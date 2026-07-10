@@ -5,6 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="theme-color" content="#16a34a">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="POS Tani">
+        <link rel="apple-touch-icon" href="/pwa-icon.png">
+        <link rel="manifest" href="/manifest.json">
 
         <title>{{ config('app.name', 'POS Toko Tani') }} - @yield('title', 'Login')</title>
 
@@ -41,5 +46,16 @@
                 &copy; {{ date('Y') }} POS Toko Tani
             </p>
         </div>
+
+        <!-- Service Worker Registration -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(reg => console.log('Service Worker registered', reg))
+                        .catch(err => console.error('Service Worker registration failed', err));
+                });
+            }
+        </script>
     </body>
 </html>

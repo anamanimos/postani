@@ -7,6 +7,9 @@
         <meta name="theme-color" content="#16a34a">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="POS Tani">
+        <link rel="apple-touch-icon" href="/pwa-icon.png">
+        <link rel="manifest" href="/manifest.json">
 
         <title>{{ config('app.name', 'POS Toko Tani') }} - @yield('title', 'Dashboard')</title>
         <meta name="description" content="Aplikasi POS Toko Pertanian - Kelola penjualan, pembelian, dan stok toko pertanian Anda">
@@ -359,6 +362,17 @@
                 window.reinitSelect2 = initSelect2;
                 window.reinitFlatpickr = initFlatpickr;
             });
+        </script>
+
+        <!-- Service Worker Registration -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(reg => console.log('Service Worker registered', reg))
+                        .catch(err => console.error('Service Worker registration failed', err));
+                });
+            }
         </script>
 
         @stack('scripts')
