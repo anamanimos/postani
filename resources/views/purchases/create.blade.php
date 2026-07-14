@@ -57,19 +57,9 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 mb-1">Foto Nota Fisik (Opsional)</label>
-                        <div x-data="{ 
-                                dragging: false, 
-                                imagePreview: null,
-                                handleFile(file) {
-                                    if (!file) return;
-                                    const reader = new FileReader();
-                                    reader.onload = (e) => {
-                                        this.imagePreview = e.target.result;
-                                    };
-                                    reader.readAsDataURL(file);
-                                }
-                             }"
-                             @dragover.prevent="dragging = true"
+                        <input type="hidden" name="gallery_filepath" x-model="galleryFilepath">
+                        
+                        <div @dragover.prevent="dragging = true"
                              @dragleave.prevent="dragging = false"
                              @drop.prevent="dragging = false; if ($event.dataTransfer.files.length) { $refs.fileInput.files = $event.dataTransfer.files; handleFile($event.dataTransfer.files[0]); }"
                              class="relative border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200"
@@ -91,12 +81,19 @@
                              <template x-if="imagePreview">
                                  <div class="relative w-full flex flex-col items-center justify-center py-1">
                                      <img :src="imagePreview" class="max-h-36 rounded-lg object-contain border border-gray-100 shadow-sm bg-white">
-                                     <button type="button" @click="imagePreview = null; $refs.fileInput.value = ''" 
-                                             class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow hover:bg-red-600 active:scale-95 transition-transform text-xs font-bold">
-                                         &times;
-                                     </button>
                                  </div>
                              </template>
+                        </div>
+                        
+                        <div class="flex gap-2 mt-2">
+                            <button type="button" @click="openGalleryModal()" 
+                                    class="flex-1 py-2 text-xs font-semibold text-primary-600 bg-primary-50 rounded-xl hover:bg-primary-100 transition-colors border border-primary-200">
+                                🖼️ Pilih dari Galeri
+                            </button>
+                            <button type="button" x-show="imagePreview || galleryFilepath" @click="clearImage()" 
+                                    class="px-3 py-2 text-xs font-semibold text-red-500 bg-red-50/50 rounded-xl hover:bg-red-100/50 transition-colors border border-red-200">
+                                Hapus
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -226,6 +223,55 @@
 
                 <button type="submit" class="btn-primary w-full py-3 font-bold">Simpan Transaksi</button>
             </div>
+
+            <!-- Modal Galeri Picker -->
+            <div x-show="galleryModalOpen" 
+                 class="fixed inset-0 z-50 overflow-y-auto" 
+                 style="display: none;"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                 
+                 <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                     <div class="fixed inset-0 transition-opacity bg-gray-500/75 backdrop-blur-sm" @click="galleryModalOpen = false"></div>
+                     
+                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+                     
+                     <div class="inline-block align-bottom bg-white/95 backdrop-blur-xl border border-white/50 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-4 w-full">
+                         <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                             <h3 class="text-sm font-bold text-dark">Pilih Gambar dari Galeri</h3>
+                             <button type="button" @click="galleryModalOpen = false" class="text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
+                         </div>
+                         
+                         <!-- Search input inside modal -->
+                         <div class="mt-3">
+                             <input type="text" x-model="searchQuery" @input.debounce.300ms="loadGalleryImages()" 
+                                    placeholder="Cari nama gambar..." 
+                                    class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
+                         </div>
+                         
+                         <!-- Gallery images list -->
+                         <div class="mt-3 max-h-80 overflow-y-auto">
+                             <div x-show="isLoading" class="text-center py-8 text-xs text-gray-400">Memuat gambar...</div>
+                             
+                             <div x-show="!isLoading && galleryImages.length === 0" class="text-center py-8 text-xs text-gray-400">Galeri kosong atau gambar tidak ditemukan.</div>
+                             
+                             <div x-show="!isLoading && galleryImages.length > 0" class="grid grid-cols-3 gap-2">
+                                 <template x-for="image in galleryImages" :key="image.id">
+                                     <div class="relative group cursor-pointer border border-gray-150 rounded-lg overflow-hidden aspect-square bg-gray-50 hover:border-primary-400 transition-colors"
+                                          @click="selectGalleryImage(image)">
+                                         <img :src="image.url" class="w-full h-full object-cover">
+                                         <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[8px] truncate p-1" :title="image.filename" x-text="image.filename"></div>
+                                     </div>
+                                 </template>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+            </div>
         </form>
     </div>
 
@@ -241,6 +287,57 @@
                 paidAmount: 0,
                 dueAmount: 0,
                 totalAmount: 0,
+                
+                // Gallery State
+                imagePreview: null,
+                dragging: false,
+                galleryFilepath: '',
+                galleryModalOpen: false,
+                galleryImages: [],
+                searchQuery: '',
+                isLoading: false,
+
+                handleFile(file) {
+                    if (!file) return;
+                    this.galleryFilepath = '';
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.imagePreview = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                },
+                openGalleryModal() {
+                    this.galleryModalOpen = true;
+                    this.loadGalleryImages();
+                },
+                loadGalleryImages() {
+                    this.isLoading = true;
+                    fetch('{{ route('api.galleries') }}?search=' + encodeURIComponent(this.searchQuery))
+                        .then(res => res.json())
+                        .then(data => {
+                            this.galleryImages = data;
+                            this.isLoading = false;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.isLoading = false;
+                        });
+                },
+                selectGalleryImage(image) {
+                    this.galleryFilepath = image.filepath;
+                    this.imagePreview = image.url;
+                    if (this.$refs.fileInput) {
+                        this.$refs.fileInput.value = '';
+                    }
+                    this.galleryModalOpen = false;
+                },
+                clearImage() {
+                    this.imagePreview = null;
+                    this.galleryFilepath = '';
+                    if (this.$refs.fileInput) {
+                        this.$refs.fileInput.value = '';
+                    }
+                },
 
                 init() {
                     this.addItem();

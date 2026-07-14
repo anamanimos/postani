@@ -53,4 +53,9 @@ class Product extends Model
     {
         return $this->hasMany(PurchasePriceHistory::class);
     }
+
+    public function gallery(): BelongsTo
+    {
+        return $this->belongsTo(Gallery::class, 'image', 'filepath');
+    }
 }

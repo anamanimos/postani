@@ -60,4 +60,9 @@ class Purchase extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function gallery(): BelongsTo
+    {
+        return $this->belongsTo(Gallery::class, 'invoice_image', 'filepath');
+    }
 }

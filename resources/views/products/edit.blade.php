@@ -11,16 +11,52 @@
     <div class="px-4 py-5 pb-24">
         <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data" x-data="{
             imagePreview: '{{ $product->image ? asset('storage/' . $product->image) : '' }}',
+            galleryFilepath: '{{ $product->image ?? '' }}',
+            galleryModalOpen: false,
+            galleryImages: [],
+            searchQuery: '',
+            isLoading: false,
             isActive: {{ $product->is_active ? 'true' : 'false' }},
+
             handleImageUpload(e) {
                 const file = e.target.files[0];
                 if (file) {
+                    this.galleryFilepath = '';
                     this.imagePreview = URL.createObjectURL(file);
                 }
+            },
+            clearImage() {
+                this.imagePreview = null;
+                this.galleryFilepath = '';
+                this.$refs.imageInput.value = '';
+            },
+            openGalleryModal() {
+                this.galleryModalOpen = true;
+                this.loadGalleryImages();
+            },
+            loadGalleryImages() {
+                this.isLoading = true;
+                fetch('{{ route('api.galleries') }}?search=' + encodeURIComponent(this.searchQuery))
+                    .then(res => res.json())
+                    .then(data => {
+                        this.galleryImages = data;
+                        this.isLoading = false;
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        this.isLoading = false;
+                    });
+            },
+            selectGalleryImage(image) {
+                this.galleryFilepath = image.filepath;
+                this.imagePreview = image.url;
+                this.$refs.imageInput.value = '';
+                this.galleryModalOpen = false;
             }
         }">
             @csrf
             @method('PUT')
+            <input type="hidden" name="gallery_filepath" x-model="galleryFilepath">
             <div class="space-y-4">
                 {{-- Image Upload --}}
                 <div class="rounded-glass border border-white/40 shadow-glass p-4" style="background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);">
@@ -39,6 +75,17 @@
                             </template>
                         </div>
                         <input type="file" name="image" x-ref="imageInput" @change="handleImageUpload($event)" accept="image/*" class="hidden">
+                    </div>
+                    
+                    <div class="flex gap-2 mt-2">
+                        <button type="button" @click="openGalleryModal()" 
+                                class="flex-1 py-2 text-xs font-semibold text-primary-600 bg-primary-50 rounded-xl hover:bg-primary-100 transition-colors border border-primary-200">
+                            🖼️ Pilih dari Galeri
+                        </button>
+                        <button type="button" x-show="imagePreview || galleryFilepath" @click="clearImage()" 
+                                class="px-3 py-2 text-xs font-semibold text-red-500 bg-red-50/50 rounded-xl hover:bg-red-100/50 transition-colors border border-red-200">
+                            Hapus
+                        </button>
                     </div>
                     @error('image') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -156,6 +203,55 @@
                 <button type="submit" class="w-full py-3.5 bg-primary-600 text-white font-semibold rounded-glass shadow-lg active:scale-[0.98] transition-transform text-sm">
                     Perbarui Produk
                 </button>
+            </div>
+
+            <!-- Modal Galeri Picker -->
+            <div x-show="galleryModalOpen" 
+                 class="fixed inset-0 z-50 overflow-y-auto" 
+                 style="display: none;"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                 
+                 <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                     <div class="fixed inset-0 transition-opacity bg-gray-500/75 backdrop-blur-sm" @click="galleryModalOpen = false"></div>
+                     
+                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+                     
+                     <div class="inline-block align-bottom bg-white/95 backdrop-blur-xl border border-white/50 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-4 w-full">
+                         <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                             <h3 class="text-sm font-bold text-dark">Pilih Gambar dari Galeri</h3>
+                             <button type="button" @click="galleryModalOpen = false" class="text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
+                         </div>
+                         
+                         <!-- Search input inside modal -->
+                         <div class="mt-3">
+                             <input type="text" x-model="searchQuery" @input.debounce.300ms="loadGalleryImages()" 
+                                    placeholder="Cari nama gambar..." 
+                                    class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
+                         </div>
+                         
+                         <!-- Gallery images list -->
+                         <div class="mt-3 max-h-80 overflow-y-auto">
+                             <div x-show="isLoading" class="text-center py-8 text-xs text-gray-400">Memuat gambar...</div>
+                             
+                             <div x-show="!isLoading && galleryImages.length === 0" class="text-center py-8 text-xs text-gray-400">Galeri kosong atau gambar tidak ditemukan.</div>
+                             
+                             <div x-show="!isLoading && galleryImages.length > 0" class="grid grid-cols-3 gap-2">
+                                 <template x-for="image in galleryImages" :key="image.id">
+                                     <div class="relative group cursor-pointer border border-gray-150 rounded-lg overflow-hidden aspect-square bg-gray-50 hover:border-primary-400 transition-colors"
+                                          @click="selectGalleryImage(image)">
+                                         <img :src="image.url" class="w-full h-full object-cover">
+                                         <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[8px] truncate p-1" :title="image.filename" x-text="image.filename"></div>
+                                     </div>
+                                 </template>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
             </div>
         </form>
     </div>

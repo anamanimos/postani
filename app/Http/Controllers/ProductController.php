@@ -50,13 +50,28 @@ class ProductController extends Controller
             'selling_price' => ['required', 'numeric', 'min:0'],
             'min_stock' => ['nullable', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'gallery_filepath' => ['nullable', 'string', 'max:500'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        $imagePath = $request->input('gallery_filepath');
+
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+            $file = $request->file('image');
+            $filename = $file->getClientOriginalName();
+            $filepath = $file->store('gallery', 'public');
+
+            \App\Models\Gallery::create([
+                'filename' => $filename,
+                'filepath' => $filepath,
+                'mime_type' => $file->getClientMimeType(),
+                'file_size' => $file->getSize(),
+            ]);
+
+            $imagePath = $filepath;
         }
 
+        $validated['image'] = $imagePath;
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['stock'] = 0;
         $validated['min_stock'] = $validated['min_stock'] ?? 0;
@@ -94,17 +109,33 @@ class ProductController extends Controller
             'selling_price' => ['required', 'numeric', 'min:0'],
             'min_stock' => ['nullable', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'gallery_filepath' => ['nullable', 'string', 'max:500'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        $imagePath = $request->input('gallery_filepath', $product->image);
+
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($product->image) {
+            // Delete old image only if it's not a gallery item and not used elsewhere
+            if ($product->image && !\App\Models\Gallery::where('filepath', $product->image)->exists()) {
                 Storage::disk('public')->delete($product->image);
             }
-            $validated['image'] = $request->file('image')->store('products', 'public');
+            
+            $file = $request->file('image');
+            $filename = $file->getClientOriginalName();
+            $filepath = $file->store('gallery', 'public');
+
+            \App\Models\Gallery::create([
+                'filename' => $filename,
+                'filepath' => $filepath,
+                'mime_type' => $file->getClientMimeType(),
+                'file_size' => $file->getSize(),
+            ]);
+
+            $imagePath = $filepath;
         }
 
+        $validated['image'] = $imagePath;
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['min_stock'] = $validated['min_stock'] ?? 0;
 
@@ -128,7 +159,10 @@ class ProductController extends Controller
         }
 
         if ($product->image) {
-            Storage::disk('public')->delete($product->image);
+            // Delete old image only if it's not a gallery item
+            if (!\App\Models\Gallery::where('filepath', $product->image)->exists()) {
+                Storage::disk('public')->delete($product->image);
+            }
         }
 
         $product->delete();

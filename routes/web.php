@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\CashTransactionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GalleryController;
 use Illuminate\Support\Facades\Route;
 
 // Public route - redirect to login
@@ -57,6 +58,10 @@ Route::middleware(['auth'])->group(function () {
     
     // Cash Transactions
     Route::resource('cash-transactions', CashTransactionController::class);
+
+    // Galleries
+    Route::resource('galleries', GalleryController::class)->only(['index', 'store', 'destroy']);
+    Route::get('/api/galleries', [GalleryController::class, 'apiIndex'])->name('api.galleries');
     
     // Profile (from Breeze)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

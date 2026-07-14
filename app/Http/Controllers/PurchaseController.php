@@ -57,6 +57,7 @@ class PurchaseController extends Controller
             'notes' => ['nullable', 'string', 'max:1000'],
             'supplier_invoice_number' => ['nullable', 'string', 'max:255'],
             'invoice_image' => ['nullable', 'image', 'max:2048'],
+            'gallery_filepath' => ['nullable', 'string', 'max:500'],
             'paid_amount' => ['nullable', 'numeric', 'min:0'],
             'payment_method' => ['nullable', 'string', 'in:cash,transfer,qris'],
             'items' => ['required', 'array', 'min:1'],
@@ -66,9 +67,21 @@ class PurchaseController extends Controller
         ]);
 
         try {
-            $invoiceImagePath = null;
+            $invoiceImagePath = $request->input('gallery_filepath');
+            
             if ($request->hasFile('invoice_image')) {
-                $invoiceImagePath = $request->file('invoice_image')->store('invoices', 'public');
+                $file = $request->file('invoice_image');
+                $filename = $file->getClientOriginalName();
+                $filepath = $file->store('gallery', 'public');
+
+                \App\Models\Gallery::create([
+                    'filename' => $filename,
+                    'filepath' => $filepath,
+                    'mime_type' => $file->getClientMimeType(),
+                    'file_size' => $file->getSize(),
+                ]);
+
+                $invoiceImagePath = $filepath;
             }
 
             $purchase = DB::transaction(function () use ($validated, $invoiceImagePath) {
