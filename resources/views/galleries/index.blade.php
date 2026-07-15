@@ -247,7 +247,7 @@
 
         <!-- Lightbox Preview Modal -->
         <div x-show="previewOpen" 
-             class="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8"
+             class="fixed inset-0 z-[60]"
              style="display: none;"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0"
@@ -258,31 +258,33 @@
              @keydown.escape.window="previewOpen = false">
              
              <!-- Backdrop -->
-             <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="previewOpen = false"></div>
+             <div class="absolute inset-0 bg-black/90" @click="previewOpen = false"></div>
              
-             <!-- Content Container -->
-             <div class="relative z-[1] flex flex-col items-center max-w-5xl w-full max-h-[90vh]"
-                  x-show="previewOpen"
-                  x-transition:enter="transition ease-out duration-300 delay-100"
-                  x-transition:enter-start="opacity-0 scale-90"
-                  x-transition:enter-end="opacity-100 scale-100"
-                  x-transition:leave="transition ease-in duration-150"
-                  x-transition:leave-start="opacity-100 scale-100"
-                  x-transition:leave-end="opacity-0 scale-90"
-                  @click.stop>
-
-                 <!-- Image -->
-                 <div class="flex-1 min-h-0 flex items-center justify-center w-full">
+             <!-- Content -->
+             <div class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-10 pointer-events-none">
+                 
+                 <!-- Image wrapper -->
+                 <div class="pointer-events-auto"
+                      x-show="previewOpen"
+                      x-transition:enter="transition ease-out duration-300 delay-100"
+                      x-transition:enter-start="opacity-0 scale-95"
+                      x-transition:enter-end="opacity-100 scale-100"
+                      x-transition:leave="transition ease-in duration-150"
+                      x-transition:leave-start="opacity-100 scale-100"
+                      x-transition:leave-end="opacity-0 scale-95"
+                      @click.stop>
                      <img :src="previewUrl" :alt="previewFilename" 
-                          class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl ring-1 ring-white/10">
+                          style="max-width: 90vw; max-height: 75vh; object-fit: contain;"
+                          class="rounded-xl shadow-2xl ring-1 ring-white/10 block">
                  </div>
 
                  <!-- Bottom Bar -->
-                 <div class="mt-3 flex items-center justify-between w-full max-w-lg mx-auto bg-white/10 backdrop-blur-xl rounded-full px-4 py-2 border border-white/10">
+                 <div class="pointer-events-auto mt-3 flex items-center justify-between max-w-md w-full bg-white/10 backdrop-blur-xl rounded-full px-4 py-2 border border-white/10"
+                      @click.stop>
                      <span class="text-white/90 text-xs font-medium truncate max-w-[70%]" x-text="previewFilename"></span>
                      <button type="button" @click="previewOpen = false" 
                              class="ml-3 shrink-0 px-3 py-1 text-xs font-semibold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors">
-                         Tutup
+                         ✕ Tutup
                      </button>
                  </div>
              </div>
