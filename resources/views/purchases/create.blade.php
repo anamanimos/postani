@@ -16,20 +16,29 @@
             <div class="glass-card p-4 space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Tengkulak / Supplier</label>
-                    <select name="supplier_id" 
-                            x-init="
-                                $($el).select2({ width: '100%' }).on('change', (e) => {
-                                    supplierId = e.target.value;
-                                    fetchPriceHistoryForAll();
-                                });
-                            "
-                            required
-                            class="form-input-glass">
-                        <option value="">-- Pilih Tengkulak --</option>
-                        @foreach($suppliers as $supplier)
-                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                        @endforeach
-                    </select>
+                    <div class="flex gap-2 items-center">
+                        <div class="flex-1">
+                            <select name="supplier_id" id="supplier-select"
+                                    x-init="
+                                        $($el).select2({ width: '100%' }).on('change', (e) => {
+                                            supplierId = e.target.value;
+                                            fetchPriceHistoryForAll();
+                                        });
+                                    "
+                                    required
+                                    class="form-input-glass">
+                                <option value="">-- Pilih Tengkulak --</option>
+                                @foreach($suppliers as $supplier)
+                                    <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="button" @click="quickSupplierOpen = true" 
+                                class="w-10 h-10 shrink-0 bg-primary-50 hover:bg-primary-100 border border-primary-200 text-primary-600 rounded-xl flex items-center justify-center transition-colors active:scale-95 shadow-sm text-lg font-bold"
+                                title="Tambah Tengkulak Baru">
+                            +
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Tanggal Pembelian</label>
@@ -272,6 +281,66 @@
                      </div>
                  </div>
             </div>
+
+             <!-- Modal Quick Add Supplier -->
+             <div x-show="quickSupplierOpen" 
+                  class="fixed inset-0 z-50 overflow-y-auto" 
+                  style="display: none;"
+                  x-transition:enter="transition ease-out duration-300"
+                  x-transition:enter-start="opacity-0"
+                  x-transition:enter-end="opacity-100"
+                  x-transition:leave="transition ease-in duration-200"
+                  x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0">
+                  
+                  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                      <div class="fixed inset-0 transition-opacity bg-gray-500/75 backdrop-blur-sm" @click="closeQuickSupplierModal()"></div>
+                      
+                      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+                      
+                      <div class="inline-block align-bottom bg-white/95 backdrop-blur-xl border border-white/50 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-5 w-full">
+                          <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                              <h3 class="text-sm font-bold text-dark">Tambah Tengkulak Baru</h3>
+                              <button type="button" @click="closeQuickSupplierModal()" class="text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
+                          </div>
+                          
+                          <div class="mt-4 space-y-4">
+                              <div>
+                                  <label class="block text-xs font-semibold text-gray-500 mb-1">Nama Tengkulak *</label>
+                                  <input type="text" x-model="newSupplierName" placeholder="Contoh: Haji Anwar"
+                                         class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
+                              </div>
+                              <div>
+                                  <label class="block text-xs font-semibold text-gray-500 mb-1">Nomor Telepon</label>
+                                  <input type="text" x-model="newSupplierPhone" placeholder="Contoh: 08123456789"
+                                         class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
+                              </div>
+                              <div>
+                                  <label class="block text-xs font-semibold text-gray-500 mb-1">Alamat</label>
+                                  <textarea x-model="newSupplierAddress" placeholder="Alamat lengkap..." rows="2"
+                                            class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white"></textarea>
+                              </div>
+                              <div>
+                                  <label class="block text-xs font-semibold text-gray-500 mb-1">Catatan</label>
+                                  <input type="text" x-model="newSupplierNotes" placeholder="Catatan khusus..."
+                                         class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
+                              </div>
+                          </div>
+                          
+                          <div class="mt-6 flex justify-end gap-2">
+                              <button type="button" @click="closeQuickSupplierModal()" 
+                                      class="px-4 py-2 text-xs font-semibold text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors border border-gray-200">
+                                  Batal
+                              </button>
+                              <button type="button" @click="saveQuickSupplier()" :disabled="isSavingSupplier || !newSupplierName.trim()"
+                                      class="px-4 py-2 text-xs font-semibold text-white bg-primary-600 rounded-xl hover:bg-primary-700 transition-colors shadow flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                                  <span x-show="isSavingSupplier">Menyimpan...</span>
+                                  <span x-show="!isSavingSupplier">Simpan</span>
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+             </div>
         </form>
     </div>
 
@@ -287,6 +356,14 @@
                 paidAmount: 0,
                 dueAmount: 0,
                 totalAmount: 0,
+                
+                // Quick Supplier State
+                quickSupplierOpen: false,
+                newSupplierName: '',
+                newSupplierPhone: '',
+                newSupplierAddress: '',
+                newSupplierNotes: '',
+                isSavingSupplier: false,
                 
                 // Gallery State
                 imagePreview: null,
@@ -315,6 +392,72 @@
                         if (this.$refs.fileInput) {
                             this.$refs.fileInput.value = '';
                         }
+                    });
+                },
+                closeQuickSupplierModal() {
+                    this.quickSupplierOpen = false;
+                    this.newSupplierName = '';
+                    this.newSupplierPhone = '';
+                    this.newSupplierAddress = '';
+                    this.newSupplierNotes = '';
+                },
+                saveQuickSupplier() {
+                    if (!this.newSupplierName.trim()) return;
+                    this.isSavingSupplier = true;
+                    
+                    fetch('{{ route('suppliers.store') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: this.newSupplierName,
+                            phone: this.newSupplierPhone,
+                            address: this.newSupplierAddress,
+                            notes: this.newSupplierNotes
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        this.isSavingSupplier = false;
+                        if (data.success && data.supplier) {
+                            // Add new option to native select
+                            const newOption = new Option(data.supplier.name, data.supplier.id, true, true);
+                            $('#supplier-select').append(newOption).trigger('change');
+                            this.supplierId = data.supplier.id;
+                            
+                            // Close modal
+                            this.closeQuickSupplierModal();
+                            
+                            // Show success SweetAlert
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: 'Tengkulak baru berhasil ditambahkan.',
+                                timer: 2000,
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                customClass: {
+                                    popup: 'rounded-2xl font-sans'
+                                }
+                            });
+                        } else {
+                            throw new Error(data.message || 'Gagal menambahkan supplier.');
+                        }
+                    })
+                    .catch(err => {
+                        this.isSavingSupplier = false;
+                        console.error(err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: err.message || 'Terjadi kesalahan saat menambahkan supplier.',
+                            customClass: {
+                                popup: 'rounded-2xl font-sans border-0'
+                            }
+                        });
                     });
                 },
                 openGalleryModal() {
