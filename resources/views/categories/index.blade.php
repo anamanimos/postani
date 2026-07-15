@@ -41,7 +41,7 @@
                         <a href="{{ route('categories.edit', $category) }}" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
                             ✏️
                         </a>
-                        <form action="{{ route('categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
+                        <form action="{{ route('categories.destroy', $category) }}" method="POST" class="confirm-delete" data-confirm="Hapus kategori ini?">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors">

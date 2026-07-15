@@ -131,7 +131,7 @@
                             {{-- Delete action --}}
                             @if(!$gallery->is_used)
                                 <form action="{{ route('galleries.destroy', $gallery) }}" method="POST" 
-                                      onsubmit="return confirm('Yakin ingin menghapus gambar ini dari galeri?')">
+                                      class="confirm-delete" data-confirm="Yakin ingin menghapus gambar ini dari galeri?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-white hover:text-red-400 transition-colors active:scale-90 transform p-0.5">

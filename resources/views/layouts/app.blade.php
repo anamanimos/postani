@@ -494,6 +494,45 @@
                     return;
                 }
                 
+                // If it is a confirm-delete form and not yet confirmed
+                if (form.classList.contains('confirm-delete') && form.dataset.confirmed !== 'true') {
+                    e.preventDefault();
+                    const message = form.getAttribute('data-confirm') || 'Yakin ingin menghapus data ini?';
+                    
+                    Swal.fire({
+                        title: 'Konfirmasi Hapus',
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#9ca3af',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl font-sans shadow-lg'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.dataset.confirmed = 'true';
+                            // Show loading SweetAlert manually
+                            Swal.fire({
+                                title: 'Memproses...',
+                                text: 'Mohon tunggu sebentar.',
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                },
+                                customClass: {
+                                    popup: 'rounded-2xl font-sans'
+                                }
+                            });
+                            form.submit();
+                        }
+                    });
+                    return;
+                }
+                
                 // Do not show loading for forms that are flagged with 'no-loading'
                 if (form.classList.contains('no-loading')) {
                     return;

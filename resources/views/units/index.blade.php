@@ -39,7 +39,7 @@
                         <a href="{{ route('units.edit', $unit) }}" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
                             ✏️
                         </a>
-                        <form action="{{ route('units.destroy', $unit) }}" method="POST" onsubmit="return confirm('Hapus satuan ini?')">
+                        <form action="{{ route('units.destroy', $unit) }}" method="POST" class="confirm-delete" data-confirm="Hapus satuan ini?">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors">

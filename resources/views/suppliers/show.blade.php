@@ -87,7 +87,7 @@
         </div>
 
         {{-- Delete Button --}}
-        <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus tengkulak ini?')">
+        <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" class="confirm-delete" data-confirm="Yakin ingin menghapus tengkulak ini?">
             @csrf
             @method('DELETE')
             <button type="submit" class="w-full py-3 border-2 border-red-200 text-red-600 font-medium rounded-glass text-sm hover:bg-red-50 transition-colors">

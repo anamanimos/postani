@@ -100,7 +100,7 @@
             </div>
 
             {{-- Delete Button --}}
-            <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
+            <form action="{{ route('products.destroy', $product) }}" method="POST" class="confirm-delete" data-confirm="Yakin ingin menghapus produk ini?">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="w-full py-3 border-2 border-red-200 text-red-600 font-medium rounded-glass text-sm hover:bg-red-50 transition-colors">
