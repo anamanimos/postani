@@ -11,11 +11,17 @@
     <div class="px-4 py-5 pb-24">
         <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data" 
               @paste.window="
-                  if ($event.clipboardData.files.length) {
-                      const file = $event.clipboardData.files[0];
-                      if (file.type.startsWith('image/')) {
-                          $event.preventDefault();
-                          handleRawFile(file);
+                  const items = ($event.clipboardData || window.clipboardData).items;
+                  if (items) {
+                      for (let i = 0; i < items.length; i++) {
+                          if (items[i].type.indexOf('image') !== -1) {
+                              const file = items[i].getAsFile();
+                              if (file) {
+                                  $event.preventDefault();
+                                  handleRawFile(file);
+                                  break;
+                              }
+                          }
                       }
                   }
               "

@@ -39,11 +39,17 @@
                      @dragleave.prevent="dragging = false"
                      @drop.prevent="dragging = false; if ($event.dataTransfer.files.length) { $refs.fileInput.files = $event.dataTransfer.files; handleFile($event.dataTransfer.files[0]); }"
                      @paste.window="
-                          if ($event.clipboardData.files.length) {
-                              const file = $event.clipboardData.files[0];
-                              if (file.type.startsWith('image/')) {
-                                  $event.preventDefault();
-                                  handleFile(file);
+                          const items = ($event.clipboardData || window.clipboardData).items;
+                          if (items) {
+                              for (let i = 0; i < items.length; i++) {
+                                  if (items[i].type.indexOf('image') !== -1) {
+                                      const file = items[i].getAsFile();
+                                      if (file) {
+                                          $event.preventDefault();
+                                          handleFile(file);
+                                          break;
+                                      }
+                                  }
                               }
                           }
                       "
