@@ -21,9 +21,15 @@
                                 const dt = new DataTransfer();
                                 dt.items.add(croppedFile);
                                 this.$refs.fileInput.files = dt.files;
-                                document.getElementById('upload-form').submit();
+                                const form = document.getElementById('upload-form');
+                                if (form) {
+                                    (form.requestSubmit ? form.requestSubmit() : form.submit());
+                                }
                             }, (originalFile) => {
-                                document.getElementById('upload-form').submit();
+                                const form = document.getElementById('upload-form');
+                                if (form) {
+                                    (form.requestSubmit ? form.requestSubmit() : form.submit());
+                                }
                             }, () => {
                                 this.$refs.fileInput.value = '';
                             });
