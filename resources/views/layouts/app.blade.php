@@ -86,17 +86,54 @@
                 background-color: #F3F4F6 !important;
                 border-bottom: 1px solid #E5E7EB !important;
                 border-radius: 12px 12px 0 0 !important;
-                padding: 6px 0 !important;
             }
-            .flatpickr-months .flatpickr-month {
+            .flatpickr-current-month {
                 color: #1F2937 !important;
+                padding: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 4px !important;
+                height: 34px !important;
+                width: 100% !important;
+                left: 0 !important;
+            }
+            .flatpickr-current-month .flatpickr-monthDropdown-months {
                 font-weight: 700 !important;
+                color: #1F2937 !important;
+                padding: 0 4px !important;
+                background: transparent !important;
+                border: none !important;
+                cursor: pointer !important;
+            }
+            .flatpickr-current-month .flatpickr-monthDropdown-months:focus {
+                outline: none !important;
+            }
+            .flatpickr-current-month .flatpickr-monthDropdown-months option {
+                color: #1F2937 !important;
+                background-color: #FFFFFF !important;
+            }
+            .flatpickr-current-month .numInputWrapper {
+                width: 6ch !important;
+                display: inline-block !important;
+            }
+            .flatpickr-current-month input.cur-year {
+                font-weight: 700 !important;
+                color: #1F2937 !important;
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
             }
             .flatpickr-months .flatpickr-prev-month, 
             .flatpickr-months .flatpickr-next-month {
                 color: #4B5563 !important;
                 fill: #4B5563 !important;
-                top: 10px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                height: 34px !important;
+                padding: 0 10px !important;
             }
             .flatpickr-months .flatpickr-prev-month:hover, 
             .flatpickr-months .flatpickr-next-month:hover {
