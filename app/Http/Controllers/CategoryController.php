@@ -23,14 +23,22 @@ class CategoryController extends Controller
         return view('categories.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
             'description' => ['nullable', 'string', 'max:500'],
         ]);
 
-        Category::create($validated);
+        $category = Category::create($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'category' => $category,
+                'message' => 'Kategori berhasil ditambahkan.'
+            ]);
+        }
 
         return redirect()
             ->route('categories.index')

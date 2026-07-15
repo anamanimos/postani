@@ -33,6 +33,13 @@
             searchQuery: '',
             isLoading: false,
             isActive: true,
+            
+            // Quick Category State
+            quickCategoryOpen: false,
+            newCategoryName: '',
+            newCategoryDescription: '',
+            isSavingCategory: false,
+            categoryId: '',
 
             handleRawFile(file) {
                 if (!file) return;
@@ -68,6 +75,68 @@
                     this.imagePreview = URL.createObjectURL(originalFile);
                 }, () => {
                     this.$refs.imageInput.value = '';
+                });
+            },
+            closeQuickCategoryModal() {
+                this.quickCategoryOpen = false;
+                this.newCategoryName = '';
+                this.newCategoryDescription = '';
+            },
+            saveQuickCategory() {
+                if (!this.newCategoryName.trim()) return;
+                this.isSavingCategory = true;
+                
+                fetch('{{ route('categories.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: this.newCategoryName,
+                        description: this.newCategoryDescription
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    this.isSavingCategory = false;
+                    if (data.success && data.category) {
+                        // Add new option to native select
+                        const newOption = new Option(data.category.name, data.category.id, true, true);
+                        $('#category-select').append(newOption).trigger('change');
+                        this.categoryId = data.category.id;
+                        
+                        // Close modal
+                        this.closeQuickCategoryModal();
+                        
+                        // Show success SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Kategori baru berhasil ditambahkan.',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'rounded-2xl font-sans'
+                            }
+                        });
+                    } else {
+                        throw new Error(data.message || 'Gagal menambahkan kategori.');
+                    }
+                })
+                .catch(err => {
+                    this.isSavingCategory = false;
+                    console.error(err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: err.message || 'Terjadi kesalahan saat menambahkan kategori.',
+                        customClass: {
+                            popup: 'rounded-2xl font-sans border-0'
+                        }
+                    });
                 });
             },
             clearImage() {
@@ -148,12 +217,27 @@
 
                     <div>
                         <label class="block text-xs font-medium text-gray-600 mb-1">Kategori</label>
-                        <select name="category_id" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
-                            <option value="">Pilih Kategori</option>
-                            @foreach($categories ?? [] as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                            @endforeach
-                        </select>
+                        <div class="flex gap-2 items-center">
+                            <div class="flex-1">
+                                <select name="category_id" id="category-select"
+                                        x-init="
+                                            $($el).select2({ width: '100%' }).on('change', (e) => {
+                                                categoryId = e.target.value;
+                                            });
+                                        "
+                                        class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
+                                    <option value="">Pilih Kategori</option>
+                                    @foreach($categories ?? [] as $category)
+                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="button" @click="quickCategoryOpen = true" 
+                                    class="w-10 h-10 shrink-0 bg-primary-50 hover:bg-primary-100 border border-primary-200 text-primary-600 rounded-xl flex items-center justify-center transition-colors active:scale-95 shadow-sm text-lg font-bold"
+                                    title="Tambah Kategori Baru">
+                                +
+                            </button>
+                        </div>
                         @error('category_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -293,6 +377,56 @@
                                      </div>
                                  </template>
                              </div>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+
+            <!-- Modal Quick Add Category -->
+            <div x-show="quickCategoryOpen" 
+                 class="fixed inset-0 z-50 overflow-y-auto" 
+                 style="display: none;"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                 
+                 <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                     <div class="fixed inset-0 transition-opacity bg-gray-500/75 backdrop-blur-sm" @click="closeQuickCategoryModal()"></div>
+                     
+                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+                     
+                     <div class="inline-block align-bottom bg-white/95 backdrop-blur-xl border border-white/50 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-5 w-full">
+                         <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                             <h3 class="text-sm font-bold text-dark">Tambah Kategori Baru</h3>
+                             <button type="button" @click="closeQuickCategoryModal()" class="text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
+                         </div>
+                         
+                         <div class="mt-4 space-y-4">
+                             <div>
+                                 <label class="block text-xs font-semibold text-gray-500 mb-1">Nama Kategori *</label>
+                                 <input type="text" x-model="newCategoryName" placeholder="Contoh: Pupuk Organik"
+                                        class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
+                             </div>
+                             <div>
+                                 <label class="block text-xs font-semibold text-gray-500 mb-1">Deskripsi</label>
+                                 <textarea x-model="newCategoryDescription" placeholder="Deskripsi kategori..." rows="3"
+                                           class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white"></textarea>
+                             </div>
+                         </div>
+                         
+                         <div class="mt-6 flex justify-end gap-2">
+                             <button type="button" @click="closeQuickCategoryModal()" 
+                                     class="px-4 py-2 text-xs font-semibold text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors border border-gray-200">
+                                 Batal
+                             </button>
+                             <button type="button" @click="saveQuickCategory()" :disabled="isSavingCategory || !newCategoryName.trim()"
+                                     class="px-4 py-2 text-xs font-semibold text-white bg-primary-600 rounded-xl hover:bg-primary-700 transition-colors shadow flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                                 <span x-show="isSavingCategory">Menyimpan...</span>
+                                 <span x-show="!isSavingCategory">Simpan</span>
+                             </button>
                          </div>
                      </div>
                  </div>
