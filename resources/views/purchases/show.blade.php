@@ -65,10 +65,30 @@
                 @endforeach
             </div>
             <div class="bg-gray-50 px-4 py-3 space-y-2 border-t border-gray-100">
+                @if($purchase->additional_cost > 0)
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>Subtotal Barang:</span>
+                    <span class="font-semibold text-dark">Rp {{ number_format($purchase->purchaseItems->sum('subtotal'), 0, ',', '.') }}</span>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>Biaya Tambahan:</span>
+                    <div class="text-right flex flex-col items-end">
+                        <span class="font-semibold text-dark">Rp {{ number_format($purchase->additional_cost, 0, ',', '.') }}</span>
+                        @if($purchase->additional_cost_notes)
+                            <span class="text-[10px] text-gray-400 italic">({{ $purchase->additional_cost_notes }})</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-500 pt-1 border-t border-dashed border-gray-250">
+                    <span>Total Pembelian:</span>
+                    <span class="font-bold text-primary-600">Rp {{ number_format($purchase->total_amount, 0, ',', '.') }}</span>
+                </div>
+                @else
                 <div class="flex items-center justify-between text-xs text-gray-500">
                     <span>Total Belanja:</span>
                     <span class="font-bold text-dark">Rp {{ number_format($purchase->total_amount, 0, ',', '.') }}</span>
                 </div>
+                @endif
                 <div class="flex items-center justify-between text-xs text-gray-500">
                     <span>Jumlah Dibayar:</span>
                     <span class="font-bold text-green-600">Rp {{ number_format($purchase->paid_amount, 0, ',', '.') }}</span>

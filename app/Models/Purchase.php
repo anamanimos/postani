@@ -12,7 +12,7 @@ class Purchase extends Model
     protected $fillable = [
         'invoice_number', 'supplier_id', 'purchase_date', 'total_amount',
         'payment_status', 'paid_amount', 'due_amount', 'notes', 'created_by',
-        'supplier_invoice_number', 'invoice_image'
+        'supplier_invoice_number', 'invoice_image', 'additional_cost', 'additional_cost_notes'
     ];
 
     protected $casts = [
@@ -20,6 +20,7 @@ class Purchase extends Model
         'total_amount' => 'double',
         'paid_amount' => 'double',
         'due_amount' => 'double',
+        'additional_cost' => 'double',
     ];
 
     public static function generateInvoiceNumber(): string

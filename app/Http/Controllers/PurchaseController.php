@@ -64,6 +64,8 @@ class PurchaseController extends Controller
             'items.*.product_id' => ['required', 'exists:products,id'],
             'items.*.quantity' => ['required', 'numeric', 'min:0.0001'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
+            'additional_cost' => ['nullable', 'numeric', 'min:0'],
+            'additional_cost_notes' => ['nullable', 'string', 'max:255'],
         ]);
 
         try {
@@ -85,9 +87,11 @@ class PurchaseController extends Controller
             }
 
             $purchase = DB::transaction(function () use ($validated, $invoiceImagePath) {
-                $totalAmount = collect($validated['items'])->sum(
+                $itemsSubtotal = collect($validated['items'])->sum(
                     fn (array $item): float => $item['quantity'] * $item['unit_price']
                 );
+                $additionalCost = (float) ($validated['additional_cost'] ?? 0);
+                $totalAmount = $itemsSubtotal + $additionalCost;
 
                 $paidAmount = (float) ($validated['paid_amount'] ?? 0);
                 $dueAmount = $totalAmount - $paidAmount;
@@ -114,6 +118,8 @@ class PurchaseController extends Controller
                     'notes' => $validated['notes'] ?? null,
                     'supplier_invoice_number' => $validated['supplier_invoice_number'] ?? null,
                     'invoice_image' => $invoiceImagePath,
+                    'additional_cost' => $additionalCost,
+                    'additional_cost_notes' => $validated['additional_cost_notes'] ?? null,
                     'created_by' => auth()->id(),
                 ]);
 

@@ -209,6 +209,19 @@
                     <span class="text-base font-bold text-primary-600" x-text="formatRupiah(totalAmount)"></span>
                 </div>
 
+                <div class="grid grid-cols-2 gap-2 border-b border-gray-100/50 pb-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Biaya Tambahan (Parkir/Bensin) (Rp)</label>
+                        <input type="number" name="additional_cost" x-model.number="additionalCost" @input="calculateTotal"
+                               placeholder="Contoh: 5000" class="form-input-glass">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Catatan Biaya Tambahan</label>
+                        <input type="text" name="additional_cost_notes" x-model="additionalCostNotes"
+                               placeholder="Contoh: Parkir & Beli Bensin" class="form-input-glass">
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 mb-1">Status Pembayaran</label>
@@ -371,6 +384,8 @@
                 paidAmount: 0,
                 dueAmount: 0,
                 totalAmount: 0,
+                additionalCost: 0,
+                additionalCostNotes: '',
                 
                 // Quick Supplier State
                 quickSupplierOpen: false,
@@ -591,7 +606,10 @@
                 },
 
                 calculateTotal() {
-                    this.totalAmount = this.items.reduce((sum, item) => sum + item.subtotal, 0);
+                    const itemsSubtotal = this.items.reduce((sum, item) => sum + item.subtotal, 0);
+                    const additional = parseFloat(this.additionalCost || 0);
+                    this.totalAmount = itemsSubtotal + additional;
+
                     if (this.paymentStatus === 'paid') {
                         this.paidAmount = this.totalAmount;
                         this.dueAmount = 0;
