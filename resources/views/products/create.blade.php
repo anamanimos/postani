@@ -20,10 +20,20 @@
 
             handleImageUpload(e) {
                 const file = e.target.files[0];
-                if (file) {
+                if (!file) return;
+                window.cropImage(file, (croppedBlob) => {
+                    const croppedFile = new File([croppedBlob], file.name, { type: file.type });
+                    const dt = new DataTransfer();
+                    dt.items.add(croppedFile);
+                    this.$refs.imageInput.files = dt.files;
                     this.galleryFilepath = '';
-                    this.imagePreview = URL.createObjectURL(file);
-                }
+                    this.imagePreview = URL.createObjectURL(croppedBlob);
+                }, (originalFile) => {
+                    this.galleryFilepath = '';
+                    this.imagePreview = URL.createObjectURL(originalFile);
+                }, () => {
+                    this.$refs.imageInput.value = '';
+                });
             },
             clearImage() {
                 this.imagePreview = null;

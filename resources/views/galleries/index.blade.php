@@ -26,7 +26,17 @@
                         dragging: false, 
                         handleFile(file) {
                             if (!file) return;
-                            document.getElementById('upload-form').submit();
+                            window.cropImage(file, (croppedBlob) => {
+                                const croppedFile = new File([croppedBlob], file.name, { type: file.type });
+                                const dt = new DataTransfer();
+                                dt.items.add(croppedFile);
+                                this.$refs.fileInput.files = dt.files;
+                                document.getElementById('upload-form').submit();
+                            }, (originalFile) => {
+                                document.getElementById('upload-form').submit();
+                            }, () => {
+                                this.$refs.fileInput.value = '';
+                            });
                         }
                      }"
                      @dragover.prevent="dragging = true"

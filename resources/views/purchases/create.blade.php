@@ -299,12 +299,23 @@
 
                 handleFile(file) {
                     if (!file) return;
-                    this.galleryFilepath = '';
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.imagePreview = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
+                    window.cropImage(file, (croppedBlob) => {
+                        const croppedFile = new File([croppedBlob], file.name, { type: file.type });
+                        const dt = new DataTransfer();
+                        dt.items.add(croppedFile);
+                        if (this.$refs.fileInput) {
+                            this.$refs.fileInput.files = dt.files;
+                        }
+                        this.galleryFilepath = '';
+                        this.imagePreview = URL.createObjectURL(croppedBlob);
+                    }, (originalFile) => {
+                        this.galleryFilepath = '';
+                        this.imagePreview = URL.createObjectURL(originalFile);
+                    }, () => {
+                        if (this.$refs.fileInput) {
+                            this.$refs.fileInput.value = '';
+                        }
+                    });
                 },
                 openGalleryModal() {
                     this.galleryModalOpen = true;
