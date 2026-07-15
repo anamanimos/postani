@@ -59,7 +59,7 @@ class LoginRequest extends FormRequest
 
         // If logged in on mobile, adjust the queued remember cookie lifetime to 90 days (129,600 minutes)
         if ($remember) {
-            $cookieName = Auth::guard()->getRecalledName();
+            $cookieName = Auth::guard()->getRecallerName();
             $cookie = \Illuminate\Support\Facades\Cookie::getQueuedCookie($cookieName);
             if ($cookie) {
                 \Illuminate\Support\Facades\Cookie::queue(
