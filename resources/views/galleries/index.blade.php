@@ -5,9 +5,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-5" x-data="{ showUsageModal: false, activeUsages: [], activeFilename: '', previewOpen: false, previewUrl: '', previewFilename: '' }"
-         x-init="window._galleryPreview = Alpine.reactive({ open: false, url: '', filename: '' }); $watch('previewOpen', v => {})"
-         @gallery-preview.window="window._galleryPreview.open = true; window._galleryPreview.url = $event.detail.url; window._galleryPreview.filename = $event.detail.filename">
+    <div class="px-4 py-5 pb-24 space-y-5" x-data="{ showUsageModal: false, activeUsages: [], activeFilename: '' }">
 
 
         {{-- Upload Section --}}
@@ -128,7 +126,7 @@
 
                         {{-- Center Eye Preview on Hover --}}
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center cursor-pointer"
-                             @click="window._galleryPreview.url = '{{ asset('storage/' . $gallery->filepath) }}'; window._galleryPreview.filename = '{{ $gallery->filename }}'; window._galleryPreview.open = true">
+                             onclick="openGalleryPreview('{{ asset('storage/' . $gallery->filepath) }}', '{{ $gallery->filename }}')">
                             <div class="opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-200">
                                 <div class="w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center">
                                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,7 +159,7 @@
                             <div class="flex items-center gap-1">
                                 {{-- Preview eye button (mobile friendly) --}}
                                 <button type="button" 
-                                        @click="window._galleryPreview.url = '{{ asset('storage/' . $gallery->filepath) }}'; window._galleryPreview.filename = '{{ $gallery->filename }}'; window._galleryPreview.open = true"
+                                        onclick="event.stopPropagation(); openGalleryPreview('{{ asset('storage/' . $gallery->filepath) }}', '{{ $gallery->filename }}')"
                                         class="text-white hover:text-blue-300 transition-colors active:scale-90 transform p-0.5" title="Preview">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -249,52 +247,51 @@
     </div>
 </x-app-layout>
 
-{{-- Lightbox rendered outside app layout to avoid stacking context issues from page-enter animation --}}
-<div x-data="{ 
-    get previewOpen() { return window._galleryPreview?.open ?? false },
-    set previewOpen(v) { if(window._galleryPreview) window._galleryPreview.open = v },
-    get previewUrl() { return window._galleryPreview?.url ?? '' },
-    get previewFilename() { return window._galleryPreview?.filename ?? '' }
-}">
-    <div x-show="previewOpen" 
-         class="fixed inset-0 z-[9999]"
-         style="display: none;"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         @keydown.escape.window="previewOpen = false">
-         
-         <!-- Backdrop -->
-         <div class="absolute inset-0 bg-black" @click="previewOpen = false"></div>
-         
-         <!-- Close button top-right -->
-         <button type="button" @click="previewOpen = false" 
-                 class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
-             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-             </svg>
-         </button>
-         
-         <!-- Content -->
-         <div class="absolute inset-0 flex flex-col items-center justify-center p-4 pb-20 sm:pb-8">
-             <!-- Image -->
-             <div x-show="previewOpen"
-                  x-transition:enter="transition ease-out duration-300 delay-100"
-                  x-transition:enter-start="opacity-0 scale-95"
-                  x-transition:enter-end="opacity-100 scale-100"
-                  @click.stop>
-                 <img :src="previewUrl" :alt="previewFilename" 
-                      style="max-width: 92vw; max-height: 70vh; object-fit: contain;"
-                      class="rounded-xl shadow-2xl block">
-             </div>
+<script>
+function openGalleryPreview(url, filename) {
+    // Remove existing lightbox if any
+    const existing = document.getElementById('gallery-lightbox');
+    if (existing) existing.remove();
 
-             <!-- Filename bar -->
-             <div class="mt-3 bg-white/15 backdrop-blur-xl rounded-full px-5 py-2 border border-white/10" @click.stop>
-                 <span class="text-white text-xs font-medium" x-text="previewFilename"></span>
-             </div>
-         </div>
-    </div>
-</div>
+    // Create lightbox
+    const lightbox = document.createElement('div');
+    lightbox.id = 'gallery-lightbox';
+    lightbox.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;padding-bottom:80px;animation:lbFadeIn .25s ease;';
+    lightbox.innerHTML = `
+        <div style="position:absolute;inset:0;background:#000;" onclick="closeGalleryPreview()"></div>
+        <button onclick="closeGalleryPreview()" style="position:absolute;top:16px;right:16px;z-index:10;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.4);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;font-weight:bold;line-height:1;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,0.4)'" onmouseout="this.style.background='rgba(255,255,255,0.25)'">
+            ✕
+        </button>
+        <img src="${url}" alt="${filename}" style="max-width:92vw;max-height:70vh;object-fit:contain;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);position:relative;z-index:1;animation:lbScaleIn .3s ease .1s both;" onclick="event.stopPropagation()">
+        <div style="position:relative;z-index:1;margin-top:12px;background:rgba(255,255,255,0.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:999px;padding:8px 20px;border:1px solid rgba(255,255,255,0.1);animation:lbScaleIn .3s ease .15s both;">
+            <span style="color:#fff;font-size:12px;font-weight:500;">${filename}</span>
+        </div>
+    `;
+    document.body.appendChild(lightbox);
+
+    // ESC key
+    lightbox._escHandler = function(e) { if (e.key === 'Escape') closeGalleryPreview(); };
+    document.addEventListener('keydown', lightbox._escHandler);
+}
+
+function closeGalleryPreview() {
+    const lightbox = document.getElementById('gallery-lightbox');
+    if (lightbox) {
+        if (lightbox._escHandler) document.removeEventListener('keydown', lightbox._escHandler);
+        lightbox.style.animation = 'lbFadeOut .2s ease forwards';
+        setTimeout(() => lightbox.remove(), 200);
+    }
+}
+
+// Add keyframe animations
+if (!document.getElementById('gallery-lightbox-styles')) {
+    const style = document.createElement('style');
+    style.id = 'gallery-lightbox-styles';
+    style.textContent = `
+        @keyframes lbFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes lbFadeOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes lbScaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    `;
+    document.head.appendChild(style);
+}
+</script>
