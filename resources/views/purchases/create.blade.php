@@ -13,6 +13,11 @@
         display: flex !important;
         align-items: stretch !important;
         width: 100% !important;
+        background-color: #F3F4F6 !important; /* default gray-100 background */
+        border: 1px solid #D1D5DB !important; /* gray-300 solid border */
+        border-radius: 8px !important; /* rounded-lg */
+        overflow: hidden !important;
+        transition: all 0.2s ease-in-out !important;
     }
     
     /* Solid Prefix */
@@ -21,10 +26,8 @@
         align-items: center !important;
         justify-content: center !important;
         width: 42px !important;
-        background-color: #F3F4F6 !important; /* gray-100 */
-        border: 1px solid #D1D5DB !important;
-        border-right: none !important;
-        border-radius: 8px 0 0 8px !important; /* rounded-lg left only */
+        background-color: transparent !important; /* inherits container background */
+        border-right: 1px solid #D1D5DB !important; /* vertical separator divider */
         color: #4B5563 !important; /* gray-600 default */
         font-size: 0.875rem !important;
         font-weight: 600 !important;
@@ -34,61 +37,56 @@
     
     /* Input Solid Styling */
     .form-input-solid {
+        flex: 1 !important;
+        min-width: 0 !important;
         width: 100% !important;
-        background-color: #F3F4F6 !important; /* gray-100 background same as icon prefix */
-        border: 1px solid #D1D5DB !important; /* gray-300 */
+        background-color: transparent !important; /* inherits container background */
+        border: none !important; /* no border of its own */
         color: #1F2937 !important;
-        border-radius: 8px !important; /* rounded-lg */
         font-size: 0.875rem !important;
         padding: 0.5rem 0.75rem !important;
-        height: 38px !important;
+        height: 36px !important; /* inner input height */
+        outline: none !important;
+        box-shadow: none !important;
         transition: all 0.2s ease-in-out !important;
     }
     
-    .input-group-solid .form-input-solid {
-        border-radius: 0 8px 8px 0 !important; /* rounded-lg right only */
-        border-left: none !important;
+    textarea.form-input-solid {
+        height: auto !important;
+        min-height: 60px !important;
     }
     
-    /* Focus States */
-    .form-input-solid:focus {
-        outline: none !important;
-        background-color: #FFFFFF !important; /* turns white on focus */
-        border-color: #16A34A !important; /* primary-600 */
-        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15) !important;
-        z-index: 10 !important;
+    /* Group Focus State */
+    .input-group-solid:focus-within {
+        border-color: #16A34A !important; /* container border turns green */
+        background-color: #FFFFFF !important; /* container background turns white */
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15) !important; /* container gets shadow */
     }
     
-    /* Input Group Focus State styling for prefix and icon */
     .input-group-solid:focus-within .input-prefix {
-        border-color: #16A34A !important;
-        color: #16A34A !important; /* turns icon/text green */
-        background-color: #FFFFFF !important; /* turns background white */
+        border-right-color: #16A34A !important; /* divider turns green */
+        color: #16A34A !important; /* icon turns green */
     }
     
     /* Select2 Solid Override */
     .input-group-solid .select2-container--default .select2-selection--single {
-        background-color: #F3F4F6 !important; /* gray-100 background same as icon prefix */
-        border: 1px solid #D1D5DB !important;
-        border-left: none !important;
+        background-color: transparent !important; /* inherits container background */
+        border: none !important; /* no border of its own */
         border-radius: 0 8px 8px 0 !important;
-        height: 38px !important;
+        height: 36px !important;
         display: flex !important;
         align-items: center !important;
         backdrop-filter: none !important;
         transition: all 0.2s ease-in-out !important;
-    }
-    .input-group-solid:focus-within .select2-container--default .select2-selection--single {
-        background-color: #FFFFFF !important; /* turns white on focus */
-        border-color: #16A34A !important;
+        width: 100% !important;
     }
     .input-group-solid .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 36px !important;
+        line-height: 34px !important;
         padding-left: 8px !important;
         color: #1F2937 !important;
     }
     .input-group-solid .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 36px !important;
+        height: 34px !important;
     }
     
     .select2-dropdown {
@@ -97,6 +95,11 @@
         border-radius: 8px !important;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
         backdrop-filter: none !important;
+    }
+    
+    /* Readonly state */
+    .input-group-solid.bg-gray-50 {
+        background-color: #F9FAFB !important;
     }
 </style>
 @endpush
@@ -122,8 +125,13 @@
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                         <h3 class="text-sm font-bold text-dark">Item Pembelian</h3>
                     </div>
-                    <button type="button" @click="addItem()" class="text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-2.5 py-1.5 rounded-lg border border-primary-200 transition-colors">
-                        ➕ Tambah Item
+                    <button type="button" @click="addItem()" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-2.5 py-1.5 rounded-lg border border-primary-200 transition-all active:scale-95">
+                        <!-- Duotone Icon: Plus Circle -->
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.3" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="currentColor"/>
+                            <path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Tambah Item
                     </button>
                 </div>
 
@@ -384,7 +392,7 @@
 
                 <div class="grid grid-cols-2 gap-2 border-b border-gray-150 pb-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Biaya Tambahan (Parkir/Bensin) (Rp)</label>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Biaya Tambahan</label>
                         <div class="input-group-solid">
                             <span class="input-prefix">Rp</span>
                             <input type="number" name="additional_cost" x-model.number="additionalCost" @input="calculateTotal"
@@ -392,7 +400,7 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Catatan Biaya Tambahan</label>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Catatan Biaya</label>
                         <div class="input-group-solid">
                             <span class="input-prefix">
                                 <!-- Duotone Icon: Pencil/Edit -->
@@ -456,10 +464,10 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 mb-1">Sisa Hutang (Rp)</label>
-                        <div class="input-group-solid">
+                        <div class="input-group-solid bg-gray-50">
                             <span class="input-prefix">Rp</span>
                             <input type="text" readonly :value="formatRupiah(dueAmount)"
-                                   class="form-input-solid bg-gray-50 font-bold text-red-600">
+                                   class="form-input-solid font-bold text-red-600">
                         </div>
                     </div>
                 </div>
