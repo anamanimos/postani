@@ -339,6 +339,10 @@
                             $(this).select2({
                                 width: '100%'
                             });
+                            // Fix Safari/iOS validation bug for hidden required selects
+                            if ($(this).attr('required')) {
+                                $(this).removeAttr('required');
+                            }
                         }
                     });
                 }
