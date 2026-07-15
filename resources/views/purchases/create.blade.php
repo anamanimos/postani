@@ -288,7 +288,7 @@
                                 <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2"/>
                             </svg>
                         </span>
-                        <input type="text" name="purchase_date" value="{{ old('purchase_date', date('Y-m-d')) }}" required autocomplete="off"
+                        <input type="text" name="purchase_date" required autocomplete="off"
                                x-init="
                                    flatpickr($el, {
                                        locale: 'id',
@@ -302,7 +302,7 @@
                                        }
                                    });
                                "
-                               class="datepicker form-input-solid">
+                               class="form-input-solid">
                     </div>
                 </div>
 
@@ -634,7 +634,10 @@
         function purchaseForm() {
             return {
                 supplierId: '',
-                purchaseDate: '{{ old('purchase_date', date('Y-m-d')) }}',
+                purchaseDate: (() => {
+                    const d = new Date();
+                    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+                })(),
                 items: [],
                 paymentStatus: 'paid',
                 paymentMethod: 'cash',

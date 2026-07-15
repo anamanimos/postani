@@ -399,16 +399,29 @@
                     });
                 }
                 
+                const d = new Date();
+                const clientTodayStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+                const serverTodayStr = '{{ date('Y-m-d') }}';
+
                 // Initialize Flatpickr globally on all date input fields
                 function initFlatpickr() {
                     $('.datepicker:not([x-init])').each(function() {
                         if (!$(this).hasClass("flatpickr-input")) {
+                            let defaultDateVal = $(this).val();
+
+                            // If it matches server today (possibly wrong clock) or is empty and required, default to client today
+                            if (defaultDateVal === serverTodayStr || (!defaultDateVal && $(this).prop('required'))) {
+                                defaultDateVal = clientTodayStr;
+                                $(this).val(clientTodayStr);
+                            }
+
                             flatpickr(this, {
                                 locale: 'id',
                                 dateFormat: 'Y-m-d',
                                 allowInput: true,
                                 altInput: true,
                                 altFormat: 'd F Y',
+                                defaultDate: defaultDateVal || null,
                                 disableMobile: true
                             });
                         }

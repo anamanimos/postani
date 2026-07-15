@@ -311,7 +311,7 @@
                                        }
                                    });
                                "
-                               class="datepicker form-input-solid">
+                               class="form-input-solid">
                     </div>
                 </div>
 
