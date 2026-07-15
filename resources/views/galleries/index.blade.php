@@ -5,7 +5,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-5">
+    <div class="px-4 py-5 pb-24 space-y-5" x-data="{ showUsageModal: false, activeUsages: [], activeFilename: '' }">
         {{-- Flash Messages --}}
         @if(session('success'))
             <div class="glass-card-solid p-3 border-l-4 border-primary-500 text-xs text-dark">
@@ -106,7 +106,7 @@
         @else
             <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 @foreach($galleries as $gallery)
-                    <div class="aspect-square bg-gray-50 relative group rounded-xl overflow-hidden shadow-sm border border-gray-150" x-data="{ showUsages: false }">
+                    <div class="aspect-square bg-gray-50 relative group rounded-xl overflow-hidden shadow-sm border border-gray-150">
                         {{-- Image Element --}}
                         <img src="{{ asset('storage/' . $gallery->filepath) }}" 
                              class="w-full h-full object-cover" 
@@ -116,27 +116,13 @@
                         {{-- Top-Right Checkmark (If Used) --}}
                         @if($gallery->is_used)
                             <div class="absolute top-1.5 right-1.5 z-10">
-                                <button @click.stop="showUsages = !showUsages" type="button" 
+                                <button @click.stop="activeUsages = {{ json_encode($gallery->usages) }}; activeFilename = '{{ $gallery->filename }}'; showUsageModal = true" type="button" 
                                         title="Gambar ini sedang digunakan. Klik untuk detail."
                                         class="w-5 h-5 rounded-full bg-green-500 text-white flex items-center justify-center shadow-md active:scale-90 transition-transform">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                                     </svg>
                                 </button>
-                                
-                                {{-- Usages list dropdown --}}
-                                <div x-show="showUsages" @click.away="showUsages = false" 
-                                     x-transition
-                                     style="display: none;"
-                                     class="absolute right-0 mt-1 w-40 bg-white/95 backdrop-blur shadow-lg border border-gray-100 rounded-xl p-2 z-20 text-[9px] text-gray-600 space-y-1">
-                                    <div class="font-bold text-gray-400 border-b border-gray-50 pb-1 mb-1">Digunakan di:</div>
-                                    @foreach($gallery->usages as $usage)
-                                        <a href="{{ $usage['edit_url'] ?? $usage['show_url'] }}" 
-                                           class="block hover:text-primary-600 truncate underline font-medium">
-                                            {{ $usage['type'] }}: {{ $usage['name'] }}
-                                        </a>
-                                    @endforeach
-                                </div>
                             </div>
                         @endif
 
@@ -171,5 +157,56 @@
                 {{ $galleries->links() }}
             </div>
         @endif
+
+        <!-- Modal Detail Penggunaan Gambar -->
+        <div x-show="showUsageModal" 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             style="display: none;"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+             
+             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                 <div class="fixed inset-0 transition-opacity bg-gray-500/75 backdrop-blur-sm" @click="showUsageModal = false"></div>
+                 
+                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+                 
+                 <div class="inline-block align-bottom bg-white/95 backdrop-blur-xl border border-white/50 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-4 w-full">
+                     <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                         <h3 class="text-sm font-bold text-dark">Rincian Penggunaan Berkas</h3>
+                         <button type="button" @click="showUsageModal = false" class="text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
+                     </div>
+                     
+                     <div class="mt-3 space-y-3">
+                         <p class="text-xs text-gray-500">
+                             Berkas <span class="font-bold text-dark" x-text="activeFilename"></span> sedang digunakan pada:
+                         </p>
+                         
+                         <div class="divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden bg-gray-50/50">
+                             <template x-for="(usage, index) in activeUsages" :key="index">
+                                 <div class="flex items-center justify-between p-3 text-xs">
+                                     <span class="font-semibold text-gray-500" x-text="usage.type"></span>
+                                     <a :href="usage.edit_url || usage.show_url" 
+                                        class="text-primary-600 hover:text-primary-700 font-bold underline truncate max-w-[200px]"
+                                        x-text="usage.name"
+                                        title="Buka Detail">
+                                     </a>
+                                 </div>
+                             </template>
+                         </div>
+                     </div>
+                     
+                     <div class="mt-5 flex justify-end">
+                         <button type="button" @click="showUsageModal = false" 
+                                 class="px-4 py-2 text-xs font-semibold text-white bg-primary-600 rounded-xl hover:bg-primary-700 transition-colors shadow">
+                             Tutup
+                         </button>
+                     </div>
+                 </div>
+             </div>
+        </div>
     </div>
 </x-app-layout>
