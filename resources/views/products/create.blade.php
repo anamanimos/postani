@@ -9,7 +9,17 @@
     </x-slot>
 
     <div class="px-4 py-5 pb-24">
-        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" x-data="{
+        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" 
+              @paste.window="
+                  if ($event.clipboardData.files.length) {
+                      const file = $event.clipboardData.files[0];
+                      if (file.type.startsWith('image/')) {
+                          $event.preventDefault();
+                          handleRawFile(file);
+                      }
+                  }
+              "
+              x-data="{
             imagePreview: null,
             galleryFilepath: '',
             galleryModalOpen: false,
@@ -18,6 +28,25 @@
             isLoading: false,
             isActive: true,
 
+            handleRawFile(file) {
+                if (!file) return;
+                window.cropImage(file, (croppedBlob) => {
+                    const croppedFile = new File([croppedBlob], file.name, { type: file.type });
+                    const dt = new DataTransfer();
+                    dt.items.add(croppedFile);
+                    this.$refs.imageInput.files = dt.files;
+                    this.galleryFilepath = '';
+                    this.imagePreview = URL.createObjectURL(croppedBlob);
+                }, (originalFile) => {
+                    const dt = new DataTransfer();
+                    dt.items.add(originalFile);
+                    this.$refs.imageInput.files = dt.files;
+                    this.galleryFilepath = '';
+                    this.imagePreview = URL.createObjectURL(originalFile);
+                }, () => {
+                    this.$refs.imageInput.value = '';
+                });
+            },
             handleImageUpload(e) {
                 const file = e.target.files[0];
                 if (!file) return;
