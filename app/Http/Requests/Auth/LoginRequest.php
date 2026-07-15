@@ -42,12 +42,38 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // Detect if request is from mobile (HP)
+        $userAgent = $this->header('User-Agent', '');
+        $isMobile = (bool) preg_match('/Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/i', $userAgent);
+
+        // If login is from mobile, automatically set remember to true
+        $remember = $isMobile;
+
+        if (! Auth::attempt($this->only('email', 'password'), $remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
+        }
+
+        // If logged in on mobile, adjust the queued remember cookie lifetime to 90 days (129,600 minutes)
+        if ($remember) {
+            $cookieName = Auth::guard()->getRecalledName();
+            $cookie = \Illuminate\Support\Facades\Cookie::getQueuedCookie($cookieName);
+            if ($cookie) {
+                \Illuminate\Support\Facades\Cookie::queue(
+                    $cookieName,
+                    $cookie->getValue(),
+                    129600, // 90 days in minutes
+                    $cookie->getPath(),
+                    $cookie->getDomain(),
+                    $cookie->isSecure(),
+                    $cookie->isHttpOnly(),
+                    $cookie->isRaw(),
+                    $cookie->getSameSite()
+                );
+            }
         }
 
         RateLimiter::clear($this->throttleKey());
