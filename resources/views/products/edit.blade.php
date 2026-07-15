@@ -25,80 +25,7 @@
                       }
                   }
               "
-              x-data="{
-            imagePreview: '{{ $product->image ? asset('storage/' . $product->image) : '' }}',
-            galleryFilepath: '{{ $product->image ?? '' }}',
-            galleryModalOpen: false,
-            galleryImages: [],
-            searchQuery: '',
-            isLoading: false,
-            isActive: {{ $product->is_active ? 'true' : 'false' }},
-
-            handleRawFile(file) {
-                if (!file) return;
-                window.cropImage(file, (croppedBlob) => {
-                    const croppedFile = new File([croppedBlob], file.name, { type: file.type });
-                    const dt = new DataTransfer();
-                    dt.items.add(croppedFile);
-                    this.$refs.imageInput.files = dt.files;
-                    this.galleryFilepath = '';
-                    this.imagePreview = URL.createObjectURL(croppedBlob);
-                }, (originalFile) => {
-                    const dt = new DataTransfer();
-                    dt.items.add(originalFile);
-                    this.$refs.imageInput.files = dt.files;
-                    this.galleryFilepath = '';
-                    this.imagePreview = URL.createObjectURL(originalFile);
-                }, () => {
-                    this.$refs.imageInput.value = '';
-                });
-            },
-            handleImageUpload(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                window.cropImage(file, (croppedBlob) => {
-                    const croppedFile = new File([croppedBlob], file.name, { type: file.type });
-                    const dt = new DataTransfer();
-                    dt.items.add(croppedFile);
-                    this.$refs.imageInput.files = dt.files;
-                    this.galleryFilepath = '';
-                    this.imagePreview = URL.createObjectURL(croppedBlob);
-                }, (originalFile) => {
-                    this.galleryFilepath = '';
-                    this.imagePreview = URL.createObjectURL(originalFile);
-                }, () => {
-                    this.$refs.imageInput.value = '';
-                });
-            },
-            clearImage() {
-                this.imagePreview = null;
-                this.galleryFilepath = '';
-                this.$refs.imageInput.value = '';
-            },
-            openGalleryModal() {
-                this.galleryModalOpen = true;
-                this.loadGalleryImages();
-            },
-            loadGalleryImages() {
-                this.isLoading = true;
-                fetch('{{ route('api.galleries') }}?search=' + encodeURIComponent(this.searchQuery))
-                    .then(res => res.json())
-                    .then(data => {
-                        this.galleryImages = data;
-                        this.isLoading = false;
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        this.isLoading = false;
-                    });
-            },
-            selectGalleryImage(image) {
-                this.galleryFilepath = image.filepath;
-                this.imagePreview = image.url;
-                this.$refs.imageInput.value = '';
-                this.galleryModalOpen = false;
-            }
-        }">
+              x-data="productEditForm()">
             @csrf
             @method('PUT')
             <input type="hidden" name="gallery_filepath" x-model="galleryFilepath">
@@ -301,3 +228,82 @@
         </form>
     </div>
 </x-app-layout>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('productEditForm', () => ({
+        imagePreview: '{{ $product->image ? asset("storage/" . $product->image) : "" }}',
+        galleryFilepath: '{{ $product->image ?? "" }}',
+        galleryModalOpen: false,
+        galleryImages: [],
+        searchQuery: '',
+        isLoading: false,
+        isActive: {{ $product->is_active ? 'true' : 'false' }},
+
+        handleRawFile(file) {
+            if (!file) return;
+            window.cropImage(file, (croppedBlob) => {
+                const croppedFile = new File([croppedBlob], file.name, { type: file.type });
+                const dt = new DataTransfer();
+                dt.items.add(croppedFile);
+                this.$refs.imageInput.files = dt.files;
+                this.galleryFilepath = '';
+                this.imagePreview = URL.createObjectURL(croppedBlob);
+            }, (originalFile) => {
+                const dt = new DataTransfer();
+                dt.items.add(originalFile);
+                this.$refs.imageInput.files = dt.files;
+                this.galleryFilepath = '';
+                this.imagePreview = URL.createObjectURL(originalFile);
+            }, () => {
+                this.$refs.imageInput.value = '';
+            });
+        },
+        handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            window.cropImage(file, (croppedBlob) => {
+                const croppedFile = new File([croppedBlob], file.name, { type: file.type });
+                const dt = new DataTransfer();
+                dt.items.add(croppedFile);
+                this.$refs.imageInput.files = dt.files;
+                this.galleryFilepath = '';
+                this.imagePreview = URL.createObjectURL(croppedBlob);
+            }, (originalFile) => {
+                this.galleryFilepath = '';
+                this.imagePreview = URL.createObjectURL(originalFile);
+            }, () => {
+                this.$refs.imageInput.value = '';
+            });
+        },
+        clearImage() {
+            this.imagePreview = null;
+            this.galleryFilepath = '';
+            this.$refs.imageInput.value = '';
+        },
+        openGalleryModal() {
+            this.galleryModalOpen = true;
+            this.loadGalleryImages();
+        },
+        loadGalleryImages() {
+            this.isLoading = true;
+            fetch('{{ route("api.galleries") }}?search=' + encodeURIComponent(this.searchQuery))
+                .then(res => res.json())
+                .then(data => {
+                    this.galleryImages = data;
+                    this.isLoading = false;
+                })
+                .catch(err => {
+                    console.error(err);
+                    this.isLoading = false;
+                });
+        },
+        selectGalleryImage(image) {
+            this.galleryFilepath = image.filepath;
+            this.imagePreview = image.url;
+            this.$refs.imageInput.value = '';
+            this.galleryModalOpen = false;
+        }
+    }));
+});
+</script>

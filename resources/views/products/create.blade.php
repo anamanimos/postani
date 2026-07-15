@@ -25,149 +25,7 @@
                       }
                   }
               "
-              x-data="{
-            imagePreview: null,
-            galleryFilepath: '',
-            galleryModalOpen: false,
-            galleryImages: [],
-            searchQuery: '',
-            isLoading: false,
-            isActive: true,
-            
-            // Quick Category State
-            quickCategoryOpen: false,
-            newCategoryName: '',
-            newCategoryDescription: '',
-            isSavingCategory: false,
-            categoryId: '',
-
-            handleRawFile(file) {
-                if (!file) return;
-                window.cropImage(file, (croppedBlob) => {
-                    const croppedFile = new File([croppedBlob], file.name, { type: file.type });
-                    const dt = new DataTransfer();
-                    dt.items.add(croppedFile);
-                    this.$refs.imageInput.files = dt.files;
-                    this.galleryFilepath = '';
-                    this.imagePreview = URL.createObjectURL(croppedBlob);
-                }, (originalFile) => {
-                    const dt = new DataTransfer();
-                    dt.items.add(originalFile);
-                    this.$refs.imageInput.files = dt.files;
-                    this.galleryFilepath = '';
-                    this.imagePreview = URL.createObjectURL(originalFile);
-                }, () => {
-                    this.$refs.imageInput.value = '';
-                });
-            },
-            handleImageUpload(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                window.cropImage(file, (croppedBlob) => {
-                    const croppedFile = new File([croppedBlob], file.name, { type: file.type });
-                    const dt = new DataTransfer();
-                    dt.items.add(croppedFile);
-                    this.$refs.imageInput.files = dt.files;
-                    this.galleryFilepath = '';
-                    this.imagePreview = URL.createObjectURL(croppedBlob);
-                }, (originalFile) => {
-                    this.galleryFilepath = '';
-                    this.imagePreview = URL.createObjectURL(originalFile);
-                }, () => {
-                    this.$refs.imageInput.value = '';
-                });
-            },
-            closeQuickCategoryModal() {
-                this.quickCategoryOpen = false;
-                this.newCategoryName = '';
-                this.newCategoryDescription = '';
-            },
-            saveQuickCategory() {
-                if (!this.newCategoryName.trim()) return;
-                this.isSavingCategory = true;
-                
-                fetch('{{ route('categories.store') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: this.newCategoryName,
-                        description: this.newCategoryDescription
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    this.isSavingCategory = false;
-                    if (data.success && data.category) {
-                        // Add new option to native select
-                        const newOption = new Option(data.category.name, data.category.id, true, true);
-                        $('#category-select').append(newOption).trigger('change');
-                        this.categoryId = data.category.id;
-                        
-                        // Close modal
-                        this.closeQuickCategoryModal();
-                        
-                        // Show success SweetAlert
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: 'Kategori baru berhasil ditambahkan.',
-                            timer: 2000,
-                            showConfirmButton: false,
-                            timerProgressBar: true,
-                            customClass: {
-                                popup: 'rounded-2xl font-sans'
-                            }
-                        });
-                    } else {
-                        throw new Error(data.message || 'Gagal menambahkan kategori.');
-                    }
-                })
-                .catch(err => {
-                    this.isSavingCategory = false;
-                    console.error(err);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: err.message || 'Terjadi kesalahan saat menambahkan kategori.',
-                        customClass: {
-                            popup: 'rounded-2xl font-sans border-0'
-                        }
-                    });
-                });
-            },
-            clearImage() {
-                this.imagePreview = null;
-                this.galleryFilepath = '';
-                this.$refs.imageInput.value = '';
-            },
-            openGalleryModal() {
-                this.galleryModalOpen = true;
-                this.loadGalleryImages();
-            },
-            loadGalleryImages() {
-                this.isLoading = true;
-                fetch('{{ route('api.galleries') }}?search=' + encodeURIComponent(this.searchQuery))
-                    .then(res => res.json())
-                    .then(data => {
-                        this.galleryImages = data;
-                        this.isLoading = false;
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        this.isLoading = false;
-                    });
-            },
-            selectGalleryImage(image) {
-                this.galleryFilepath = image.filepath;
-                this.imagePreview = image.url;
-                this.$refs.imageInput.value = '';
-                this.galleryModalOpen = false;
-            }
-        }">
+              x-data="productForm()">
             @csrf
             <input type="hidden" name="gallery_filepath" x-model="galleryFilepath">
             <div class="space-y-4">
@@ -434,3 +292,142 @@
         </form>
     </div>
 </x-app-layout>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('productForm', () => ({
+        imagePreview: null,
+        galleryFilepath: '',
+        galleryModalOpen: false,
+        galleryImages: [],
+        searchQuery: '',
+        isLoading: false,
+        isActive: true,
+
+        // Quick Category State
+        quickCategoryOpen: false,
+        newCategoryName: '',
+        newCategoryDescription: '',
+        isSavingCategory: false,
+        categoryId: '',
+
+        handleRawFile(file) {
+            if (!file) return;
+            window.cropImage(file, (croppedBlob) => {
+                const croppedFile = new File([croppedBlob], file.name, { type: file.type });
+                const dt = new DataTransfer();
+                dt.items.add(croppedFile);
+                this.$refs.imageInput.files = dt.files;
+                this.galleryFilepath = '';
+                this.imagePreview = URL.createObjectURL(croppedBlob);
+            }, (originalFile) => {
+                const dt = new DataTransfer();
+                dt.items.add(originalFile);
+                this.$refs.imageInput.files = dt.files;
+                this.galleryFilepath = '';
+                this.imagePreview = URL.createObjectURL(originalFile);
+            }, () => {
+                this.$refs.imageInput.value = '';
+            });
+        },
+        handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            window.cropImage(file, (croppedBlob) => {
+                const croppedFile = new File([croppedBlob], file.name, { type: file.type });
+                const dt = new DataTransfer();
+                dt.items.add(croppedFile);
+                this.$refs.imageInput.files = dt.files;
+                this.galleryFilepath = '';
+                this.imagePreview = URL.createObjectURL(croppedBlob);
+            }, (originalFile) => {
+                this.galleryFilepath = '';
+                this.imagePreview = URL.createObjectURL(originalFile);
+            }, () => {
+                this.$refs.imageInput.value = '';
+            });
+        },
+        closeQuickCategoryModal() {
+            this.quickCategoryOpen = false;
+            this.newCategoryName = '';
+            this.newCategoryDescription = '';
+        },
+        saveQuickCategory() {
+            if (!this.newCategoryName.trim()) return;
+            this.isSavingCategory = true;
+
+            fetch('{{ route("categories.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: this.newCategoryName,
+                    description: this.newCategoryDescription
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.isSavingCategory = false;
+                if (data.success && data.category) {
+                    const newOption = new Option(data.category.name, data.category.id, true, true);
+                    $('#category-select').append(newOption).trigger('change');
+                    this.categoryId = data.category.id;
+                    this.closeQuickCategoryModal();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Kategori baru berhasil ditambahkan.',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
+                        customClass: { popup: 'rounded-2xl font-sans' }
+                    });
+                } else {
+                    throw new Error(data.message || 'Gagal menambahkan kategori.');
+                }
+            })
+            .catch(err => {
+                this.isSavingCategory = false;
+                console.error(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: err.message || 'Terjadi kesalahan saat menambahkan kategori.',
+                    customClass: { popup: 'rounded-2xl font-sans border-0' }
+                });
+            });
+        },
+        clearImage() {
+            this.imagePreview = null;
+            this.galleryFilepath = '';
+            this.$refs.imageInput.value = '';
+        },
+        openGalleryModal() {
+            this.galleryModalOpen = true;
+            this.loadGalleryImages();
+        },
+        loadGalleryImages() {
+            this.isLoading = true;
+            fetch('{{ route("api.galleries") }}?search=' + encodeURIComponent(this.searchQuery))
+                .then(res => res.json())
+                .then(data => {
+                    this.galleryImages = data;
+                    this.isLoading = false;
+                })
+                .catch(err => {
+                    console.error(err);
+                    this.isLoading = false;
+                });
+        },
+        selectGalleryImage(image) {
+            this.galleryFilepath = image.filepath;
+            this.imagePreview = image.url;
+            this.$refs.imageInput.value = '';
+            this.galleryModalOpen = false;
+        }
+    }));
+});
+</script>
