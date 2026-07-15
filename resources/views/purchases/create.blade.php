@@ -25,16 +25,17 @@
         border: 1px solid #D1D5DB !important;
         border-right: none !important;
         border-radius: 8px 0 0 8px !important; /* rounded-lg left only */
-        color: #4B5563 !important; /* gray-600 */
+        color: #4B5563 !important; /* gray-600 default */
         font-size: 0.875rem !important;
         font-weight: 600 !important;
         flex-shrink: 0 !important;
+        transition: all 0.2s ease-in-out !important;
     }
     
     /* Input Solid Styling */
     .form-input-solid {
         width: 100% !important;
-        background-color: #FFFFFF !important;
+        background-color: #F3F4F6 !important; /* gray-100 background same as icon prefix */
         border: 1px solid #D1D5DB !important; /* gray-300 */
         color: #1F2937 !important;
         border-radius: 8px !important; /* rounded-lg */
@@ -49,21 +50,25 @@
         border-left: none !important;
     }
     
+    /* Focus States */
     .form-input-solid:focus {
         outline: none !important;
+        background-color: #FFFFFF !important; /* turns white on focus */
         border-color: #16A34A !important; /* primary-600 */
         box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15) !important;
         z-index: 10 !important;
     }
     
-    /* Input Group Focus State styling for prefix */
+    /* Input Group Focus State styling for prefix and icon */
     .input-group-solid:focus-within .input-prefix {
         border-color: #16A34A !important;
+        color: #16A34A !important; /* turns icon/text green */
+        background-color: #FFFFFF !important; /* turns background white */
     }
     
     /* Select2 Solid Override */
     .input-group-solid .select2-container--default .select2-selection--single {
-        background-color: #FFFFFF !important;
+        background-color: #F3F4F6 !important; /* gray-100 background same as icon prefix */
         border: 1px solid #D1D5DB !important;
         border-left: none !important;
         border-radius: 0 8px 8px 0 !important;
@@ -74,6 +79,7 @@
         transition: all 0.2s ease-in-out !important;
     }
     .input-group-solid:focus-within .select2-container--default .select2-selection--single {
+        background-color: #FFFFFF !important; /* turns white on focus */
         border-color: #16A34A !important;
     }
     .input-group-solid .select2-container--default .select2-selection--single .select2-selection__rendered {
@@ -138,7 +144,12 @@
                                     <label class="block text-[10px] font-semibold text-gray-500 mb-1">Produk</label>
                                     <div class="input-group-solid">
                                         <span class="input-prefix">
-                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                            <!-- Duotone Icon: Package -->
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path opacity="0.3" d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
+                                                <path d="M2 17L12 22L22 17M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
                                         </span>
                                         <div class="flex-1 min-w-0">
                                             <select :name="'items['+index+'][product_id]'" 
@@ -167,7 +178,11 @@
                                         <label class="block text-[10px] font-semibold text-gray-500 mb-1" x-text="'Jumlah (' + (item.buyUnit || 'satuan') + ')'"></label>
                                         <div class="input-group-solid">
                                             <span class="input-prefix">
-                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+                                                <!-- Duotone Icon: Hashtag -->
+                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path opacity="0.3" d="M4 9H20M4 15H20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                                                    <path d="M9 3L7 21M17 3L15 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                                </svg>
                                             </span>
                                             <input type="number" step="any" :name="'items['+index+'][quantity]'" x-model.number="item.quantity" @input="calculateSubtotal(index)" required
                                                    class="form-input-solid">
@@ -218,7 +233,12 @@
                     <div class="flex gap-2 items-center">
                         <div class="input-group-solid flex-1">
                             <span class="input-prefix">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                <!-- Duotone Icon: User -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" fill="currentColor"/>
+                                    <path d="M6 21C6 17.134 9.13401 14 13 14H11C7.13401 14 4 17.134 4 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
                             </span>
                             <div class="flex-1 min-w-0">
                                 <select name="supplier_id" id="supplier-select"
@@ -249,7 +269,12 @@
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Tanggal Pembelian</label>
                     <div class="input-group-solid">
                         <span class="input-prefix">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 00-2 2z"/></svg>
+                            <!-- Duotone Icon: Calendar -->
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect opacity="0.3" x="3" y="6" width="18" height="15" rx="2" fill="currentColor"/>
+                                <path d="M8 3V7M16 3V7M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2"/>
+                            </svg>
                         </span>
                         <input type="text" name="purchase_date" required 
                                x-init="
@@ -274,7 +299,11 @@
                         <label class="block text-xs font-semibold text-gray-500 mb-1">Nomor Nota Tengkulak (Opsional)</label>
                         <div class="input-group-solid">
                             <span class="input-prefix">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                <!-- Duotone Icon: Document/Receipt -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M3 10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157C21 4.34315 21 6.22876 21 10V14C21 17.7712 21 19.6569 19.8284 20.8284C18.6569 22 16.7712 22 13 22H11C7.22876 22 5.34315 22 4.17157 20.8284C3 19.6569 3 17.7712 3 14V10Z" fill="currentColor"/>
+                                    <path d="M8 7H16M8 12H16M8 17H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
                             </span>
                             <input type="text" name="supplier_invoice_number" placeholder="Masukkan nomor nota dari tengkulak..."
                                    class="form-input-solid">
@@ -366,7 +395,11 @@
                         <label class="block text-xs font-semibold text-gray-500 mb-1">Catatan Biaya Tambahan</label>
                         <div class="input-group-solid">
                             <span class="input-prefix">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                <!-- Duotone Icon: Pencil/Edit -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" fill="currentColor"/>
+                                    <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                             </span>
                             <input type="text" name="additional_cost_notes" x-model="additionalCostNotes"
                                    placeholder="Contoh: Parkir & Beli Bensin" class="form-input-solid">
@@ -379,7 +412,12 @@
                         <label class="block text-xs font-semibold text-gray-500 mb-1">Status Pembayaran</label>
                         <div class="input-group-solid">
                             <span class="input-prefix">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                <!-- Duotone Icon: Credit Card -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect opacity="0.3" x="3" y="5" width="18" height="14" rx="2" fill="currentColor"/>
+                                    <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                                </svg>
                             </span>
                             <select name="payment_status" x-model="paymentStatus" required class="form-input-solid">
                                 <option value="unpaid">Hutang (Kredit)</option>
@@ -392,7 +430,12 @@
                         <label class="block text-xs font-semibold text-gray-500 mb-1">Metode Pembayaran</label>
                         <div class="input-group-solid">
                             <span class="input-prefix">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                <!-- Duotone Icon: Wallet -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M4 5C4 3.89543 4.89543 3 6 3H16C17.1046 3 18 3.89543 18 5V7H20C21.1046 7 22 7.89543 22 9V17C22 18.1046 21.1046 19 20 19H18V20C18 21.1046 17.1046 22 16 22H6C4.89543 22 4 21.1046 4 20V5Z" fill="currentColor"/>
+                                    <path d="M18 10H22M15 13H15.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <rect x="2" y="7" width="16" height="12" rx="2" stroke="currentColor" stroke-width="2"/>
+                                </svg>
                             </span>
                             <select name="payment_method" x-model="paymentMethod" required class="form-input-solid">
                                 <option value="cash">Tunai</option>
@@ -425,7 +468,11 @@
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Catatan</label>
                     <div class="input-group-solid">
                         <span class="input-prefix">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            <!-- Duotone Icon: Message/Chat -->
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.3" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" fill="currentColor"/>
+                                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </span>
                         <textarea name="notes" rows="2" placeholder="Catatan transaksi..." class="form-input-solid h-auto py-2"></textarea>
                     </div>
