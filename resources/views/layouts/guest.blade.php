@@ -43,7 +43,7 @@
                 </div>
 
                 {{-- Card --}}
-                <div class="w-full max-w-sm bg-white/40 backdrop-blur-xl border border-white/50 shadow-glass rounded-3xl p-6 page-enter" style="animation-delay: 0.1s;">
+                <div class="w-full max-w-sm p-4 page-enter" style="animation-delay: 0.1s;">
                     {{ $slot }}
                 </div>
 
