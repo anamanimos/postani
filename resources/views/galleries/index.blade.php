@@ -104,89 +104,62 @@
                 Tidak ada berkas gambar yang ditemukan.
             </div>
         @else
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 @foreach($galleries as $gallery)
-                    <div class="glass-card overflow-hidden flex flex-col justify-between" x-data="{ showUsages: false }">
-                        <div>
-                            {{-- Image Preview --}}
-                            <div class="aspect-square bg-gray-100 relative group overflow-hidden">
-                                <img src="{{ asset('storage/' . $gallery->filepath) }}" 
-                                     class="w-full h-full object-cover" 
-                                     alt="{{ $gallery->filename }}">
-                                
-                                {{-- Hover zoom/detail link --}}
-                                <a href="{{ asset('storage/' . $gallery->filepath) }}" target="_blank" 
-                                   class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-200">
-                                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    <div class="aspect-square bg-gray-50 relative group rounded-xl overflow-hidden shadow-sm border border-gray-150" x-data="{ showUsages: false }">
+                        {{-- Image Element --}}
+                        <img src="{{ asset('storage/' . $gallery->filepath) }}" 
+                             class="w-full h-full object-cover" 
+                             alt="{{ $gallery->filename }}"
+                             loading="lazy">
+
+                        {{-- Top-Right Checkmark (If Used) --}}
+                        @if($gallery->is_used)
+                            <div class="absolute top-1.5 right-1.5 z-10">
+                                <button @click.stop="showUsages = !showUsages" type="button" 
+                                        title="Gambar ini sedang digunakan. Klik untuk detail."
+                                        class="w-5 h-5 rounded-full bg-green-500 text-white flex items-center justify-center shadow-md active:scale-90 transition-transform">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                </a>
-                            </div>
-
-                            {{-- Image Meta --}}
-                            <div class="p-2 space-y-1.5">
-                                <div class="truncate text-[10px] font-bold text-dark" title="{{ $gallery->filename }}">
-                                    {{ $gallery->filename }}
-                                </div>
-                                <div class="text-[9px] text-gray-400">
-                                    {{ round($gallery->file_size / 1024, 1) }} KB
-                                </div>
-
-                                {{-- Usage Badge --}}
-                                <div>
-                                    @if($gallery->is_used)
-                                        <button type="button" @click="showUsages = !showUsages" 
-                                                class="w-full flex items-center justify-between text-[9px] px-1.5 py-0.5 rounded bg-green-50 hover:bg-green-100 text-green-700 font-bold border border-green-200 transition-colors">
-                                            <span>✔️ Digunakan ({{ count($gallery->usages) }})</span>
-                                            <svg class="h-3 w-3 transition-transform" :class="showUsages ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                            </svg>
-                                        </button>
-                                    @else
-                                        <span class="inline-block text-[9px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-bold border border-gray-200">
-                                            ⚠️ Belum Digunakan
-                                        </span>
-                                    @endif
-                                </div>
-
-                                {{-- Usage List --}}
-                                <div x-show="showUsages" x-collapse class="pt-1.5 space-y-1 border-t border-dashed border-gray-100 text-[9px] text-gray-500">
+                                </button>
+                                
+                                {{-- Usages list dropdown --}}
+                                <div x-show="showUsages" @click.away="showUsages = false" 
+                                     x-transition
+                                     style="display: none;"
+                                     class="absolute right-0 mt-1 w-40 bg-white/95 backdrop-blur shadow-lg border border-gray-100 rounded-xl p-2 z-20 text-[9px] text-gray-600 space-y-1">
+                                    <div class="font-bold text-gray-400 border-b border-gray-50 pb-1 mb-1">Digunakan di:</div>
                                     @foreach($gallery->usages as $usage)
-                                        <div class="flex items-center justify-between">
-                                            <span>{{ $usage['type'] }}:</span>
-                                            @if($usage['edit_url'])
-                                                <a href="{{ $usage['edit_url'] }}" class="text-primary-600 hover:text-primary-700 font-semibold underline truncate max-w-[80px]" title="Klik untuk edit">
-                                                    {{ $usage['name'] }}
-                                                </a>
-                                            @else
-                                                <a href="{{ $usage['show_url'] }}" class="text-primary-600 hover:text-primary-700 font-semibold underline truncate max-w-[80px]" title="Klik untuk detail">
-                                                    {{ $usage['name'] }}
-                                                </a>
-                                            @endif
-                                        </div>
+                                        <a href="{{ $usage['edit_url'] ?? $usage['show_url'] }}" 
+                                           class="block hover:text-primary-600 truncate underline font-medium">
+                                            {{ $usage['type'] }}: {{ $usage['name'] }}
+                                        </a>
                                     @endforeach
                                 </div>
                             </div>
-                        </div>
+                        @endif
 
-                        {{-- Action Button --}}
-                        <div class="p-2 pt-0 border-t border-gray-50 flex justify-end">
-                            @if($gallery->is_used)
-                                <button type="button" disabled 
-                                        title="Gambar ini sedang digunakan dan tidak dapat dihapus."
-                                        class="text-[9px] text-gray-300 font-medium cursor-not-allowed">
-                                    Hapus
-                                </button>
-                            @else
+                        {{-- Bottom Overlay (Always visible or Hover) --}}
+                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-1.5 pt-6 flex items-center justify-between opacity-90 group-hover:opacity-100 transition-opacity">
+                            <span class="text-[9px] font-medium text-white truncate max-w-[75%]" title="{{ $gallery->filename }}">
+                                {{ $gallery->filename }}
+                            </span>
+                            
+                            {{-- Delete action --}}
+                            @if(!$gallery->is_used)
                                 <form action="{{ route('galleries.destroy', $gallery) }}" method="POST" 
                                       onsubmit="return confirm('Yakin ingin menghapus gambar ini dari galeri?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-[9px] text-red-500 hover:text-red-700 font-semibold">
-                                        Hapus
+                                    <button type="submit" class="text-white hover:text-red-400 transition-colors active:scale-90 transform p-0.5">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
                                     </button>
                                 </form>
+                            @else
+                                <span class="text-[10px] text-gray-400 cursor-not-allowed p-0.5" title="Gambar ini terkunci karena sedang digunakan">🔒</span>
                             @endif
                         </div>
                     </div>
