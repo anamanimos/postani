@@ -27,7 +27,7 @@
         justify-content: center !important;
         width: 42px !important;
         background-color: transparent !important; /* inherits container background */
-        border-right: 1px solid #D1D5DB !important; /* vertical separator divider */
+        border-right: none !important; /* no vertical separator divider */
         color: #4B5563 !important; /* gray-600 default */
         font-size: 0.875rem !important;
         font-weight: 600 !important;
@@ -64,7 +64,6 @@
     }
     
     .input-group-solid:focus-within .input-prefix {
-        border-right-color: #16A34A !important; /* divider turns green */
         color: #16A34A !important; /* icon turns green */
     }
     
@@ -125,7 +124,7 @@
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                         <h3 class="text-sm font-bold text-dark">Item Pembelian</h3>
                     </div>
-                    <button type="button" @click="addItem()" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-2.5 py-1.5 rounded-lg border border-primary-200 transition-all active:scale-95">
+                    <button type="button" @click="addItem()" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-5 py-1.5 rounded-lg border border-primary-200 transition-all active:scale-95">
                         <!-- Duotone Icon: Plus Circle -->
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path opacity="0.3" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="currentColor"/>
