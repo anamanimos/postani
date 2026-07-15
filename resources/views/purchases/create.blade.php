@@ -229,6 +229,8 @@
                                                         $nextTick(() => {
                                                             $($el).select2({ width: '100%' }).on('change', (e) => {
                                                                 item.productId = e.target.value;
+                                                                const selectedOpt = e.target.options[e.target.selectedIndex];
+                                                                item.buyUnit = selectedOpt ? (selectedOpt.getAttribute('data-buy-unit') || '') : '';
                                                                 productChanged(index);
                                                             });
                                                         });
@@ -894,11 +896,6 @@
                         item.priceHistory = [];
                         return;
                     }
-
-                    // Get buyUnit symbol
-                    const selectEl = document.querySelectorAll('select')[index + 2]; // adjusting for offset of supplier_id
-                    const selectedOpt = selectEl.options[selectEl.selectedIndex];
-                    item.buyUnit = selectedOpt.getAttribute('data-buy-unit') || '';
 
                     // Fetch price history
                     this.fetchPriceHistory(index);

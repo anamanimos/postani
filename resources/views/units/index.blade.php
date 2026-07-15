@@ -3,32 +3,51 @@
         <h2 class="text-lg font-bold text-dark">Satuan Barang</h2>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-6">
+    <div class="px-4 py-5 pb-24 space-y-6 max-w-lg mx-auto">
         {{-- Form Tambah Satuan --}}
-        <div class="glass-card p-4">
+        <div class="card-solid p-4">
             <h3 class="text-sm font-semibold text-dark mb-3">Tambah Satuan Baru</h3>
-            <form action="{{ route('units.store') }}" method="POST" class="space-y-3">
+            <form action="{{ route('units.store') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
                     <label for="name" class="block text-xs font-semibold text-gray-500 mb-1">Nama Satuan</label>
-                    <input type="text" name="name" id="name" required placeholder="Contoh: Kilogram, Karung..."
-                           class="form-input-glass">
+                    <div class="input-group-solid">
+                        <span class="input-prefix">
+                            <!-- Duotone Icon: Tag -->
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.3" d="M12 2l9 9-9 9-9-9 9-9z" fill="currentColor"/>
+                                <path d="M12 2l9 9-9 9-9-9 9-9z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="7" r="1" fill="currentColor"/>
+                            </svg>
+                        </span>
+                        <input type="text" name="name" id="name" required placeholder="Contoh: Kilogram, Karung..."
+                               class="form-input-solid">
+                    </div>
                 </div>
                 <div>
                     <label for="symbol" class="block text-xs font-semibold text-gray-500 mb-1">Simbol / Singkatan</label>
-                    <input type="text" name="symbol" id="symbol" required placeholder="Contoh: kg, karung, l..."
-                           class="form-input-glass">
+                    <div class="input-group-solid">
+                        <span class="input-prefix">
+                            <!-- Duotone Icon: Hashtag -->
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.3" d="M4 9H20M4 15H20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M9 3L7 21M17 3L15 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <input type="text" name="symbol" id="symbol" required placeholder="Contoh: kg, karung, l..."
+                               class="form-input-solid">
+                    </div>
                 </div>
-                <button type="submit" class="btn-primary w-full">Simpan Satuan</button>
+                <button type="submit" class="btn-primary w-full py-3 font-bold rounded-lg transition-transform active:scale-[0.98]">Simpan Satuan</button>
             </form>
         </div>
 
         {{-- Daftar Satuan --}}
-        <div class="glass-card overflow-hidden">
-            <div class="px-4 py-3 border-b border-white/30">
+        <div class="card-solid overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-150">
                 <h3 class="text-sm font-semibold text-dark">Daftar Satuan</h3>
             </div>
-            <div class="divide-y divide-gray-100">
+            <div class="divide-y divide-gray-150">
                 @forelse($units as $unit)
                 <div class="px-4 py-3 flex items-center justify-between">
                     <div>

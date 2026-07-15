@@ -3,22 +3,25 @@
         <h2 class="text-lg font-bold text-dark">Kasir Jual Barang</h2>
     </x-slot>
 
-    <div class="px-4 py-3 pb-24" x-data="posSystem()">
+    <div class="px-4 py-3 pb-24 max-w-lg mx-auto" x-data="posSystem()">
         {{-- Search Input --}}
         <div class="relative mb-4">
-            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-            <input type="text" x-model="searchQuery" placeholder="Cari barang berdasarkan nama..." autofocus
-                   class="w-full pl-10 pr-4 py-3 rounded-glass border border-white/40 shadow-glass text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                   style="background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);">
+            <div class="input-group-solid">
+                <span class="input-prefix">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </span>
+                <input type="text" x-model="searchQuery" placeholder="Cari barang berdasarkan nama..." autofocus
+                       class="form-input-solid">
+            </div>
         </div>
 
         {{-- Product Grid --}}
         <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pb-10 pr-1">
             <template x-for="product in filteredProducts()" :key="product.id">
                 <div @click="addToCart(product)"
-                     class="rounded-glass border border-white/40 shadow-glass overflow-hidden block active:scale-95 transition-all duration-150 bg-white/60 backdrop-blur-md cursor-pointer select-none">
+                      class="card-solid overflow-hidden block active:scale-95 transition-all duration-150 cursor-pointer select-none bg-white">
                     <div class="aspect-square bg-gray-100 relative">
                         <template x-if="product.image">
                             <img :src="'/storage/' + product.image" class="w-full h-full object-cover" :alt="product.name">
@@ -36,7 +39,7 @@
                               x-text="'Stok: ' + formatNumber(product.stock / product.conversion_factor) + ' ' + product.sell_unit"></span>
                     </div>
                     <div class="p-3 space-y-1">
-                        <p class="text-xs text-gray-400" x-text="product.category"></p>
+                        <p class="text-[10px] text-gray-400" x-text="product.category"></p>
                         <h4 class="text-xs font-bold text-dark line-clamp-2 leading-tight h-8" x-text="product.name"></h4>
                         <p class="text-sm font-extrabold text-primary-600" x-text="formatRupiah(product.selling_price)"></p>
                     </div>
@@ -118,17 +121,28 @@
                     <label class="block text-xs font-semibold text-gray-500">
                         Pilih Pelanggan (Petani) <span class="text-accent-600 text-[10px]" x-show="paymentMethod === 'credit'">*Wajib</span>
                     </label>
-                    <select x-init="
-                                $($el).select2({ width: '100%' }).on('change', (e) => {
-                                    customerId = e.target.value;
-                                });
-                            "
-                            class="form-input-glass">
-                        <option value="">-- Pelanggan Umum (Walk-in) --</option>
-                        @foreach($customers as $customer)
-                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                        @endforeach
-                    </select>
+                    <div class="input-group-solid">
+                        <span class="input-prefix">
+                            <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.3" d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" fill="currentColor"/>
+                                <path d="M6 21C6 17.134 9.13401 14 13 14H11C7.13401 14 4 17.134 4 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <select x-init="
+                                        $($el).select2({ width: '100%' }).on('change', (e) => {
+                                            customerId = e.target.value;
+                                        });
+                                    "
+                                    class="form-input-solid">
+                                <option value="">-- Pelanggan Umum (Walk-in) --</option>
+                                @foreach($customers as $customer)
+                                    <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Submit button --}}

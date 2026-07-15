@@ -5,6 +5,10 @@
 @tailwind utilities;
 
 @layer base {
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100% !important;
+    }
     html {
         -webkit-tap-highlight-color: transparent;
     }
@@ -14,6 +18,9 @@
         color: #1F2937;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+    }
+    .select2-container {
+        max-width: 100% !important;
     }
 }
 
@@ -217,6 +224,44 @@
     }
     ::-webkit-scrollbar-thumb:hover {
         background: rgba(22, 163, 74, 0.4);
+    }
+
+    /* Solid Card */
+    .card-solid {
+        @apply bg-white border border-gray-300 rounded-xl;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    }
+
+    /* Input Group Container */
+    .input-group-solid {
+        @apply flex items-stretch w-full bg-gray-100 border border-gray-300 rounded-lg overflow-hidden transition-all duration-200;
+    }
+
+    /* Solid Prefix */
+    .input-group-solid .input-prefix {
+        @apply flex items-center justify-center bg-transparent text-gray-600 text-sm font-semibold shrink-0 transition-all duration-200;
+        width: 42px;
+    }
+
+    /* Input Solid Styling */
+    .form-input-solid {
+        @apply flex-1 min-w-0 w-full bg-transparent border-none text-gray-800 text-sm px-3 py-2 outline-none transition-all duration-200;
+        height: 36px;
+        box-shadow: none !important;
+    }
+
+    textarea.form-input-solid {
+        @apply h-auto;
+        min-height: 60px;
+    }
+
+    /* Group Focus State */
+    .input-group-solid:focus-within {
+        @apply border-primary-600 bg-white ring-4 ring-primary-500/15;
+    }
+
+    .input-group-solid:focus-within .input-prefix {
+        @apply text-primary-600;
     }
 }
 

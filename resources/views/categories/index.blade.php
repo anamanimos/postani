@@ -3,32 +3,51 @@
         <h2 class="text-lg font-bold text-dark">Kategori Produk</h2>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-6">
+    <div class="px-4 py-5 pb-24 space-y-6 max-w-lg mx-auto">
         {{-- Form Tambah Kategori --}}
-        <div class="glass-card p-4">
+        <div class="card-solid p-4">
             <h3 class="text-sm font-semibold text-dark mb-3">Tambah Kategori Baru</h3>
-            <form action="{{ route('categories.store') }}" method="POST" class="space-y-3">
+            <form action="{{ route('categories.store') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
                     <label for="name" class="block text-xs font-semibold text-gray-500 mb-1">Nama Kategori</label>
-                    <input type="text" name="name" id="name" required placeholder="Contoh: Pupuk, Pestisida..."
-                           class="form-input-glass">
+                    <div class="input-group-solid">
+                        <span class="input-prefix">
+                            <!-- Duotone Icon: Tag -->
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.3" d="M12 2l9 9-9 9-9-9 9-9z" fill="currentColor"/>
+                                <path d="M12 2l9 9-9 9-9-9 9-9z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="7" r="1" fill="currentColor"/>
+                            </svg>
+                        </span>
+                        <input type="text" name="name" id="name" required placeholder="Contoh: Pupuk, Pestisida..."
+                               class="form-input-solid">
+                    </div>
                 </div>
                 <div>
                     <label for="description" class="block text-xs font-semibold text-gray-500 mb-1">Deskripsi</label>
-                    <textarea name="description" id="description" rows="2" placeholder="Deskripsi singkat..."
-                              class="form-input-glass"></textarea>
+                    <div class="input-group-solid">
+                        <span class="input-prefix">
+                            <!-- Duotone Icon: Message/Chat -->
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.3" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" fill="currentColor"/>
+                                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <textarea name="description" id="description" rows="2" placeholder="Deskripsi singkat..."
+                                  class="form-input-solid"></textarea>
+                    </div>
                 </div>
-                <button type="submit" class="btn-primary w-full">Simpan Kategori</button>
+                <button type="submit" class="btn-primary w-full py-3 font-bold rounded-lg transition-transform active:scale-[0.98]">Simpan Kategori</button>
             </form>
         </div>
 
         {{-- Daftar Kategori --}}
-        <div class="glass-card overflow-hidden">
-            <div class="px-4 py-3 border-b border-white/30">
+        <div class="card-solid overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-150">
                 <h3 class="text-sm font-semibold text-dark">Daftar Kategori</h3>
             </div>
-            <div class="divide-y divide-gray-100">
+            <div class="divide-y divide-gray-150">
                 @forelse($categories as $category)
                 <div class="px-4 py-3 flex items-center justify-between">
                     <div>

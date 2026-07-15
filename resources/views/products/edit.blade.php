@@ -8,7 +8,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24">
+    <div class="px-4 py-5 pb-24 max-w-lg mx-auto">
         <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data" 
               @paste.window="
                   const items = ($event.clipboardData || window.clipboardData).items;
@@ -31,7 +31,7 @@
             <input type="hidden" name="gallery_filepath" x-model="galleryFilepath">
             <div class="space-y-4">
                 {{-- Image Upload --}}
-                <div class="rounded-glass border border-white/40 shadow-glass p-4" style="background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);">
+                <div class="card-solid p-4">
                     <label class="block text-sm font-medium text-dark mb-2">Foto Produk</label>
                     <div class="relative">
                         <div class="w-full aspect-video rounded-xl bg-gray-100 overflow-hidden flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300 hover:border-primary-400 transition-colors"
@@ -51,11 +51,11 @@
                     
                     <div class="flex gap-2 mt-2">
                         <button type="button" @click="openGalleryModal()" 
-                                class="flex-1 py-2 text-xs font-semibold text-primary-600 bg-primary-50 rounded-xl hover:bg-primary-100 transition-colors border border-primary-200">
+                                class="flex-1 py-2 text-xs font-semibold text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors border border-primary-200">
                             🖼️ Pilih dari Galeri
                         </button>
                         <button type="button" x-show="imagePreview || galleryFilepath" @click="clearImage()" 
-                                class="px-3 py-2 text-xs font-semibold text-red-500 bg-red-50/50 rounded-xl hover:bg-red-100/50 transition-colors border border-red-200">
+                                class="px-3 py-2 text-xs font-semibold text-red-500 bg-red-50/50 rounded-lg hover:bg-red-100/50 transition-colors border border-red-200">
                             Hapus
                         </button>
                     </div>
@@ -63,105 +63,185 @@
                 </div>
 
                 {{-- Basic Info --}}
-                <div class="rounded-glass border border-white/40 shadow-glass p-4 space-y-4" style="background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);">
-                    <h3 class="text-sm font-semibold text-dark">Informasi Dasar</h3>
+                <div class="card-solid p-4 space-y-4">
+                    <h3 class="text-sm font-semibold text-dark border-b border-gray-150 pb-2">Informasi Dasar</h3>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Nama Produk *</label>
-                        <input type="text" name="name" value="{{ old('name', $product->name) }}" required
-                            class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Nama Produk *</label>
+                        <div class="input-group-solid">
+                            <span class="input-prefix">
+                                <!-- Duotone Icon: Package -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
+                                    <path d="M2 17L12 22L22 17M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <input type="text" name="name" value="{{ old('name', $product->name) }}" required placeholder="Contoh: Pupuk NPK Mutiara 16-16-16"
+                                   class="form-input-solid">
+                        </div>
                         @error('name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Kategori</label>
-                        <select name="category_id" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
-                            <option value="">Pilih Kategori</option>
-                            @foreach($categories ?? [] as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                            @endforeach
-                        </select>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Kategori</label>
+                        <div class="input-group-solid">
+                            <span class="input-prefix">
+                                <!-- Duotone Icon: Folder -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M19 20H5C3.89543 20 3 19.1046 3 18V6C3 4.89543 3.89543 4 5 4H9.58579C9.85101 4 10.1054 4.10536 10.2929 4.29289L12.7071 6.70711C12.8946 6.89464 13.149 7 13.4142 7H19C20.1046 7 21 7.89543 21 9V18C21 19.1046 20.1046 20 19 20Z" fill="currentColor"/>
+                                    <path d="M3 8H21M19 20H5C3.89543 20 3 19.1046 3 18V6C3 4.89543 3.89543 4 5 4H9.58579C9.85101 4 10.1054 4.10536 10.2929 4.29289L12.7071 6.70711C12.8946 6.89464 13.149 7 13.4142 7H19C20.1046 7 21 7.89543 21 9V18C21 19.1046 20.1046 20 19 20Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <div class="flex-1 min-w-0">
+                                <select name="category_id" class="form-input-solid"
+                                        x-init="
+                                            $($el).select2({ width: '100%' }).on('change', (e) => {
+                                                categoryId = e.target.value;
+                                            });
+                                            if (categoryId) {
+                                                $($el).val(categoryId).trigger('change');
+                                            }
+                                        ">
+                                    <option value="">Pilih Kategori</option>
+                                    @foreach($categories ?? [] as $category)
+                                        <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         @error('category_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">SKU (Kode Produk)</label>
-                        <input type="text" name="sku" value="{{ old('sku', $product->sku) }}"
-                            class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">SKU (Kode Produk)</label>
+                        <div class="input-group-solid">
+                            <span class="input-prefix">
+                                <!-- Duotone Icon: Hashtag -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M4 9H20M4 15H20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                                    <path d="M9 3L7 21M17 3L15 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <input type="text" name="sku" value="{{ old('sku', $product->sku) }}" placeholder="Contoh: NPK-001"
+                                   class="form-input-solid">
+                        </div>
                         @error('sku') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 {{-- Unit & Conversion --}}
-                <div class="rounded-glass border border-white/40 shadow-glass p-4 space-y-4" style="background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);">
-                    <h3 class="text-sm font-semibold text-dark">Satuan & Konversi</h3>
+                <div class="card-solid p-4 space-y-4">
+                    <h3 class="text-sm font-semibold text-dark border-b border-gray-150 pb-2">Satuan & Konversi</h3>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Satuan Beli *</label>
-                            <select name="buy_unit_id" required class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
-                                <option value="">Pilih</option>
-                                @foreach($units ?? [] as $unit)
-                                    <option value="{{ $unit->id }}" {{ old('buy_unit_id', $product->buy_unit_id) == $unit->id ? 'selected' : '' }}>{{ $unit->name }}</option>
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">Satuan Beli *</label>
+                            <div class="input-group-solid">
+                                <span class="input-prefix">
+                                    <!-- Duotone Icon: Archive -->
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path opacity="0.3" d="M21 8V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V8H21Z" fill="currentColor"/>
+                                        <rect x="2" y="3" width="20" height="5" rx="1" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M10 12H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M3 8V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V8" stroke="currentColor" stroke-width="2"/>
+                                    </svg>
+                                </span>
+                                <select name="buy_unit_id" required class="form-input-solid">
+                                    <option value="">Pilih</option>
+                                    @foreach($units ?? [] as $unit)
+                                        <option value="{{ $unit->id }}" {{ old('buy_unit_id', $product->buy_unit_id) == $unit->id ? 'selected' : '' }}>{{ $unit->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             @error('buy_unit_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Satuan Jual *</label>
-                            <select name="sell_unit_id" required class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
-                                <option value="">Pilih</option>
-                                @foreach($units ?? [] as $unit)
-                                    <option value="{{ $unit->id }}" {{ old('sell_unit_id', $product->sell_unit_id) == $unit->id ? 'selected' : '' }}>{{ $unit->name }}</option>
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">Satuan Jual *</label>
+                            <div class="input-group-solid">
+                                <span class="input-prefix">
+                                    <!-- Duotone Icon: Archive -->
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path opacity="0.3" d="M21 8V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V8H21Z" fill="currentColor"/>
+                                        <rect x="2" y="3" width="20" height="5" rx="1" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M10 12H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M3 8V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V8" stroke="currentColor" stroke-width="2"/>
+                                    </svg>
+                                </span>
+                                <select name="sell_unit_id" required class="form-input-solid">
+                                    <option value="">Pilih</option>
+                                    @foreach($units ?? [] as $unit)
+                                        <option value="{{ $unit->id }}" {{ old('sell_unit_id', $product->sell_unit_id) == $unit->id ? 'selected' : '' }}>{{ $unit->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             @error('sell_unit_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Faktor Konversi *</label>
-                        <input type="number" name="conversion_factor" value="{{ old('conversion_factor', $product->conversion_factor) }}" min="0.01" step="0.01" required
-                            class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
-                        <p class="text-xs text-gray-400 mt-1">1 satuan beli = berapa satuan jual</p>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Faktor Konversi *</label>
+                        <div class="input-group-solid">
+                            <span class="input-prefix">
+                                <!-- Duotone Icon: Swap -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M17 17H7V14L3 18L7 22V19H17V17Z" fill="currentColor"/>
+                                    <path opacity="0.3" d="M7 7H17V10L21 6L17 2V5H7V7Z" fill="currentColor"/>
+                                    <path d="M17 17H7V14L3 18L7 22V19H17V17ZM7 7H17V10L21 6L17 2V5H7V7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <input type="number" name="conversion_factor" value="{{ old('conversion_factor', $product->conversion_factor) }}" min="0.01" step="0.01" required placeholder="1 sat. beli = ? sat. jual"
+                                   class="form-input-solid">
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-1">1 satuan beli = berapa satuan jual (Contoh: 1 karung = 25 kg, isi 25)</p>
                         @error('conversion_factor') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 {{-- Pricing & Stock --}}
-                <div class="rounded-glass border border-white/40 shadow-glass p-4 space-y-4" style="background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);">
-                    <h3 class="text-sm font-semibold text-dark">Harga & Stok</h3>
+                <div class="card-solid p-4 space-y-4">
+                    <h3 class="text-sm font-semibold text-dark border-b border-gray-150 pb-2">Harga & Stok</h3>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Harga Jual *</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">Rp</span>
-                            <input type="number" name="selling_price" value="{{ old('selling_price', $product->selling_price) }}" min="0" required
-                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Harga Jual (per satuan jual) *</label>
+                        <div class="input-group-solid">
+                            <span class="input-prefix">Rp</span>
+                            <input type="number" name="selling_price" value="{{ old('selling_price', $product->selling_price) }}" min="0" required placeholder="0"
+                                   class="form-input-solid">
                         </div>
                         @error('selling_price') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Stok Minimum</label>
-                        <input type="number" name="min_stock" value="{{ old('min_stock', $product->min_stock) }}" min="0"
-                            class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white/80">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Stok Minimum</label>
+                        <div class="input-group-solid">
+                            <span class="input-prefix">
+                                <!-- Duotone Icon: Alert Shield -->
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" fill="currentColor"/>
+                                    <path d="M12 8V13M12 16H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <input type="number" name="min_stock" value="{{ old('min_stock', $product->min_stock) }}" min="0" placeholder="0"
+                                   class="form-input-solid">
+                        </div>
                         @error('min_stock') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Stok Saat Ini</label>
-                        <p class="text-sm font-bold text-dark">{{ $product->stock }} {{ $product->sellUnit->abbreviation ?? '' }}</p>
-                        <p class="text-xs text-gray-400">Stok hanya berubah melalui transaksi beli/jual</p>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Stok Saat Ini</label>
+                        <p class="text-sm font-bold text-dark">{{ $product->stock }} {{ $product->sellUnit->symbol ?? '' }}</p>
+                        <p class="text-[10px] text-gray-400 mt-0.5">Stok hanya berubah melalui transaksi beli/jual</p>
                     </div>
                 </div>
 
                 {{-- Status Toggle --}}
-                <div class="rounded-glass border border-white/40 shadow-glass p-4" style="background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);">
+                <div class="card-solid p-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-dark">Status Aktif</p>
-                            <p class="text-xs text-gray-400">Produk nonaktif tidak muncul di kasir</p>
+                            <p class="text-sm font-semibold text-dark">Status Aktif</p>
+                            <p class="text-[10px] text-gray-400">Produk nonaktif tidak muncul di kasir</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="hidden" name="is_active" value="0">
@@ -172,7 +252,7 @@
                 </div>
 
                 {{-- Submit --}}
-                <button type="submit" class="w-full py-3.5 bg-primary-600 text-white font-semibold rounded-glass shadow-lg active:scale-[0.98] transition-transform text-sm">
+                <button type="submit" class="btn-primary w-full py-3.5 font-bold rounded-lg transition-transform active:scale-[0.98] text-sm shadow-lg">
                     Perbarui Produk
                 </button>
             </div>
@@ -239,6 +319,7 @@ document.addEventListener('alpine:init', () => {
         searchQuery: '',
         isLoading: false,
         isActive: {{ $product->is_active ? 'true' : 'false' }},
+        categoryId: '{{ $product->category_id }}',
 
         handleRawFile(file) {
             if (!file) return;

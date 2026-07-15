@@ -30,6 +30,9 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 
         <style>
+            .select2-container {
+                max-width: 100% !important;
+            }
             /* Custom styling for Select2 to match Clean Glassmorphism theme */
             .select2-container--default .select2-selection--single {
                 background-color: rgba(255, 255, 255, 0.7) !important;
