@@ -6,17 +6,7 @@
     </x-slot>
 
     <div class="px-4 py-5 pb-24 space-y-5" x-data="{ showUsageModal: false, activeUsages: [], activeFilename: '' }">
-        {{-- Flash Messages --}}
-        @if(session('success'))
-            <div class="glass-card-solid p-3 border-l-4 border-primary-500 text-xs text-dark">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="glass-card-solid p-3 border-l-4 border-red-500 text-xs text-dark">
-                {{ session('error') }}
-            </div>
-        @endif
+
 
         {{-- Upload Section --}}
         <div class="glass-card p-4">
