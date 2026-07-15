@@ -331,7 +331,7 @@
             $(document).ready(function() {
                 // Initialize Select2 globally on all standard select elements
                 function initSelect2() {
-                    $('select:not(.no-select2)').each(function() {
+                    $('select:not(.no-select2):not(.swal2-select)').each(function() {
                         if (!$(this).hasClass("select2-hidden-accessible")) {
                             $(this).select2({
                                 width: '100%'
