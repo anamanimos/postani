@@ -117,13 +117,25 @@
         @else
             <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 @foreach($galleries as $gallery)
-                    <div class="aspect-square bg-gray-50 relative group rounded-xl overflow-hidden shadow-sm border border-gray-150 cursor-pointer"
-                         @click="previewUrl = '{{ asset('storage/' . $gallery->filepath) }}'; previewFilename = '{{ $gallery->filename }}'; previewOpen = true">
+                    <div class="aspect-square bg-gray-50 relative group rounded-xl overflow-hidden shadow-sm border border-gray-150">
                         {{-- Image Element --}}
                         <img src="{{ asset('storage/' . $gallery->filepath) }}" 
                              class="w-full h-full object-cover" 
                              alt="{{ $gallery->filename }}"
                              loading="lazy">
+
+                        {{-- Center Eye Preview on Hover --}}
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center cursor-pointer"
+                             @click="previewUrl = '{{ asset('storage/' . $gallery->filepath) }}'; previewFilename = '{{ $gallery->filename }}'; previewOpen = true">
+                            <div class="opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-200">
+                                <div class="w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
 
                         {{-- Top-Right Checkmark (If Used) --}}
                         @if($gallery->is_used)
@@ -138,27 +150,39 @@
                             </div>
                         @endif
 
-                        {{-- Bottom Overlay (Always visible or Hover) --}}
-                        <div @click.stop class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-1.5 pt-6 flex items-center justify-between opacity-90 group-hover:opacity-100 transition-opacity">
-                            <span class="text-[9px] font-medium text-white truncate max-w-[75%]" title="{{ $gallery->filename }}">
+                        {{-- Bottom Overlay --}}
+                        <div @click.stop class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-1.5 pt-6 flex items-center justify-between">
+                            <span class="text-[9px] font-medium text-white truncate max-w-[70%]" title="{{ $gallery->filename }}">
                                 {{ $gallery->filename }}
                             </span>
                             
-                            {{-- Delete action --}}
-                            @if(!$gallery->is_used)
-                                <form action="{{ route('galleries.destroy', $gallery) }}" method="POST" 
-                                      class="confirm-delete" data-confirm="Yakin ingin menghapus gambar ini dari galeri?">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-white hover:text-red-400 transition-colors active:scale-90 transform p-0.5">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                    </button>
-                                </form>
-                            @else
-                                <span class="text-[10px] text-gray-400 cursor-not-allowed p-0.5" title="Gambar ini terkunci karena sedang digunakan">🔒</span>
-                            @endif
+                            <div class="flex items-center gap-1">
+                                {{-- Preview eye button (mobile friendly) --}}
+                                <button type="button" 
+                                        @click="previewUrl = '{{ asset('storage/' . $gallery->filepath) }}'; previewFilename = '{{ $gallery->filename }}'; previewOpen = true"
+                                        class="text-white hover:text-blue-300 transition-colors active:scale-90 transform p-0.5" title="Preview">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </button>
+
+                                {{-- Delete action --}}
+                                @if(!$gallery->is_used)
+                                    <form action="{{ route('galleries.destroy', $gallery) }}" method="POST" 
+                                          class="confirm-delete" data-confirm="Yakin ingin menghapus gambar ini dari galeri?">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-white hover:text-red-400 transition-colors active:scale-90 transform p-0.5">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="text-[10px] text-gray-400 cursor-not-allowed p-0.5" title="Gambar ini terkunci karena sedang digunakan">🔒</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -223,7 +247,7 @@
 
         <!-- Lightbox Preview Modal -->
         <div x-show="previewOpen" 
-             class="fixed inset-0 z-[60] flex items-center justify-center"
+             class="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8"
              style="display: none;"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0"
@@ -236,31 +260,33 @@
              <!-- Backdrop -->
              <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="previewOpen = false"></div>
              
-             <!-- Close Button -->
-             <button type="button" @click="previewOpen = false" 
-                     class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors backdrop-blur-sm">
-                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                 </svg>
-             </button>
-             
-             <!-- Filename -->
-             <div class="absolute top-4 left-4 z-10">
-                 <span class="text-white/80 text-xs font-medium bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-full" x-text="previewFilename"></span>
-             </div>
-             
-             <!-- Image -->
-             <div class="relative z-[1] max-w-[92vw] max-h-[85vh] flex items-center justify-center"
+             <!-- Content Container -->
+             <div class="relative z-[1] flex flex-col items-center max-w-5xl w-full max-h-[90vh]"
+                  x-show="previewOpen"
                   x-transition:enter="transition ease-out duration-300 delay-100"
                   x-transition:enter-start="opacity-0 scale-90"
                   x-transition:enter-end="opacity-100 scale-100"
                   x-transition:leave="transition ease-in duration-150"
                   x-transition:leave-start="opacity-100 scale-100"
-                  x-transition:leave-end="opacity-0 scale-90">
-                 <img :src="previewUrl" :alt="previewFilename" 
-                      class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
-                      @click.stop>
+                  x-transition:leave-end="opacity-0 scale-90"
+                  @click.stop>
+
+                 <!-- Image -->
+                 <div class="flex-1 min-h-0 flex items-center justify-center w-full">
+                     <img :src="previewUrl" :alt="previewFilename" 
+                          class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl ring-1 ring-white/10">
+                 </div>
+
+                 <!-- Bottom Bar -->
+                 <div class="mt-3 flex items-center justify-between w-full max-w-lg mx-auto bg-white/10 backdrop-blur-xl rounded-full px-4 py-2 border border-white/10">
+                     <span class="text-white/90 text-xs font-medium truncate max-w-[70%]" x-text="previewFilename"></span>
+                     <button type="button" @click="previewOpen = false" 
+                             class="ml-3 shrink-0 px-3 py-1 text-xs font-semibold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors">
+                         Tutup
+                     </button>
+                 </div>
              </div>
+        </div>
         </div>
     </div>
 </x-app-layout>
