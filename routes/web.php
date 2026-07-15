@@ -33,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('customers', CustomerController::class);
     
     // Purchases
-    Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
     Route::get('/purchases/price-history', [PurchaseController::class, 'getPriceHistory'])->name('purchases.price-history');
     
     // Sales

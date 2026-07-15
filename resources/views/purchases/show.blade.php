@@ -1,10 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('purchases.index') }}" class="w-10 h-10 rounded-full bg-white/60 border border-white/40 flex items-center justify-center active:scale-95 transition-transform">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('purchases.index') }}" class="w-10 h-10 rounded-full bg-white/60 border border-white/40 flex items-center justify-center active:scale-95 transition-transform">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </a>
+                <h2 class="text-lg font-bold text-dark">Detail Pembelian</h2>
+            </div>
+            <a href="{{ route('purchases.edit', $purchase) }}" 
+               class="px-3 py-1.5 text-xs font-bold text-primary-600 hover:text-primary-700 bg-white/80 hover:bg-white border border-gray-200 rounded-xl transition-all shadow-sm active:scale-95">
+                ✏️ Edit Nota
             </a>
-            <h2 class="text-lg font-bold text-dark">Detail Pembelian</h2>
         </div>
     </x-slot>
 
