@@ -135,9 +135,9 @@
                 </div>
 
                 {{-- Item List --}}
-                <div class="space-y-4 divide-y divide-gray-150 pt-1">
+                <div class="pt-2">
                     <template x-for="(item, index) in items" :key="index">
-                        <div class="pt-3 space-y-3">
+                        <div class="space-y-3" :class="index > 0 ? 'border-t border-gray-150 mt-4 pt-4' : ''">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-gray-500" x-text="'Item #' + (index + 1)"></span>
                                 <button type="button" @click="removeItem(index)" class="text-xs text-red-500 hover:text-red-700 font-semibold bg-red-50 px-2 py-1 rounded-lg border border-red-150 transition-colors">
