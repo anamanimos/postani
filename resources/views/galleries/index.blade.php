@@ -5,7 +5,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-5" x-data="{ showUsageModal: false, activeUsages: [], activeFilename: '' }">
+    <div class="px-4 py-5 pb-24 space-y-5" x-data="{ showUsageModal: false, activeUsages: [], activeFilename: '', previewOpen: false, previewUrl: '', previewFilename: '' }">
 
 
         {{-- Upload Section --}}
@@ -117,7 +117,8 @@
         @else
             <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 @foreach($galleries as $gallery)
-                    <div class="aspect-square bg-gray-50 relative group rounded-xl overflow-hidden shadow-sm border border-gray-150">
+                    <div class="aspect-square bg-gray-50 relative group rounded-xl overflow-hidden shadow-sm border border-gray-150 cursor-pointer"
+                         @click="previewUrl = '{{ asset('storage/' . $gallery->filepath) }}'; previewFilename = '{{ $gallery->filename }}'; previewOpen = true">
                         {{-- Image Element --}}
                         <img src="{{ asset('storage/' . $gallery->filepath) }}" 
                              class="w-full h-full object-cover" 
@@ -138,7 +139,7 @@
                         @endif
 
                         {{-- Bottom Overlay (Always visible or Hover) --}}
-                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-1.5 pt-6 flex items-center justify-between opacity-90 group-hover:opacity-100 transition-opacity">
+                        <div @click.stop class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-1.5 pt-6 flex items-center justify-between opacity-90 group-hover:opacity-100 transition-opacity">
                             <span class="text-[9px] font-medium text-white truncate max-w-[75%]" title="{{ $gallery->filename }}">
                                 {{ $gallery->filename }}
                             </span>
@@ -217,6 +218,48 @@
                          </button>
                      </div>
                  </div>
+             </div>
+        </div>
+
+        <!-- Lightbox Preview Modal -->
+        <div x-show="previewOpen" 
+             class="fixed inset-0 z-[60] flex items-center justify-center"
+             style="display: none;"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @keydown.escape.window="previewOpen = false">
+             
+             <!-- Backdrop -->
+             <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="previewOpen = false"></div>
+             
+             <!-- Close Button -->
+             <button type="button" @click="previewOpen = false" 
+                     class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors backdrop-blur-sm">
+                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                 </svg>
+             </button>
+             
+             <!-- Filename -->
+             <div class="absolute top-4 left-4 z-10">
+                 <span class="text-white/80 text-xs font-medium bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-full" x-text="previewFilename"></span>
+             </div>
+             
+             <!-- Image -->
+             <div class="relative z-[1] max-w-[92vw] max-h-[85vh] flex items-center justify-center"
+                  x-transition:enter="transition ease-out duration-300 delay-100"
+                  x-transition:enter-start="opacity-0 scale-90"
+                  x-transition:enter-end="opacity-100 scale-100"
+                  x-transition:leave="transition ease-in duration-150"
+                  x-transition:leave-start="opacity-100 scale-100"
+                  x-transition:leave-end="opacity-0 scale-90">
+                 <img :src="previewUrl" :alt="previewFilename" 
+                      class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+                      @click.stop>
              </div>
         </div>
     </div>
