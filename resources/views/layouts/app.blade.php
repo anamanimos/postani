@@ -25,7 +25,6 @@
 
         <!-- Flatpickr CSS & Select2 CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_green.css">
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 
@@ -78,15 +77,68 @@
             }
             /* Flatpickr customization */
             .flatpickr-calendar {
-                background: rgba(255, 255, 255, 0.95) !important;
-                backdrop-filter: blur(20px) !important;
-                border: 1px solid rgba(255, 255, 255, 0.5) !important;
-                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08) !important;
-                border-radius: 16px !important;
+                background: #FFFFFF !important;
+                border: 1px solid #D1D5DB !important;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+                border-radius: 12px !important;
             }
-            .flatpickr-day.selected, .flatpickr-day.selected:hover {
-                background: #16a34a !important;
-                border-color: #16a34a !important;
+            .flatpickr-months {
+                background-color: #F3F4F6 !important;
+                border-bottom: 1px solid #E5E7EB !important;
+                border-radius: 12px 12px 0 0 !important;
+                padding: 6px 0 !important;
+            }
+            .flatpickr-months .flatpickr-month {
+                color: #1F2937 !important;
+                font-weight: 700 !important;
+            }
+            .flatpickr-months .flatpickr-prev-month, 
+            .flatpickr-months .flatpickr-next-month {
+                color: #4B5563 !important;
+                fill: #4B5563 !important;
+                top: 10px !important;
+            }
+            .flatpickr-months .flatpickr-prev-month:hover, 
+            .flatpickr-months .flatpickr-next-month:hover {
+                color: #16A34A !important;
+                fill: #16A34A !important;
+            }
+            .flatpickr-months .flatpickr-prev-month:hover svg, 
+            .flatpickr-months .flatpickr-next-month:hover svg {
+                fill: #16A34A !important;
+            }
+            .flatpickr-weekdaycontainer {
+                padding: 4px 0 !important;
+                background-color: #F9FAFB !important;
+                border-bottom: 1px solid #E5E7EB !important;
+            }
+            span.flatpickr-weekday {
+                color: #4B5563 !important;
+                font-weight: 600 !important;
+            }
+            .flatpickr-day {
+                color: #1F2937 !important;
+                border-radius: 6px !important;
+            }
+            .flatpickr-day.today {
+                border-color: #16A34A !important;
+                color: #16A34A !important;
+                font-weight: 700 !important;
+            }
+            .flatpickr-day.today:hover {
+                background-color: #F0FDF4 !important;
+                color: #16A34A !important;
+            }
+            .flatpickr-day.selected, 
+            .flatpickr-day.selected:focus, 
+            .flatpickr-day.selected:hover {
+                background-color: #16A34A !important;
+                border-color: #16A34A !important;
+                color: #FFFFFF !important;
+                font-weight: 700 !important;
+            }
+            .flatpickr-day:hover {
+                background-color: #F3F4F6 !important;
             }
         </style>
 
