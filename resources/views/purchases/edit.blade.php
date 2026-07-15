@@ -297,7 +297,7 @@
                                 <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2"/>
                             </svg>
                         </span>
-                        <input type="text" name="purchase_date" required 
+                        <input type="text" name="purchase_date" required autocomplete="off"
                                x-init="
                                    flatpickr($el, {
                                        locale: 'id',

@@ -38,7 +38,7 @@ class PurchaseController extends Controller
         return view('purchases.index', compact('purchases', 'suppliers'));
     }
 
-    public function create(): View
+    public function create(): \Illuminate\Http\Response
     {
         $suppliers = Supplier::orderBy('name')->get();
         $products = Product::where('is_active', true)
@@ -46,7 +46,11 @@ class PurchaseController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('purchases.create', compact('suppliers', 'products'));
+        return response()
+            ->view('purchases.create', compact('suppliers', 'products'))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     public function store(Request $request): RedirectResponse
@@ -180,7 +184,7 @@ class PurchaseController extends Controller
         return response()->json($history);
     }
 
-    public function edit(Purchase $purchase): View
+    public function edit(Purchase $purchase): \Illuminate\Http\Response
     {
         $suppliers = Supplier::orderBy('name')->get();
         // Include products that are currently in the purchase items, even if they are inactive
@@ -196,7 +200,11 @@ class PurchaseController extends Controller
             'purchaseItems.product.buyUnit',
         ]);
 
-        return view('purchases.edit', compact('purchase', 'suppliers', 'products'));
+        return response()
+            ->view('purchases.edit', compact('purchase', 'suppliers', 'products'))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     public function update(Request $request, Purchase $purchase): RedirectResponse
