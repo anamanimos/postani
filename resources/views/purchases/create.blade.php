@@ -71,6 +71,15 @@
                         <div @dragover.prevent="dragging = true"
                              @dragleave.prevent="dragging = false"
                              @drop.prevent="dragging = false; if ($event.dataTransfer.files.length) { $refs.fileInput.files = $event.dataTransfer.files; handleFile($event.dataTransfer.files[0]); }"
+                             @paste.window="
+                                 if ($event.clipboardData.files.length) {
+                                     const file = $event.clipboardData.files[0];
+                                     if (file.type.startsWith('image/')) {
+                                         $event.preventDefault();
+                                         handleFile(file);
+                                     }
+                                 }
+                             "
                              class="relative border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200"
                              :class="dragging ? 'border-primary-500 bg-primary-50/20' : 'border-gray-200 hover:border-primary-400 bg-white/40'">
                              
