@@ -531,11 +531,12 @@
                         
                         currentCropper = new Cropper(imgElement, {
                             aspectRatio: NaN,
-                            viewMode: 1,
+                            viewMode: 2,
                             autoCropArea: 0.9,
                             responsive: true,
                             restore: false,
-                            checkCrossOrigin: false
+                            checkCrossOrigin: false,
+                            rotateable: true
                         });
                     };
 
