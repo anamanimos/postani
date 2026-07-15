@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Gallery extends Model
 {
@@ -13,6 +14,14 @@ class Gallery extends Model
         'mime_type',
         'file_size',
     ];
+
+    /**
+     * Get labels for this gallery image.
+     */
+    public function labels(): BelongsToMany
+    {
+        return $this->belongsToMany(Label::class);
+    }
 
     /**
      * Get products using this gallery image.

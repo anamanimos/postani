@@ -62,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
     // Galleries
     Route::resource('galleries', GalleryController::class)->only(['index', 'store', 'destroy']);
     Route::get('/api/galleries', [GalleryController::class, 'apiIndex'])->name('api.galleries');
+    Route::post('/galleries/{gallery}/labels', [GalleryController::class, 'updateLabels'])->name('galleries.update-labels');
     
     // Profile (from Breeze)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

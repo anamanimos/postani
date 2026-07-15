@@ -16,7 +16,7 @@ class GalleryController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Gallery::with(['products', 'purchases']);
+        $query = Gallery::with(['products', 'purchases', 'labels']);
 
         // Search filter
         if ($request->filled('search')) {
@@ -34,9 +34,17 @@ class GalleryController extends Controller
             }
         }
 
-        $galleries = $query->latest()->paginate(18)->withQueryString();
+        // Label filter
+        if ($request->filled('label')) {
+            $query->whereHas('labels', function ($q) use ($request) {
+                $q->where('name', $request->label);
+            });
+        }
 
-        return view('galleries.index', compact('galleries'));
+        $galleries = $query->latest()->paginate(18)->withQueryString();
+        $allLabels = \App\Models\Label::orderBy('name')->get();
+
+        return view('galleries.index', compact('galleries', 'allLabels'));
     }
 
     /**
@@ -145,5 +153,35 @@ class GalleryController extends Controller
         });
 
         return response()->json($galleries);
+    }
+
+    /**
+     * API: Update labels for the specified gallery item.
+     */
+    public function updateLabels(Request $request, Gallery $gallery): JsonResponse
+    {
+        $request->validate([
+            'labels' => ['nullable', 'array'],
+            'labels.*' => ['string', 'max:50', 'distinct'],
+        ]);
+
+        $labelIds = [];
+        if ($request->has('labels')) {
+            foreach ($request->input('labels') as $labelName) {
+                $labelName = trim($labelName);
+                if ($labelName !== '') {
+                    $label = \App\Models\Label::firstOrCreate(['name' => $labelName]);
+                    $labelIds[] = $label->id;
+                }
+            }
+        }
+
+        $gallery->labels()->sync($labelIds);
+        $gallery->load('labels');
+
+        return response()->json([
+            'success' => true,
+            'labels' => $gallery->labels->pluck('name'),
+        ]);
     }
 }
