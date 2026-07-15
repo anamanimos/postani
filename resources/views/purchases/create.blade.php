@@ -100,6 +100,81 @@
     .input-group-solid.bg-gray-50 {
         background-color: #F9FAFB !important;
     }
+    
+    /* Flatpickr Theme Customization */
+    .flatpickr-calendar {
+        background-color: #FFFFFF !important;
+        border: 1px solid #D1D5DB !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        font-family: inherit !important;
+        margin-top: 4px !important;
+    }
+    
+    .flatpickr-months {
+        background-color: #F3F4F6 !important;
+        border-bottom: 1px solid #D1D5DB !important;
+        border-radius: 8px 8px 0 0 !important;
+        padding: 6px 0 !important;
+    }
+    
+    .flatpickr-months .flatpickr-month {
+        color: #1F2937 !important;
+        font-weight: 700 !important;
+    }
+    
+    .flatpickr-months .flatpickr-prev-month, 
+    .flatpickr-months .flatpickr-next-month {
+        color: #4B5563 !important;
+        fill: #4B5563 !important;
+        top: 10px !important;
+    }
+    
+    .flatpickr-months .flatpickr-prev-month:hover, 
+    .flatpickr-months .flatpickr-next-month:hover {
+        color: #16A34A !important;
+        fill: #16A34A !important;
+    }
+    
+    .flatpickr-weekdaycontainer {
+        padding: 4px 0 !important;
+        background-color: #F9FAFB !important;
+        border-bottom: 1px solid #E5E7EB !important;
+    }
+    
+    span.flatpickr-weekday {
+        color: #4B5563 !important;
+        font-weight: 600 !important;
+    }
+    
+    .flatpickr-day {
+        color: #1F2937 !important;
+        border-radius: 6px !important;
+    }
+    
+    .flatpickr-day.today {
+        border-color: #16A34A !important;
+        color: #16A34A !important;
+        font-weight: 700 !important;
+    }
+    
+    .flatpickr-day.today:hover {
+        background-color: #E8F5E9 !important;
+        color: #16A34A !important;
+    }
+    
+    .flatpickr-day.selected, 
+    .flatpickr-day.selected:focus, 
+    .flatpickr-day.selected:hover {
+        background-color: #16A34A !important;
+        border-color: #16A34A !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+    }
+    
+    .flatpickr-day:hover {
+        background-color: #F3F4F6 !important;
+    }
 </style>
 @endpush
 <x-app-layout>
@@ -119,19 +194,9 @@
 
             {{-- Detail Barang --}}
             <div class="card-solid p-4 space-y-4">
-                <div class="flex items-center justify-between border-b border-gray-150 pb-2">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                        <h3 class="text-sm font-bold text-dark">Item Pembelian</h3>
-                    </div>
-                    <button type="button" @click="addItem()" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-5 py-1.5 rounded-lg border border-primary-200 transition-all active:scale-95">
-                        <!-- Duotone Icon: Plus Circle -->
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path opacity="0.3" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="currentColor"/>
-                            <path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        Tambah Item
-                    </button>
+                <div class="flex items-center gap-2 border-b border-gray-150 pb-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                    <h3 class="text-sm font-bold text-dark">Item Pembelian</h3>
                 </div>
 
                 {{-- Item List --}}
@@ -225,6 +290,18 @@
                             </div>
                         </div>
                     </template>
+                </div>
+
+                {{-- Tombol Tambah Item di Bawah List --}}
+                <div class="pt-2 border-t border-gray-150">
+                    <button type="button" @click="addItem()" class="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-5 py-2.5 rounded-lg border border-primary-200 border-dashed transition-all active:scale-[0.98]">
+                        <!-- Duotone Icon: Plus Circle -->
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.3" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="currentColor"/>
+                            <path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Tambah Item Belanja
+                    </button>
                 </div>
             </div>
 
@@ -629,7 +706,7 @@
         function purchaseForm() {
             return {
                 supplierId: '',
-                purchaseDate: new Date().toISOString().split('T')[0],
+                purchaseDate: new Date().toLocaleDateString('sv-SE'),
                 items: [],
                 paymentStatus: 'paid',
                 paymentMethod: 'cash',
