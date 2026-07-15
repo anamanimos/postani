@@ -104,7 +104,9 @@
                              
                              <template x-if="imagePreview">
                                  <div class="relative w-full flex flex-col items-center justify-center py-1">
-                                     <img :src="imagePreview" class="max-h-36 rounded-lg object-contain border border-gray-100 shadow-sm bg-white">
+                                     <img :src="imagePreview" @click.stop="previewModalOpen = true" 
+                                          class="max-h-36 rounded-lg object-contain border border-gray-100 shadow-sm bg-white cursor-zoom-in hover:brightness-95 active:scale-95 transition-all duration-200"
+                                          title="Klik untuk memperbesar">
                                  </div>
                              </template>
                         </div>
@@ -366,6 +368,31 @@
                                   <span x-show="!isSavingSupplier">Simpan</span>
                               </button>
                           </div>
+             <!-- Modal Preview Foto Besar -->
+             <div x-show="previewModalOpen" 
+                  class="fixed inset-0 z-50 overflow-y-auto" 
+                  style="display: none;"
+                  x-transition:enter="transition ease-out duration-300"
+                  x-transition:enter-start="opacity-0"
+                  x-transition:enter-end="opacity-100"
+                  x-transition:leave="transition ease-in duration-200"
+                  x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0"
+                  @keydown.escape.window="previewModalOpen = false">
+                  
+                  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                      <div class="fixed inset-0 transition-opacity bg-black/80 backdrop-blur-sm" @click="previewModalOpen = false"></div>
+                      
+                      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+                      
+                      <div class="inline-block align-bottom bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle max-w-3xl w-full p-2 relative">
+                          <div class="absolute top-4 right-4 z-10">
+                              <button type="button" @click="previewModalOpen = false" 
+                                      class="w-8 h-8 rounded-full bg-black/50 text-white hover:bg-black/70 flex items-center justify-center font-bold text-lg transition-colors">
+                                  &times;
+                              </button>
+                          </div>
+                          <img :src="imagePreview" class="w-full max-h-[80vh] object-contain rounded-xl">
                       </div>
                   </div>
              </div>
@@ -386,6 +413,7 @@
                 totalAmount: 0,
                 additionalCost: 0,
                 additionalCostNotes: '',
+                previewModalOpen: false,
                 
                 // Quick Supplier State
                 quickSupplierOpen: false,
