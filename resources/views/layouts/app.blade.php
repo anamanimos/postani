@@ -418,71 +418,141 @@
 
         <script>
             let currentCropper = null;
+
+            // Pre-resize large images to prevent mobile browser freeze
+            function preResizeImage(file, maxDim) {
+                maxDim = maxDim || 2048;
+                return new Promise(function(resolve) {
+                    // Skip non-images
+                    if (!file || !file.type.startsWith('image/')) {
+                        resolve(file);
+                        return;
+                    }
+                    
+                    var img = new Image();
+                    var url = URL.createObjectURL(file);
+                    img.onload = function() {
+                        // If image is already small enough, return original
+                        if (img.naturalWidth <= maxDim && img.naturalHeight <= maxDim) {
+                            URL.revokeObjectURL(url);
+                            resolve(file);
+                            return;
+                        }
+                        
+                        // Calculate new dimensions
+                        var ratio = Math.min(maxDim / img.naturalWidth, maxDim / img.naturalHeight);
+                        var newW = Math.round(img.naturalWidth * ratio);
+                        var newH = Math.round(img.naturalHeight * ratio);
+                        
+                        // Draw to offscreen canvas
+                        var canvas = document.createElement('canvas');
+                        canvas.width = newW;
+                        canvas.height = newH;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, newW, newH);
+                        URL.revokeObjectURL(url);
+                        
+                        canvas.toBlob(function(blob) {
+                            if (blob) {
+                                var resizedFile = new File([blob], file.name, { type: 'image/jpeg' });
+                                resolve(resizedFile);
+                            } else {
+                                resolve(file);
+                            }
+                            // Free canvas memory
+                            canvas.width = 0;
+                            canvas.height = 0;
+                        }, 'image/jpeg', 0.85);
+                    };
+                    img.onerror = function() {
+                        URL.revokeObjectURL(url);
+                        resolve(file);
+                    };
+                    img.src = url;
+                });
+            }
+
             window.cropImage = function(file, successCallback, skipCallback, cancelCallback) {
                 if (!file || !file.type.startsWith('image/')) {
                     if (skipCallback) skipCallback(file);
                     return;
                 }
 
-                const modal = document.getElementById('global-crop-modal');
-                const imgElement = document.getElementById('global-crop-img-element');
-                const saveBtn = document.getElementById('global-crop-save');
-                const skipBtn = document.getElementById('global-crop-skip');
-                const cancelBtn = document.getElementById('global-crop-cancel');
+                // Show loading while pre-processing large images
+                Swal.fire({
+                    title: 'Memproses gambar...',
+                    text: 'Mengoptimalkan ukuran gambar',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: function() { Swal.showLoading(); },
+                    customClass: { popup: 'rounded-2xl font-sans' }
+                });
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imgElement.src = e.target.result;
-                    modal.classList.remove('hidden');
+                preResizeImage(file, 2048).then(function(processedFile) {
+                    Swal.close();
 
-                    if (currentCropper) {
-                        currentCropper.destroy();
-                    }
+                    var modal = document.getElementById('global-crop-modal');
+                    var imgElement = document.getElementById('global-crop-img-element');
+                    var saveBtn = document.getElementById('global-crop-save');
+                    var skipBtn = document.getElementById('global-crop-skip');
+                    var cancelBtn = document.getElementById('global-crop-cancel');
+
+                    // Use createObjectURL instead of readAsDataURL (much less memory)
+                    var objectUrl = URL.createObjectURL(processedFile);
+                    imgElement.src = objectUrl;
                     
-                    currentCropper = new Cropper(imgElement, {
-                        aspectRatio: NaN, // Free ratio
-                        viewMode: 1,
-                        autoCropArea: 0.9,
-                        responsive: true,
-                        restore: false,
-                        checkCrossOrigin: false
-                    });
-                };
-                reader.readAsDataURL(file);
-
-                function closeModal() {
-                    modal.classList.add('hidden');
-                    if (currentCropper) {
-                        currentCropper.destroy();
-                        currentCropper = null;
-                    }
-                }
-
-                saveBtn.onclick = function() {
-                    if (!currentCropper) return;
-                    currentCropper.getCroppedCanvas({
-                        maxWidth: 1920,
-                        maxHeight: 1920,
-                        imageSmoothingQuality: 'high'
-                    }).toBlob((blob) => {
-                        if (blob) {
-                            successCallback(blob);
-                        } else {
-                            skipCallback(file);
+                    imgElement.onload = function() {
+                        modal.classList.remove('hidden');
+                        
+                        if (currentCropper) {
+                            currentCropper.destroy();
                         }
+                        
+                        currentCropper = new Cropper(imgElement, {
+                            aspectRatio: NaN,
+                            viewMode: 1,
+                            autoCropArea: 0.9,
+                            responsive: true,
+                            restore: false,
+                            checkCrossOrigin: false
+                        });
+                    };
+
+                    function closeModal() {
+                        modal.classList.add('hidden');
+                        if (currentCropper) {
+                            currentCropper.destroy();
+                            currentCropper = null;
+                        }
+                        URL.revokeObjectURL(objectUrl);
+                    }
+
+                    saveBtn.onclick = function() {
+                        if (!currentCropper) return;
+                        currentCropper.getCroppedCanvas({
+                            maxWidth: 1920,
+                            maxHeight: 1920,
+                            imageSmoothingQuality: 'high'
+                        }).toBlob(function(blob) {
+                            if (blob) {
+                                successCallback(blob);
+                            } else {
+                                skipCallback(processedFile);
+                            }
+                            closeModal();
+                        }, 'image/jpeg', 0.85);
+                    };
+
+                    skipBtn.onclick = function() {
+                        skipCallback(processedFile);
                         closeModal();
-                    }, file.type || 'image/jpeg');
-                };
+                    };
 
-                skipBtn.onclick = function() {
-                    skipCallback(file);
-                    closeModal();
-                };
-
-                cancelBtn.onclick = function() {
-                    if (cancelCallback) cancelCallback();
-                    closeModal();
-                };
+                    cancelBtn.onclick = function() {
+                        if (cancelCallback) cancelCallback();
+                        closeModal();
+                    };
+                });
             };
 
             // Global loading overlay on form submit (except GET filter forms or AJAX)
