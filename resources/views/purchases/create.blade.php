@@ -113,7 +113,7 @@
         </div>
     </x-slot>
 
-    <div class="py-5 pb-24" x-data="purchaseForm()">
+    <div class="py-5 pb-36" x-data="purchaseForm()">
         <form action="{{ route('purchases.store') }}" method="POST" enctype="multipart/form-data" 
               class="space-y-4">
             @csrf
@@ -490,7 +490,17 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary w-full py-3 font-bold rounded-lg transition-transform active:scale-[0.98]">Simpan Transaksi</button>
+            </div>
+
+            {{-- Floating Submit Button --}}
+            <div class="fixed bottom-24 left-0 right-0 z-40 px-3 pointer-events-none">
+                <div class="max-w-lg mx-auto pointer-events-auto">
+                    <button type="submit" 
+                            :disabled="!isValid()"
+                            class="btn-primary w-full py-3.5 text-base font-extrabold shadow-float transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                            x-text="'Simpan Transaksi'">
+                    </button>
+                </div>
             </div>
 
             <!-- Modal Galeri Picker -->
@@ -879,6 +889,16 @@
 
                 updateDueAmount() {
                     this.dueAmount = Math.max(0, this.totalAmount - this.paidAmount);
+                },
+
+                isValid() {
+                    if (!this.supplierId) return false;
+                    if (this.items.length === 0) return false;
+                    return this.items.every(item => {
+                        return item.productId && 
+                               parseFloat(item.quantity) > 0 && 
+                               parseFloat(item.unitPrice) >= 0;
+                    });
                 }
             };
         }
