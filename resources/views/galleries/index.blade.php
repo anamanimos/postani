@@ -118,7 +118,7 @@
                          @click="openGalleryPreview(index)">
                         {{-- Image Element --}}
                         <img :src="gallery.url" 
-                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                             class="w-full h-full object-cover" 
                              :alt="gallery.filename"
                              loading="lazy">
 
@@ -143,35 +143,6 @@
                                 </button>
                             </div>
                         </template>
-
-                        {{-- Bottom Overlay (visible on hover) --}}
-                        <div @click.stop class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent p-1.5 pt-6 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            <span class="text-[9px] font-medium text-white truncate max-w-[55%]" x-text="gallery.filename" :title="gallery.filename"></span>
-                            
-                            <div class="flex items-center gap-1">
-                                {{-- Edit label button --}}
-                                <button type="button" 
-                                        @click="openLabelModal(gallery.id, gallery.labels, gallery.filename)"
-                                        class="text-white hover:text-yellow-300 transition-colors active:scale-90 transform p-0.5" title="Kelola Label">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.5 20.5L18 12l-6-6-8.5 8.5a2.12 2.12 0 000 3l3 3a2.12 2.12 0 003 0zM7 7h.01"/>
-                                    </svg>
-                                </button>
-
-                                {{-- Delete action --}}
-                                <template x-if="!gallery.is_used">
-                                    <button type="button" @click="deleteItem(gallery.id)" 
-                                            class="text-white hover:text-red-400 transition-colors active:scale-90 transform p-0.5">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                    </button>
-                                </template>
-                                <template x-if="gallery.is_used">
-                                    <span class="text-[10px] text-gray-400 cursor-not-allowed p-0.5" title="Gambar ini terkunci karena sedang digunakan">🔒</span>
-                                </template>
-                            </div>
-                        </div>
                     </div>
                 </template>
             </div>
