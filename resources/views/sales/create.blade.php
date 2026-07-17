@@ -3,7 +3,7 @@
         <h2 class="text-lg font-bold text-dark">Kasir Jual Barang</h2>
     </x-slot>
 
-    <div class="py-3 pb-24 max-w-lg mx-auto" x-data="posSystem()">
+    <div class="py-3 pb-20 max-w-lg mx-auto" x-data="posSystem()">
         {{-- Search Input --}}
         <div class="relative mb-4">
             <div class="input-group-solid">
@@ -18,7 +18,7 @@
         </div>
 
         {{-- Product Grid --}}
-        <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pb-10 pr-1">
+        <div class="grid grid-cols-2 gap-3 max-h-[70vh] overflow-y-auto pr-1">
             <template x-for="product in filteredProducts()" :key="product.id">
                 <div @click="addToCart(product)"
                       class="card-solid overflow-hidden block active:scale-95 transition-all duration-150 cursor-pointer select-none bg-white">
