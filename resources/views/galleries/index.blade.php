@@ -1,35 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between w-full" 
-             x-data="{ showSearch: {{ request('search') ? 'true' : 'false' }} }"
-             @open-header-search.window="showSearch = true; $nextTick(() => $refs.searchInput.focus())">
-            <h2 class="text-lg font-bold text-dark" x-show="!showSearch">Galeri Media</h2>
-            
-            <button x-show="!showSearch" @click="showSearch = true; $nextTick(() => $refs.searchInput.focus())" class="text-gray-500 hover:text-dark p-1 rounded-lg transition-colors" title="Cari Gambar">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-            </button>
-            
-            <form x-show="showSearch" action="{{ route('galleries.index') }}" method="GET" class="w-full flex items-center gap-2" style="display: none;">
-                <input type="hidden" name="filter" value="{{ request('filter') }}">
-                <input type="hidden" name="label" value="{{ request('label') }}">
-                
-                <div class="relative flex-1">
-                    <input type="text" name="search" x-ref="searchInput" value="{{ request('search') }}" 
-                           placeholder="Cari nama file..." 
-                           class="w-full form-input-glass pl-9 text-xs py-1.5 rounded-lg border-gray-300 focus:border-primary-500">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                    </div>
-                </div>
-                
-                <button type="button" @click="showSearch = false; $refs.searchInput.value = ''; $refs.searchInput.form.submit()" class="text-xs text-gray-500 hover:text-dark px-2 py-1.5 font-semibold transition-colors">
-                    Batal
-                </button>
-            </form>
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-dark">Galeri Media</h2>
         </div>
     </x-slot>
 
@@ -44,7 +16,8 @@
                  'is_used' => $g->is_used,
                  'usages' => $g->usages
              ])) }},
-             nextPageUrl: '{{ $galleries->nextPageUrl() }}'
+             nextPageUrl: '{{ $galleries->nextPageUrl() }}',
+             openFloatingSearch: {{ request('search') ? 'true' : 'false' }}
          })"
          @scroll.window.debounce.100ms="checkScroll()">
 
@@ -378,16 +351,18 @@
              x-transition:leave="transition ease-in duration-100 transform"
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 translate-y-10 scale-95"
-             class="fixed bottom-40 right-5 z-40"
+             class="fixed bottom-40 left-0 right-0 z-40 px-5 pointer-events-none"
              style="display: none;">
-            <button type="button" 
-                    @click="document.getElementById('main-file-input').click()"
-                    class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150"
-                    title="Unggah Gambar Baru">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-                </svg>
-            </button>
+            <div class="max-w-lg mx-auto flex justify-end">
+                <button type="button" 
+                        @click="document.getElementById('main-file-input').click()"
+                        class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto"
+                        title="Unggah Gambar Baru">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
+            </div>
         </div>
 
         {{-- 2. Floating search button (placed at the bottom, bottom-24) --}}
@@ -398,16 +373,45 @@
              x-transition:leave="transition ease-in duration-100 transform"
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 translate-y-10 scale-95"
-             class="fixed bottom-24 right-5 z-40"
+             class="fixed bottom-24 left-0 right-0 z-40 px-5 pointer-events-none"
              style="display: none;">
-            <button type="button" 
-                    @click="window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => $dispatch('open-header-search'), 250)"
-                    class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150"
-                    title="Cari Gambar">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-            </button>
+            <div class="max-w-lg mx-auto relative flex justify-end h-12">
+                <div class="absolute right-0 top-0 bg-white/95 backdrop-blur-md border border-gray-200/80 shadow-lg rounded-full overflow-hidden transition-all duration-300 ease-out pointer-events-auto"
+                     :class="openFloatingSearch ? 'w-full h-12' : 'w-12 h-12'">
+                     
+                     {{-- Collapsed Button --}}
+                     <button type="button" x-show="!openFloatingSearch"
+                             @click="openFloatingSearch = true; $nextTick(() => $refs.floatSearchInput.focus())"
+                             class="w-full h-full flex items-center justify-center text-primary-600 active:scale-95 transition-transform duration-150"
+                             title="Cari Gambar">
+                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                         </svg>
+                     </button>
+                     
+                     {{-- Expanded Form --}}
+                     <form x-show="openFloatingSearch" action="{{ route('galleries.index') }}" method="GET" 
+                           class="w-full h-full flex items-center px-4 gap-2.5" style="display: none;">
+                         <input type="hidden" name="filter" value="{{ request('filter') }}">
+                         <input type="hidden" name="label" value="{{ request('label') }}">
+                         
+                         <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                         </svg>
+                         
+                         <input type="text" name="search" x-ref="floatSearchInput" value="{{ request('search') }}"
+                                placeholder="Cari berkas gambar..."
+                                @keydown.escape="openFloatingSearch = false"
+                                class="flex-1 bg-transparent border-0 outline-none text-xs font-semibold text-gray-700 placeholder-gray-400 focus:ring-0 p-0">
+                         
+                         <button type="button" 
+                                 @click="openFloatingSearch = false; $refs.floatSearchInput.value = ''; $refs.floatSearchInput.form.submit()"
+                                 class="text-xs text-gray-400 hover:text-gray-600 font-bold flex-shrink-0 px-1 py-1">
+                             Batal
+                         </button>
+                     </form>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -432,11 +436,12 @@ window.triggerDeleteGallery = function(id) {
 
 // Alpine gallery manager component with infinite scroll pagination
 document.addEventListener('alpine:init', () => {
-    Alpine.data('galleryManager', ({ initialItems, nextPageUrl }) => ({
+    Alpine.data('galleryManager', ({ initialItems, nextPageUrl, openFloatingSearch }) => ({
         items: initialItems,
         nextPageUrl: nextPageUrl,
         loading: false,
         showFloatingAddButton: false,
+        openFloatingSearch: openFloatingSearch,
 
         showUsageModal: false,
         activeUsages: [],
