@@ -1,7 +1,33 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="text-lg font-bold text-dark">Galeri Media</h2>
+        <div class="flex items-center justify-between w-full" x-data="{ showSearch: {{ request('search') ? 'true' : 'false' }} }">
+            <h2 class="text-lg font-bold text-dark" x-show="!showSearch">Galeri Media</h2>
+            
+            <button x-show="!showSearch" @click="showSearch = true; $nextTick(() => $refs.searchInput.focus())" class="text-gray-500 hover:text-dark p-1 rounded-lg transition-colors" title="Cari Gambar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </button>
+            
+            <form x-show="showSearch" action="{{ route('galleries.index') }}" method="GET" class="w-full flex items-center gap-2" style="display: none;">
+                <input type="hidden" name="filter" value="{{ request('filter') }}">
+                <input type="hidden" name="label" value="{{ request('label') }}">
+                
+                <div class="relative flex-1">
+                    <input type="text" name="search" x-ref="searchInput" value="{{ request('search') }}" 
+                           placeholder="Cari nama file..." 
+                           class="w-full form-input-glass pl-9 text-xs py-1.5 rounded-lg border-gray-300 focus:border-primary-500">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <button type="button" @click="showSearch = false; $refs.searchInput.value = ''; $refs.searchInput.form.submit()" class="text-xs text-gray-500 hover:text-dark px-2 py-1.5 font-semibold transition-colors">
+                    Batal
+                </button>
+            </form>
         </div>
     </x-slot>
 
@@ -87,17 +113,7 @@
             <form action="{{ route('galleries.index') }}" method="GET" class="space-y-3">
                 <input type="hidden" name="filter" value="{{ request('filter') }}">
 
-                {{-- Search Bar --}}
-                <div class="relative">
-                    <input type="text" name="search" value="{{ request('search') }}" 
-                           placeholder="Cari nama file gambar..." 
-                           class="form-input-glass pl-9 text-xs">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                    </div>
-                </div>
+                <input type="hidden" name="search" value="{{ request('search') }}">
 
                 {{-- Label Filter dropdown --}}
                 <div class="relative">
