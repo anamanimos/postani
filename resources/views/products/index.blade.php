@@ -38,36 +38,40 @@
         {{-- Product Grid (Infinite Scroll) --}}
         <div class="grid grid-cols-2 gap-3">
             <template x-for="product in items" :key="product.id">
-                <a :href="product.show_url" class="card-solid overflow-hidden block active:scale-[0.98] transition-transform">
-                    <div class="aspect-square bg-gray-100 relative overflow-hidden">
+                <a :href="product.show_url" class="card-solid overflow-hidden block active:scale-[0.98] transition-transform bg-white">
+                    <div class="aspect-square bg-gray-100 relative">
                         <template x-if="product.image">
                             <img :src="'/storage/' + product.image" class="w-full h-full object-cover" :alt="product.name" loading="lazy">
                         </template>
                         <template x-if="!product.image">
                             <div class="w-full h-full flex items-center justify-center">
                                 <!-- Duotone Icon: Package -->
-                                <svg class="w-12 h-12 text-gray-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg class="w-10 h-10 text-gray-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path opacity="0.3" d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
-                                    <path d="M2 17L12 22L22 17M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2 17L12 22L22 17M2 12L17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
                         </template>
+
+                        {{-- Category Overlay Badge --}}
+                        <span class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[9px] px-1.5 py-0.5 rounded font-semibold tracking-wide"
+                              x-text="product.category_name"></span>
+
                         {{-- Stock Badge --}}
-                        <template x-if="product.stock <= product.min_stock">
-                            <span class="absolute top-2 right-2 text-[10px] px-1.5 py-0.5 rounded-full bg-red-500 text-white font-medium">Stok Rendah</span>
-                        </template>
+                        <span :class="product.stock <= product.min_stock ? 'bg-red-500 text-white' : 'bg-primary-100 text-primary-700'"
+                              class="absolute bottom-2 left-2 text-[10px] px-1.5 py-0.5 rounded-full font-semibold"
+                              x-text="'Stok: ' + formatNumber(product.stock) + ' ' + product.sell_unit_symbol"></span>
+
                         <template x-if="!product.is_active">
                             <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
                                 <span class="text-xs text-white font-medium bg-black/60 px-2 py-1 rounded">Nonaktif</span>
                             </div>
                         </template>
                     </div>
-                    <div class="p-3">
-                        <p class="text-xs text-gray-400 mb-0.5" x-text="product.category_name"></p>
-                        <p class="text-sm font-semibold text-dark leading-tight line-clamp-2 mb-1" x-text="product.name"></p>
-                        <p class="text-sm font-bold text-primary-600" x-text="formatRupiah(product.selling_price)"></p>
-                        <p class="text-xs text-gray-400 mt-1" x-text="'Stok: ' + formatNumber(product.stock) + ' ' + product.sell_unit_symbol"></p>
+                    <div class="p-3 space-y-1">
+                        <h4 class="text-xs font-bold text-dark line-clamp-2 leading-tight h-8" x-text="product.name"></h4>
+                        <p class="text-sm font-extrabold text-primary-600" x-text="formatRupiah(product.selling_price)"></p>
                     </div>
                 </a>
             </template>
