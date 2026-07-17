@@ -68,7 +68,7 @@
                      class="relative border-2 border-dashed rounded-xl p-5 flex flex-col items-center justify-center transition-all duration-200"
                      :class="dragging ? 'border-primary-500 bg-primary-50/20' : 'border-gray-200 hover:border-primary-400 bg-white/40'">
                      
-                     <input type="file" name="image" x-ref="fileInput" accept="image/*" class="hidden"
+                     <input type="file" name="image" id="main-file-input" x-ref="fileInput" accept="image/*" class="hidden"
                             @change="handleFile($event.target.files[0])">
                      
                      <div class="text-center cursor-pointer py-3 w-full" @click="$refs.fileInput.click()">
@@ -351,6 +351,26 @@
              </div>
         </div>
 
+        {{-- Floating add button --}}
+        <div x-show="showFloatingAddButton" 
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 translate-y-10 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 translate-y-10 scale-95"
+             class="fixed bottom-24 right-5 z-40"
+             style="display: none;">
+            <button type="button" 
+                    @click="document.getElementById('main-file-input').click()"
+                    class="w-12 h-12 rounded-full bg-primary-600 hover:bg-primary-700 text-white flex items-center justify-center shadow-lg active:scale-90 transition-all transform hover:-translate-y-0.5 duration-200"
+                    title="Unggah Gambar Baru">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                </svg>
+            </button>
+        </div>
+
     </div>
 </x-app-layout><script>
 // Global bridge helper to open label manager from lightbox preview
@@ -377,6 +397,7 @@ document.addEventListener('alpine:init', () => {
         items: initialItems,
         nextPageUrl: nextPageUrl,
         loading: false,
+        showFloatingAddButton: false,
 
         showUsageModal: false,
         activeUsages: [],
@@ -393,6 +414,8 @@ document.addEventListener('alpine:init', () => {
         },
 
         checkScroll() {
+            this.showFloatingAddButton = window.scrollY > 120;
+
             if (this.loading || !this.nextPageUrl) return;
 
             // Trigger when scrolling within 250px of the page bottom
