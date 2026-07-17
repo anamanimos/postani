@@ -5,23 +5,25 @@
 
     <div class="pb-28 space-y-3" x-data="productList()" @scroll.window="checkScroll()">
 
-        {{-- Sticky Category Filter Chips (fixed under header) --}}
+        {{-- Sticky Category Filter Chips (fixed under header when scrolled) --}}
         @if(isset($categories) && $categories->count() > 0)
-        <div class="fixed top-16 left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100/80 px-3 py-2 overflow-x-auto scrollbar-hide">
-            <div class="max-w-lg mx-auto flex gap-1.5 whitespace-nowrap">
+        <div class="sticky top-[60px] z-20 -mx-3 px-3 py-2 transition-all duration-200 overflow-x-auto scrollbar-hide"
+             :class="isStickyCategory ? 'bg-white/90 backdrop-blur-md border-b border-gray-150 shadow-sm' : 'bg-transparent border-transparent'">
+            <div class="flex gap-1.5 whitespace-nowrap">
                 <a href="{{ route('products.index', ['search' => request('search')]) }}"
-                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all inline-block flex-shrink-0 {{ !request('category') ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all inline-block flex-shrink-0"
+                    :class="!activeCategory ? 'bg-primary-600 text-white shadow-md' : (isStickyCategory ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-white/85 border border-gray-200/50 text-gray-600 shadow-sm')">
                     Semua
                 </a>
                 @foreach($categories as $cat)
                 <a href="{{ route('products.index', ['category' => $cat->id, 'search' => request('search')]) }}"
-                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all inline-block flex-shrink-0 {{ request('category') == $cat->id ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all inline-block flex-shrink-0"
+                    :class="activeCategory == '{{ $cat->id }}' ? 'bg-primary-600 text-white shadow-md' : (isStickyCategory ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-white/85 border border-gray-200/50 text-gray-600 shadow-sm')">
                     {{ $cat->name }}
                 </a>
                 @endforeach
             </div>
         </div>
-        <div class="pt-12"></div>
         @endif
 
         {{-- Active Search Indicator --}}
@@ -176,6 +178,7 @@
                 searchQuery: '{{ request('search', '') }}',
                 activeSearch: '{{ request('search', '') }}',
                 activeCategory: '{{ request('category', '') }}',
+                isStickyCategory: false,
 
                 get clearSearchUrl() {
                     let params = new URLSearchParams(window.location.search);
@@ -185,6 +188,8 @@
                 },
 
                 checkScroll() {
+                    this.isStickyCategory = window.scrollY > 20;
+
                     if (this.loading || !this.nextPageUrl) return;
 
                     const threshold = 300;
