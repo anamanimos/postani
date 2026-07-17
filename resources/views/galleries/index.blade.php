@@ -5,7 +5,20 @@
         </div>
     </x-slot>
 
-    <div class="py-5 pb-24 space-y-5" x-data="galleryManager()">
+    <div class="py-5 pb-24 space-y-5" 
+         x-data="galleryManager({
+             initialItems: {!! json_encode($galleries->map(fn($g) => [
+                 'id' => $g->id,
+                 'filepath' => $g->filepath,
+                 'url' => asset('storage/' . $g->filepath),
+                 'filename' => $g->filename,
+                 'labels' => $g->labels->pluck('name'),
+                 'is_used' => $g->is_used,
+                 'usages' => $g->usages
+             ])) !!},
+             nextPageUrl: '{{ $galleries->nextPageUrl() }}'
+         })"
+         @scroll.window.debounce.100ms="checkScroll()">
 
         {{-- Upload Section --}}
         <div class="glass-card p-4">
@@ -129,30 +142,28 @@
             </div>
         @else
             <div class="grid grid-cols-3 gap-[2px] -mx-3 overflow-hidden bg-gray-200">
-                @foreach($galleries as $gallery)
+                <template x-for="(gallery, index) in items" :key="gallery.id">
                     <div class="aspect-square bg-white relative group overflow-hidden cursor-pointer"
-                         onclick="openGalleryPreview({{ $loop->index }})">
+                         @click="openGalleryPreview(index)">
                         {{-- Image Element --}}
-                        <img src="{{ asset('storage/' . $gallery->filepath) }}" 
+                        <img :src="gallery.url" 
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
-                             alt="{{ $gallery->filename }}"
+                             :alt="gallery.filename"
                              loading="lazy">
 
                         {{-- Labels at Top-Left --}}
-                        @if($gallery->labels->isNotEmpty())
+                        <template x-if="gallery.labels && gallery.labels.length > 0">
                             <div class="absolute top-1.5 left-1.5 z-10 flex flex-wrap gap-1 max-w-[75%] pointer-events-none">
-                                @foreach($gallery->labels as $label)
-                                    <span class="bg-black/60 text-white rounded px-1.5 py-0.5 text-[8px] font-semibold truncate max-w-[60px] block shadow-sm" title="{{ $label->name }}">
-                                        {{ $label->name }}
-                                    </span>
-                                @endforeach
+                                <template x-for="label in gallery.labels">
+                                    <span class="bg-black/60 text-white rounded px-1.5 py-0.5 text-[8px] font-semibold truncate max-w-[60px] block shadow-sm animate-fade-in" x-text="label" :title="label"></span>
+                                </template>
                             </div>
-                        @endif
+                        </template>
 
                         {{-- Top-Right Checkmark (If Used) --}}
-                        @if($gallery->is_used)
+                        <template x-if="gallery.is_used">
                             <div class="absolute top-1.5 right-1.5 z-10" @click.stop>
-                                <button @click="openUsageModal({{ json_encode($gallery->usages) }}, '{{ addslashes($gallery->filename) }}')" type="button" 
+                                <button @click="openUsageModal(gallery.usages, gallery.filename)" type="button" 
                                         title="Gambar ini sedang digunakan. Klik untuk detail."
                                         class="w-5 h-5 rounded-full bg-green-500 text-white flex items-center justify-center shadow-md active:scale-90 transition-transform">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,18 +171,16 @@
                                     </svg>
                                 </button>
                             </div>
-                        @endif
+                        </template>
 
                         {{-- Bottom Overlay (visible on hover) --}}
                         <div @click.stop class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent p-1.5 pt-6 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            <span class="text-[9px] font-medium text-white truncate max-w-[55%]" title="{{ $gallery->filename }}">
-                                {{ $gallery->filename }}
-                            </span>
+                            <span class="text-[9px] font-medium text-white truncate max-w-[55%]" x-text="gallery.filename" :title="gallery.filename"></span>
                             
                             <div class="flex items-center gap-1">
                                 {{-- Edit label button --}}
                                 <button type="button" 
-                                        @click="openLabelModal({{ $gallery->id }}, {{ json_encode($gallery->labels->pluck('name')) }}, '{{ addslashes($gallery->filename) }}')"
+                                        @click="openLabelModal(gallery.id, gallery.labels, gallery.filename)"
                                         class="text-white hover:text-yellow-300 transition-colors active:scale-90 transform p-0.5" title="Kelola Label">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.5 20.5L18 12l-6-6-8.5 8.5a2.12 2.12 0 000 3l3 3a2.12 2.12 0 003 0zM7 7h.01"/>
@@ -179,24 +188,26 @@
                                 </button>
 
                                 {{-- Delete action --}}
-                                @if(!$gallery->is_used)
-                                    <form action="{{ route('galleries.destroy', $gallery) }}" method="POST" 
-                                          class="confirm-delete inline-flex" data-confirm="Yakin ingin menghapus gambar ini dari galeri?">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-white hover:text-red-400 transition-colors active:scale-90 transform p-0.5">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                        </button>
-                                    </form>
-                                @else
+                                <template x-if="!gallery.is_used">
+                                    <button type="button" @click="deleteItem(gallery.id)" 
+                                            class="text-white hover:text-red-400 transition-colors active:scale-90 transform p-0.5">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </template>
+                                <template x-if="gallery.is_used">
                                     <span class="text-[10px] text-gray-400 cursor-not-allowed p-0.5" title="Gambar ini terkunci karena sedang digunakan">🔒</span>
-                                @endif
+                                </template>
                             </div>
                         </div>
                     </div>
-                @endforeach
+                </template>
+            </div>
+
+            {{-- Loading spinner --}}
+            <div x-show="loading" class="py-6 flex justify-center" style="display: none;">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
             </div>
         @endif
 
@@ -340,25 +351,10 @@
         </div>
 
     </div>
-</x-app-layout>
-
-<script>
-// Build array of galleries for lightbox navigation
-const galleryItems = [
-    @foreach($galleries as $gallery)
-        {
-            id: {{ $gallery->id }},
-            url: '{{ asset('storage/' . $gallery->filepath) }}',
-            filename: '{{ addslashes($gallery->filename) }}',
-            labels: {!! json_encode($gallery->labels->pluck('name')) !!},
-            is_used: {{ $gallery->is_used ? 'true' : 'false' }}
-        },
-    @endforeach
-];
-
-// Global bridge helpers for lightbox actions
+</x-app-layout><script>
+// Global bridge helper to open label manager from lightbox preview
 window.triggerLabelModal = function(id, labels, filename) {
-    const el = document.querySelector('[x-data="galleryManager()"]');
+    const el = document.querySelector('[x-data^="galleryManager"]');
     if (el) {
         const alpine = Alpine.$data(el);
         alpine.openLabelModal(id, labels, filename);
@@ -366,23 +362,21 @@ window.triggerLabelModal = function(id, labels, filename) {
     }
 };
 
-window.triggerDeleteGallery = function(actionUrl, token) {
-    if (confirm("Yakin ingin menghapus gambar ini dari galeri?")) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = actionUrl;
-        form.innerHTML = `
-            <input type="hidden" name="_token" value="${token}">
-            <input type="hidden" name="_method" value="DELETE">
-        `;
-        document.body.appendChild(form);
-        form.submit();
+window.triggerDeleteGallery = function(id) {
+    const el = document.querySelector('[x-data^="galleryManager"]');
+    if (el) {
+        const alpine = Alpine.$data(el);
+        alpine.deleteItem(id);
     }
 };
 
-// Alpine gallery manager component
+// Alpine gallery manager component with infinite scroll pagination
 document.addEventListener('alpine:init', () => {
-    Alpine.data('galleryManager', () => ({
+    Alpine.data('galleryManager', ({ initialItems, nextPageUrl }) => ({
+        items: initialItems,
+        nextPageUrl: nextPageUrl,
+        loading: false,
+
         showUsageModal: false,
         activeUsages: [],
         activeFilename: '',
@@ -393,6 +387,72 @@ document.addEventListener('alpine:init', () => {
         activeGalleryLabels: [],
         newLabelInput: '',
         isSavingLabels: false,
+
+        init() {
+        },
+
+        checkScroll() {
+            if (this.loading || !this.nextPageUrl) return;
+
+            // Trigger when scrolling within 250px of the page bottom
+            const threshold = 250;
+            const scrollPosition = window.innerHeight + window.scrollY;
+            const documentHeight = document.documentElement.scrollHeight;
+
+            if (documentHeight - scrollPosition < threshold) {
+                this.loadMore();
+            }
+        },
+
+        loadMore() {
+            if (this.loading || !this.nextPageUrl) return;
+            this.loading = true;
+
+            fetch(this.nextPageUrl, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.items.push(...data.data);
+                this.nextPageUrl = data.next_page_url;
+                this.loading = false;
+            })
+            .catch(err => {
+                console.error(err);
+                this.loading = false;
+            });
+        },
+
+        deleteItem(id) {
+            if (confirm("Yakin ingin menghapus gambar ini dari galeri?")) {
+                closeGalleryPreview(); // Close lightbox if open
+                
+                fetch(`/galleries/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ _method: 'DELETE' })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        this.items = this.items.filter(item => item.id !== id);
+                    } else {
+                        alert(data.message || 'Gagal menghapus gambar.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Terjadi kesalahan saat menghapus gambar.');
+                });
+            }
+        },
 
         openUsageModal(usages, filename) {
             this.activeUsages = usages;
@@ -459,7 +519,10 @@ let currentPreviewIndex = -1;
 
 function openGalleryPreview(index) {
     currentPreviewIndex = index;
-    const item = galleryItems[index];
+    const el = document.querySelector('[x-data^="galleryManager"]');
+    if (!el) return;
+    const alpine = Alpine.$data(el);
+    const item = alpine.items[index];
     if (!item) return;
 
     // Remove existing lightbox if any
@@ -474,10 +537,9 @@ function openGalleryPreview(index) {
     // Determine label pills html
     const labelPills = item.labels.map(l => `<span style="background:rgba(22,163,74,0.3);color:#fff;font-size:9px;padding:2px 8px;border-radius:999px;font-weight:600;margin-right:4px;">${l}</span>`).join('');
     
-    const token = '{{ csrf_token() }}';
     const deleteButtonHtml = item.is_used 
         ? `<span style="color:rgba(255,255,255,0.45);font-size:10px;font-weight:600;display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.1);padding:4px 10px;border-radius:999px;">🔒 Terkunci</span>`
-        : `<button onclick="window.triggerDeleteGallery('/galleries/${item.id}', '${token}')" style="background:rgba(239,68,68,0.25);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.4)'" onmouseout="this.style.background='rgba(239,68,68,0.25)'">🗑️ Hapus</button>`;
+        : `<button onclick="window.triggerDeleteGallery(${item.id})" style="background:rgba(239,68,68,0.25);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.4)'" onmouseout="this.style.background='rgba(239,68,68,0.25)'">🗑️ Hapus</button>`;
 
     const labelButtonHtml = `<button onclick="window.triggerLabelModal(${item.id}, ${JSON.stringify(item.labels).replace(/"/g, '&quot;')}, '${item.filename.replace(/'/g, "\\'")}')" style="background:rgba(234,179,8,0.25);border:1px solid rgba(234,179,8,0.4);color:#fde047;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;transition:background 0.2s;" onmouseover="this.style.background='rgba(234,179,8,0.4)'" onmouseout="this.style.background='rgba(234,179,8,0.25)'">🏷️ Label</button>`;
 
@@ -531,10 +593,14 @@ function openGalleryPreview(index) {
 }
 
 function navigateGalleryPreview(direction) {
-    if (galleryItems.length <= 1) return;
+    const el = document.querySelector('[x-data^="galleryManager"]');
+    if (!el) return;
+    const alpine = Alpine.$data(el);
+    if (alpine.items.length <= 1) return;
+    
     let newIndex = currentPreviewIndex + direction;
-    if (newIndex >= galleryItems.length) newIndex = 0;
-    if (newIndex < 0) newIndex = galleryItems.length - 1;
+    if (newIndex >= alpine.items.length) newIndex = 0;
+    if (newIndex < 0) newIndex = alpine.items.length - 1;
     openGalleryPreview(newIndex);
 }
 
@@ -562,4 +628,3 @@ if (!document.getElementById('gallery-lightbox-styles')) {
     document.head.appendChild(style);
 }
 </script>
-

@@ -41,7 +41,23 @@ class GalleryController extends Controller
             });
         }
 
-        $galleries = $query->latest()->get();
+        $galleries = $query->latest()->paginate(18)->withQueryString();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'data' => $galleries->map(fn($g) => [
+                    'id' => $g->id,
+                    'filepath' => $g->filepath,
+                    'url' => asset('storage/' . $g->filepath),
+                    'filename' => $g->filename,
+                    'labels' => $g->labels->pluck('name'),
+                    'is_used' => $g->is_used,
+                    'usages' => $g->usages
+                ]),
+                'next_page_url' => $galleries->nextPageUrl(),
+            ]);
+        }
+
         $allLabels = \App\Models\Label::orderBy('name')->get();
 
         return view('galleries.index', compact('galleries', 'allLabels'));
