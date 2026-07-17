@@ -7,15 +7,15 @@
 
         {{-- Sticky Category Filter Chips (fixed under header) --}}
         @if(isset($categories) && $categories->count() > 0)
-        <div class="fixed top-16 left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100/80 px-3 py-2">
-            <div class="max-w-lg mx-auto flex flex-wrap gap-1.5">
+        <div class="fixed top-16 left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100/80 px-3 py-2 overflow-x-auto scrollbar-hide">
+            <div class="max-w-lg mx-auto flex gap-1.5 whitespace-nowrap">
                 <a href="{{ route('products.index', ['search' => request('search')]) }}"
-                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all {{ !request('category') ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all inline-block flex-shrink-0 {{ !request('category') ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
                     Semua
                 </a>
                 @foreach($categories as $cat)
                 <a href="{{ route('products.index', ['category' => $cat->id, 'search' => request('search')]) }}"
-                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all {{ request('category') == $cat->id ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all inline-block flex-shrink-0 {{ request('category') == $cat->id ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
                     {{ $cat->name }}
                 </a>
                 @endforeach
