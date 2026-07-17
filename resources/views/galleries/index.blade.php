@@ -1,7 +1,28 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between w-full">
             <h2 class="text-lg font-bold text-dark">Galeri Media</h2>
+            
+            {{-- Floating Label Filter Dropdown in Header --}}
+            <div class="relative">
+                <select onchange="window.location.href = this.value" 
+                        class="appearance-none bg-white/80 backdrop-blur-md border border-gray-200/80 rounded-full pl-3 pr-8 py-1.5 text-xs font-semibold text-gray-700 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer">
+                    <option value="{{ route('galleries.index', ['filter' => request('filter'), 'search' => request('search'), 'label' => '']) }}">
+                        Semua Label
+                    </option>
+                    @foreach($allLabels as $lbl)
+                        <option value="{{ route('galleries.index', ['filter' => request('filter'), 'search' => request('search'), 'label' => $lbl->name]) }}"
+                                {{ request('label') == $lbl->name ? 'selected' : '' }}>
+                            {{ $lbl->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-gray-500">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+            </div>
         </div>
     </x-slot>
 
@@ -90,17 +111,7 @@
 
                 <input type="hidden" name="search" value="{{ request('search') }}">
 
-                {{-- Label Filter dropdown --}}
-                <div class="relative">
-                    <select name="label" class="form-input-glass text-xs" onchange="this.form.submit()">
-                        <option value="">-- Semua Label --</option>
-                        @foreach($allLabels as $lbl)
-                            <option value="{{ $lbl->name }}" {{ request('label') == $lbl->name ? 'selected' : '' }}>
-                                Label: {{ $lbl->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <input type="hidden" name="label" value="{{ request('label') }}">
 
                 {{-- Status Tabs --}}
                 <div class="flex bg-gray-100/80 p-0.5 rounded-lg text-[11px] font-semibold">
