@@ -3,7 +3,7 @@
         <h2 class="text-lg font-bold text-dark">Kasir Jual Barang</h2>
     </x-slot>
 
-    <div class="px-4 py-3 pb-24 max-w-lg mx-auto" x-data="posSystem()">
+    <div class="py-3 pb-24 max-w-lg mx-auto" x-data="posSystem()">
         {{-- Search Input --}}
         <div class="relative mb-4">
             <div class="input-group-solid">
