@@ -86,10 +86,10 @@
                   style="scrollbar-width: none; -ms-overflow-style: none;">
                   
                   <!-- Spacer Start -->
-                  <div class="w-[2%] shrink-0"></div>
+                  <div class="shrink-0" style="width: 2%"></div>
                   
                   {{-- Slide 1: Penjualan Hari Ini --}}
-                  <div class="w-[96%] shrink-0 snap-center px-2">
+                  <div class="shrink-0 snap-center px-2" style="width: 96%">
                       <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-emerald-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                           <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-emerald-500/10 blur-xl"></div>
                           <div class="flex items-center justify-between mb-3">
@@ -104,7 +104,7 @@
                   </div>
 
                   {{-- Slide 2: Transaksi Hari Ini --}}
-                  <div class="w-[96%] shrink-0 snap-center px-2">
+                  <div class="shrink-0 snap-center px-2" style="width: 96%">
                       <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-blue-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                           <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-blue-500/10 blur-xl"></div>
                           <div class="flex items-center justify-between mb-3">
@@ -119,7 +119,7 @@
                   </div>
 
                   {{-- Slide 3: Total Piutang --}}
-                  <div class="w-[96%] shrink-0 snap-center px-2">
+                  <div class="shrink-0 snap-center px-2" style="width: 96%">
                       <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-orange-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                           <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-orange-500/10 blur-xl"></div>
                           <div class="flex items-center justify-between mb-3">
@@ -134,7 +134,7 @@
                   </div>
 
                   {{-- Slide 4: Total Hutang --}}
-                  <div class="w-[96%] shrink-0 snap-center px-2">
+                  <div class="shrink-0 snap-center px-2" style="width: 96%">
                       <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-red-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                           <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-red-500/10 blur-xl"></div>
                           <div class="flex items-center justify-between mb-3">
@@ -149,7 +149,7 @@
                   </div>
                   
                   <!-- Spacer End -->
-                  <div class="w-[2%] shrink-0"></div>
+                  <div class="shrink-0" style="width: 2%"></div>
              </div>
 
              <!-- Indicator Dots -->
