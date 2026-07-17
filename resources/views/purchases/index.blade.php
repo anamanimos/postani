@@ -1,11 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="text-lg font-bold text-dark">Riwayat Pembelian</h2>
-            <a href="{{ route('purchases.create') }}" class="btn-primary flex items-center gap-2 text-xs py-2 px-4 rounded-full">
-                <span>➕ Beli Barang</span>
-            </a>
-        </div>
+        <h2 class="text-lg font-bold text-dark">Riwayat Pembelian</h2>
     </x-slot>
 
     <div class="py-5 pb-24 space-y-4">
@@ -62,6 +57,20 @@
             {{ $purchases->appends(request()->query())->links() }}
         </div>
         @endif
+        
+        {{-- Floating add button (placed at bottom-24) --}}
+        <div class="fixed bottom-24 left-0 right-0 z-40 px-5 pointer-events-none">
+            <div class="max-w-lg mx-auto flex justify-end">
+                <a href="{{ route('purchases.create') }}" 
+                   class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto"
+                   title="Beli Barang Baru">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
     </div>
 </x-app-layout>
 
