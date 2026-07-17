@@ -14,7 +14,7 @@ class GalleryController extends Controller
     /**
      * Display a listing of the gallery items.
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|JsonResponse
     {
         $query = Gallery::with(['products', 'purchases', 'labels']);
 
