@@ -7,7 +7,7 @@
 
     <div class="py-5 pb-24 space-y-5" 
          x-data="galleryManager({
-             initialItems: {!! json_encode($galleries->map(fn($g) => [
+             initialItems: {{ json_encode($galleries->map(fn($g) => [
                  'id' => $g->id,
                  'filepath' => $g->filepath,
                  'url' => asset('storage/' . $g->filepath),
@@ -15,7 +15,7 @@
                  'labels' => $g->labels->pluck('name'),
                  'is_used' => $g->is_used,
                  'usages' => $g->usages
-             ])) !!},
+             ])) }},
              nextPageUrl: '{{ $galleries->nextPageUrl() }}'
          })"
          @scroll.window.debounce.100ms="checkScroll()">
