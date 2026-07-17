@@ -77,8 +77,14 @@
                     <div class="py-3 flex items-center justify-between gap-3">
                         <div class="flex-1">
                             <h4 class="text-sm font-semibold text-dark leading-tight" x-text="item.name"></h4>
-                            <p class="text-xs text-gray-400 mt-0.5" x-text="formatRupiah(item.selling_price) + ' / ' + item.sell_unit"></p>
-                            <p class="text-xs font-semibold text-primary-600 mt-1" x-text="formatRupiah(item.selling_price * item.quantity)"></p>
+                            <div class="flex items-center gap-1.5 mt-1 text-xs">
+                                <span class="text-gray-400 font-medium">Harga: Rp</span>
+                                <input type="number" step="any" x-model.number="item.selling_price" 
+                                       class="w-24 px-2 py-0.5 rounded-lg border border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-bold text-dark bg-white/80 transition-colors"
+                                       @input="validatePrice(idx)">
+                                <span class="text-gray-400">/ <span x-text="item.sell_unit"></span></span>
+                            </div>
+                            <p class="text-xs font-semibold text-primary-600 mt-1" x-text="formatRupiah((item.selling_price || 0) * item.quantity)"></p>
                         </div>
                         
                         <div class="flex items-center gap-3">
@@ -242,16 +248,36 @@
                     }
                 },
 
+                validatePrice(idx) {
+                    const item = this.cart[idx];
+                    if (item.selling_price === '' || isNaN(item.selling_price)) {
+                        return;
+                    }
+                    if (item.selling_price < 0) {
+                        item.selling_price = 0;
+                    }
+                },
+
                 cartCount() {
                     return this.cart.reduce((sum, item) => sum + item.quantity, 0);
                 },
 
                 totalCart() {
-                    return this.cart.reduce((sum, item) => sum + (item.selling_price * item.quantity), 0);
+                    return this.cart.reduce((sum, item) => sum + ((item.selling_price || 0) * item.quantity), 0);
                 },
 
                 submitSale() {
                     if (this.cart.length === 0) return;
+
+                    // Validate that all items have valid prices
+                    for (let i = 0; i < this.cart.length; i++) {
+                        const item = this.cart[i];
+                        if (item.selling_price === '' || isNaN(item.selling_price) || item.selling_price < 0) {
+                            alert(`Harga jual untuk ${item.name} tidak valid!`);
+                            return;
+                        }
+                    }
+
                     if (this.paymentMethod === 'credit' && !this.customerId) {
                         alert('Silakan pilih pelanggan untuk transaksi Hutang/Kredit!');
                         return;
