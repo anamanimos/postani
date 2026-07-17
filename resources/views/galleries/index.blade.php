@@ -3,26 +3,20 @@
         <div class="flex items-center justify-between w-full">
             <h2 class="text-lg font-bold text-dark">Galeri Media</h2>
             
-            {{-- Floating Label Filter Dropdown in Header --}}
-            <div class="relative">
-                <select onchange="window.location.href = this.value" 
-                        class="appearance-none bg-white/80 backdrop-blur-md border border-gray-200/80 rounded-full pl-3 pr-8 py-1.5 text-xs font-semibold text-gray-700 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer">
-                    <option value="{{ route('galleries.index', ['filter' => request('filter'), 'search' => request('search'), 'label' => '']) }}">
-                        Semua Label
-                    </option>
-                    @foreach($allLabels as $lbl)
-                        <option value="{{ route('galleries.index', ['filter' => request('filter'), 'search' => request('search'), 'label' => $lbl->name]) }}"
-                                {{ request('label') == $lbl->name ? 'selected' : '' }}>
-                            {{ $lbl->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <div class="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-gray-500">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </div>
-            </div>
+            {{-- Floating Label Filter Button in Header --}}
+            <button type="button" @click="$dispatch('open-label-filter-modal')"
+                    class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 relative pointer-events-auto"
+                    title="Filter Label">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.5 9.5a2.25 2.25 0 003.182 0l4.318-4.318a2.25 2.25 0 000-3.182l-9.5-9.5A2.25 2.25 0 009.568 3z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6h.008v.008H6V6z"/>
+                </svg>
+                
+                {{-- Active indicator dot --}}
+                @if(request('label'))
+                    <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-accent-500 shadow-sm"></span>
+                @endif
+            </button>
         </div>
     </x-slot>
 
@@ -40,7 +34,8 @@
              nextPageUrl: '{{ $galleries->nextPageUrl() }}',
              openFloatingSearch: {{ request('search') ? 'true' : 'false' }}
          })"
-         @scroll.window.debounce.100ms="checkScroll()">
+         @scroll.window.debounce.100ms="checkScroll()"
+         @open-label-filter-modal.window="showLabelFilterModal = true">
 
         {{-- Upload Section --}}
         <div class="glass-card p-4">
@@ -353,6 +348,69 @@
              </div>
         </div>
 
+        <!-- Modal Filter Label -->
+        <div x-show="showLabelFilterModal" 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             style="display: none;"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+             
+             {{-- Backdrop --}}
+             <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="showLabelFilterModal = false"></div>
+             
+             {{-- Modal content wrapper (aligned to bottom for mobile look) --}}
+             <div class="flex items-end justify-center min-h-screen p-4 sm:items-center">
+                  <div class="bg-white rounded-t-2xl sm:rounded-2xl max-w-sm w-full p-5 shadow-2xl relative z-10 transform transition-all duration-300 ease-out border border-gray-150 max-h-[70vh] flex flex-col"
+                       x-show="showLabelFilterModal"
+                       x-transition:enter="transition ease-out duration-300 transform"
+                       x-transition:enter-start="translate-y-full sm:scale-95"
+                       x-transition:enter-end="translate-y-0 sm:scale-100"
+                       x-transition:leave="transition ease-in duration-200 transform"
+                       x-transition:leave-start="translate-y-0 sm:scale-100"
+                       x-transition:leave-end="translate-y-full sm:scale-95">
+                       
+                       <div class="flex justify-between items-center pb-3 border-b border-gray-100 mb-4 flex-shrink-0">
+                            <h3 class="text-sm font-bold text-dark">Filter Berdasarkan Label</h3>
+                            <button @click="showLabelFilterModal = false" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                       </div>
+                       
+                       {{-- Labels List (scrollable) --}}
+                       <div class="space-y-1.5 overflow-y-auto flex-1 pr-1">
+                            {{-- Option: Semua Label --}}
+                            <a href="{{ route('galleries.index', ['filter' => request('filter'), 'search' => request('search'), 'label' => '']) }}"
+                               class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ !request('label') ? 'bg-primary-50 text-primary-600 border border-primary-100' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent' }}">
+                                <span>Semua Label</span>
+                                <span class="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-bold">
+                                     {{ \App\Models\Gallery::count() }}
+                                </span>
+                            </a>
+                            
+                            {{-- Options: Specific Labels --}}
+                            @foreach($allLabels as $lbl)
+                                <a href="{{ route('galleries.index', ['filter' => request('filter'), 'search' => request('search'), 'label' => $lbl->name]) }}"
+                                   class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request('label') == $lbl->name ? 'bg-primary-50 text-primary-600 border border-primary-100' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent' }}">
+                                    <span class="flex items-center gap-1.5">
+                                         <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
+                                         {{ $lbl->name }}
+                                    </span>
+                                    <span class="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-bold">
+                                         {{ $lbl->galleries_count ?? $lbl->galleries()->count() }}
+                                    </span>
+                                </a>
+                            @endforeach
+                       </div>
+                  </div>
+             </div>
+        </div>
+
         {{-- Floating action buttons --}}
         {{-- 1. Floating add button (placed above search, bottom-40) --}}
         <div x-show="showFloatingAddButton" 
@@ -445,6 +503,7 @@ document.addEventListener('alpine:init', () => {
         openFloatingSearch: openFloatingSearch,
         activeFilter: '{{ request('filter') }}',
         activeLabel: '{{ request('label') }}',
+        showLabelFilterModal: false,
 
         showUsageModal: false,
         activeUsages: [],
