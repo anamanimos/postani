@@ -13,7 +13,7 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|JsonResponse
     {
         $query = Product::with(['category', 'buyUnit', 'sellUnit']);
 
@@ -21,12 +21,32 @@ class ProductController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
+        // Support both 'category' and 'category_id' query params
+        $categoryId = $request->input('category', $request->input('category_id'));
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
         }
 
         $products = $query->orderBy('name')->paginate(15)->withQueryString();
         $categories = Category::orderBy('name')->get();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'data' => $products->map(fn($p) => [
+                    'id' => $p->id,
+                    'name' => $p->name,
+                    'selling_price' => (float) $p->selling_price,
+                    'stock' => (float) $p->stock,
+                    'min_stock' => (float) ($p->min_stock ?? 0),
+                    'is_active' => (bool) $p->is_active,
+                    'image' => $p->image,
+                    'category_name' => $p->category->name ?? 'Tanpa Kategori',
+                    'sell_unit_symbol' => $p->sellUnit->symbol ?? '',
+                    'show_url' => route('products.show', $p),
+                ]),
+                'next_page_url' => $products->nextPageUrl(),
+            ]);
+        }
 
         return view('products.index', compact('products', 'categories'));
     }
