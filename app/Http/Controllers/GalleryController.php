@@ -41,7 +41,20 @@ class GalleryController extends Controller
             });
         }
 
-        $galleries = $query->latest()->paginate(18)->withQueryString();
+        // Sorting
+        $sort = $request->input('sort', 'created_at');
+        $direction = $request->input('direction', 'desc');
+
+        if (!in_array($sort, ['filename', 'created_at'])) {
+            $sort = 'created_at';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
+
+        $query->orderBy($sort, $direction);
+
+        $galleries = $query->paginate(18)->withQueryString();
 
         if ($request->expectsJson()) {
             try {

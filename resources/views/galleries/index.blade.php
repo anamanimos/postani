@@ -85,7 +85,7 @@
         </div>
 
         {{-- Active Filters Indicator & Reset --}}
-        @if(request('search') || request('filter') || request('label'))
+        @if(request('search') || request('filter') || request('label') || (request('sort') && (request('sort') !== 'created_at' || request('direction') !== 'desc')))
             <div class="glass-card px-4 py-2.5 flex items-center justify-between text-xs font-semibold">
                 <div class="flex items-center gap-1 text-gray-500 flex-wrap">
                     <span>Filter Aktif:</span>
@@ -97,6 +97,9 @@
                     @endif
                     @if(request('label'))
                         <span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px]">Label: {{ request('label') }}</span>
+                    @endif
+                    @if(request('sort') && (request('sort') !== 'created_at' || request('direction') !== 'desc'))
+                        <span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px]">Urut: {{ request('sort') == 'filename' ? 'Nama' : 'Tanggal' }} ({{ request('direction') == 'asc' ? 'Asc' : 'Desc' }})</span>
                     @endif
                 </div>
                 <a href="{{ route('galleries.index') }}" 
@@ -435,6 +438,102 @@
              </div>
         </div>
 
+        <!-- Modal Urutkan (Sort) -->
+        <div x-show="showSortModal" 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             style="display: none;"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+             
+             {{-- Backdrop --}}
+             <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="showSortModal = false"></div>
+             
+             {{-- Modal content wrapper (aligned to bottom for mobile look) --}}
+             <div class="flex items-end justify-center min-h-screen p-4 sm:items-center">
+                  <div class="bg-white rounded-t-2xl sm:rounded-2xl max-w-sm w-full p-5 shadow-2xl relative z-10 transform transition-all duration-300 ease-out border border-gray-150 max-h-[70vh] flex flex-col"
+                       x-show="showSortModal"
+                       x-transition:enter="transition ease-out duration-300 transform"
+                       x-transition:enter-start="translate-y-full sm:scale-95"
+                       x-transition:enter-end="translate-y-0 sm:scale-100"
+                       x-transition:leave="transition ease-in duration-200 transform"
+                       x-transition:leave-start="translate-y-0 sm:scale-100"
+                       x-transition:leave-end="translate-y-full sm:scale-95">
+                       
+                       <div class="flex justify-between items-center pb-3 border-b border-gray-100 mb-4 flex-shrink-0">
+                            <h3 class="text-sm font-bold text-dark">Urutkan Berkas</h3>
+                            <button @click="showSortModal = false" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                       </div>
+                       
+                       {{-- Sorting Options --}}
+                       <div class="space-y-1.5 overflow-y-auto flex-1 pr-1">
+                            {{-- Option: Terbaru --}}
+                            @php
+                                $isTerbaru = (!request('sort') || (request('sort') === 'created_at' && request('direction') === 'desc'));
+                            @endphp
+                            <a href="{{ route('galleries.index', ['sort' => 'created_at', 'direction' => 'desc', 'filter' => request('filter'), 'search' => request('search'), 'label' => request('label')]) }}"
+                               class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isTerbaru ? 'bg-primary-50 text-primary-600 border border-primary-100' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent' }}">
+                                <span>Terbaru Upload</span>
+                                @if($isTerbaru)
+                                    <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                @endif
+                            </a>
+                            
+                            {{-- Option: Terlama --}}
+                            @php
+                                $isTerlama = (request('sort') === 'created_at' && request('direction') === 'asc');
+                            @endphp
+                            <a href="{{ route('galleries.index', ['sort' => 'created_at', 'direction' => 'asc', 'filter' => request('filter'), 'search' => request('search'), 'label' => request('label')]) }}"
+                               class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isTerlama ? 'bg-primary-50 text-primary-600 border border-primary-100' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent' }}">
+                                <span>Terlama Upload</span>
+                                @if($isTerlama)
+                                    <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                @endif
+                            </a>
+                            
+                            {{-- Option: Nama A-Z --}}
+                            @php
+                                $isNameAsc = (request('sort') === 'filename' && request('direction') === 'asc');
+                            @endphp
+                            <a href="{{ route('galleries.index', ['sort' => 'filename', 'direction' => 'asc', 'filter' => request('filter'), 'search' => request('search'), 'label' => request('label')]) }}"
+                               class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isNameAsc ? 'bg-primary-50 text-primary-600 border border-primary-100' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent' }}">
+                                <span>Nama (A - Z)</span>
+                                @if($isNameAsc)
+                                    <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                @endif
+                            </a>
+
+                            {{-- Option: Nama Z-A --}}
+                            @php
+                                $isNameDesc = (request('sort') === 'filename' && request('direction') === 'desc');
+                            @endphp
+                            <a href="{{ route('galleries.index', ['sort' => 'filename', 'direction' => 'desc', 'filter' => request('filter'), 'search' => request('search'), 'label' => request('label')]) }}"
+                               class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isNameDesc ? 'bg-primary-50 text-primary-600 border border-primary-100' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent' }}">
+                                <span>Nama (Z - A)</span>
+                                @if($isNameDesc)
+                                    <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                @endif
+                            </a>
+                       </div>
+                  </div>
+             </div>
+        </div>
+
         {{-- Floating action buttons --}}
         {{-- 1. Floating add button (placed above search, bottom-40) --}}
         <div x-show="showFloatingAddButton" 
@@ -501,7 +600,20 @@
         <div class="fixed top-16 left-0 right-0 z-40 px-5 pointer-events-none">
             <div class="max-w-lg mx-auto flex justify-end gap-2.5">
                 
-                {{-- 3. Floating status filter button (placed on the left of label, cycles: Semua -> Digunakan -> Belum Digunakan) --}}
+                {{-- 2. Floating sort button (placed on the left of status) --}}
+                <button type="button" @click="showSortModal = true"
+                        class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto relative"
+                        title="Urutkan Gambar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9M3 12h5M17 14v7m0 0l-3-3m3 3l3-3M21 10V3m0 0l-3 3m3-3l3 3"/>
+                    </svg>
+                    
+                    {{-- Active indicator dot (only show if not default created_at desc) --}}
+                    @if(request('sort') && (request('sort') !== 'created_at' || request('direction') !== 'desc'))
+                        <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-accent-500 shadow-sm animate-pulse"></span>
+                    @endif
+                </button>
+
                 {{-- 3. Floating status filter button (placed on the left of label) --}}
                 <button type="button" @click="showStatusFilterModal = true"
                         class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto relative"
@@ -566,6 +678,7 @@ document.addEventListener('alpine:init', () => {
         activeLabel: '{{ request('label') }}',
         showLabelFilterModal: false,
         showStatusFilterModal: false,
+        showSortModal: false,
 
         showUsageModal: false,
         activeUsages: [],
