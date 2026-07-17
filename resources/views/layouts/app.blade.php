@@ -216,8 +216,6 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        @stack('header_actions')
-                        
                         {{-- Profile Menu --}}
                         <div x-data="{ open: false }" class="relative">
                             <button @click="open = !open" class="w-9 h-9 rounded-xl bg-white/60 border border-white/40 flex items-center justify-center transition-all hover:bg-white/80">
