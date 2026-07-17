@@ -44,11 +44,39 @@
                 </div>
                 @endif
                 @if($purchase->invoice_image)
-                <div class="col-span-2 pt-1 border-t border-gray-100">
-                    <p class="text-gray-400 mb-1">Foto Nota Fisik</p>
-                    <a href="{{ asset('storage/' . $purchase->invoice_image) }}" target="_blank" class="block w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm active:scale-95 transition-transform">
-                        <img src="{{ asset('storage/' . $purchase->invoice_image) }}" alt="Foto Nota" class="w-full h-full object-cover">
-                    </a>
+                <div class="col-span-2 pt-2 border-t border-gray-100" x-data="{ imgPreviewOpen: false }">
+                    <p class="text-gray-400 mb-1.5 font-semibold">Foto Nota Fisik</p>
+                    
+                    {{-- Clickable full-width thumbnail --}}
+                    <div @click="imgPreviewOpen = true" 
+                         class="relative w-full h-48 rounded-xl overflow-hidden border border-gray-200 shadow-sm active:scale-[0.99] transition-all cursor-pointer group bg-gray-50 flex items-center justify-center">
+                        <img src="{{ asset('storage/' . $purchase->invoice_image) }}" alt="Foto Nota Fisik" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300">
+                        {{-- Hover Overlay --}}
+                        <div class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1">
+                            🔍 Klik untuk Memperbesar
+                        </div>
+                    </div>
+
+                    {{-- Alpine Lightbox Modal --}}
+                    <div x-show="imgPreviewOpen" 
+                         x-transition.opacity 
+                         class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+                         @click="imgPreviewOpen = false"
+                         @keydown.escape.window="imgPreviewOpen = false"
+                         style="display: none;">
+                        
+                        {{-- Close button --}}
+                        <button type="button" @click="imgPreviewOpen = false" 
+                                class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors text-lg z-50">
+                            ✕
+                        </button>
+                        
+                        {{-- Full size Image --}}
+                        <img src="{{ asset('storage/' . $purchase->invoice_image) }}" 
+                             alt="Detail Nota Fisik" 
+                             class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                             @click.stop>
+                    </div>
                 </div>
                 @endif
             </div>
