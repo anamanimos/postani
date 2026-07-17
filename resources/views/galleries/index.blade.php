@@ -84,38 +84,27 @@
             </form>
         </div>
 
-        {{-- Filter & Search --}}
-        <div class="glass-card p-4 space-y-3">
-            <form action="{{ route('galleries.index') }}" method="GET" class="space-y-3">
-                <input type="hidden" name="filter" value="{{ request('filter') }}">
-
-                <input type="hidden" name="search" value="{{ request('search') }}">
-
-                <input type="hidden" name="label" value="{{ request('label') }}">
-
-                {{-- Status Tabs --}}
-                <div class="flex bg-gray-100/80 p-0.5 rounded-lg text-[11px] font-semibold">
-                    <a href="{{ route('galleries.index', ['filter' => '', 'search' => request('search'), 'label' => request('label')]) }}" 
-                       class="flex-1 text-center py-1.5 rounded-md transition-all {{ request('filter') == '' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
-                        Semua
-                    </a>
-                    <a href="{{ route('galleries.index', ['filter' => 'used', 'search' => request('search'), 'label' => request('label')]) }}" 
-                       class="flex-1 text-center py-1.5 rounded-md transition-all {{ request('filter') == 'used' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
-                        Digunakan
-                    </a>
-                    <a href="{{ route('galleries.index', ['filter' => 'unused', 'search' => request('search'), 'label' => request('label')]) }}" 
-                       class="flex-1 text-center py-1.5 rounded-md transition-all {{ request('filter') == 'unused' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
-                        Belum Digunakan
-                    </a>
+        {{-- Active Filters Indicator & Reset --}}
+        @if(request('search') || request('filter') || request('label'))
+            <div class="glass-card px-4 py-2.5 flex items-center justify-between text-xs font-semibold">
+                <div class="flex items-center gap-1 text-gray-500 flex-wrap">
+                    <span>Filter Aktif:</span>
+                    @if(request('search'))
+                        <span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px]">Cari: "{{ request('search') }}"</span>
+                    @endif
+                    @if(request('filter'))
+                        <span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px]">{{ request('filter') == 'used' ? 'Digunakan' : 'Belum Digunakan' }}</span>
+                    @endif
+                    @if(request('label'))
+                        <span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px]">Label: {{ request('label') }}</span>
+                    @endif
                 </div>
-                
-                @if(request('search') || request('filter') || request('label'))
-                    <div class="flex justify-end">
-                        <a href="{{ route('galleries.index') }}" class="text-[10px] text-gray-400 hover:text-gray-600 underline">Reset Filter</a>
-                    </div>
-                @endif
-            </form>
-        </div>
+                <a href="{{ route('galleries.index') }}" 
+                   class="text-[11px] font-bold text-red-500 hover:text-red-700 transition-colors flex-shrink-0">
+                    Reset
+                </a>
+            </div>
+        @endif
 
         {{-- Gallery Grid --}}
         @if($galleries->isEmpty())
@@ -458,9 +447,53 @@
             </div>
         </div>
 
-        {{-- 3. Floating label filter button (placed at top-right, top-16) --}}
+        {{-- Floating action buttons (Top Right, top-16) --}}
         <div class="fixed top-16 left-0 right-0 z-40 px-5 pointer-events-none">
-            <div class="max-w-lg mx-auto flex justify-end">
+            <div class="max-w-lg mx-auto flex justify-end gap-2.5">
+                
+                {{-- 3. Floating status filter button (placed on the left of label, cycles: Semua -> Digunakan -> Belum Digunakan) --}}
+                @php
+                    $currentFilter = request('filter');
+                    if ($currentFilter == 'used') {
+                        $nextFilter = 'unused';
+                        $filterTitle = 'Filter: Digunakan';
+                    } elseif ($currentFilter == 'unused') {
+                        $nextFilter = '';
+                        $filterTitle = 'Filter: Belum Digunakan';
+                    } else {
+                        $nextFilter = 'used';
+                        $filterTitle = 'Filter: Semua';
+                    }
+                    $nextUrl = route('galleries.index', ['filter' => $nextFilter, 'search' => request('search'), 'label' => request('label')]);
+                @endphp
+                <a href="{{ $nextUrl }}"
+                   class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto relative"
+                   title="{{ $filterTitle }} (Klik untuk mengubah)">
+                    
+                    @if($currentFilter == 'used')
+                        {{-- Green check circle --}}
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    @elseif($currentFilter == 'unused')
+                        {{-- Orange warning circle --}}
+                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    @else
+                        {{-- Gray layout menu list icon --}}
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    @endif
+                    
+                    {{-- Active indicator dot --}}
+                    @if($currentFilter)
+                        <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-accent-500 shadow-sm animate-pulse"></span>
+                    @endif
+                </a>
+
+                {{-- 4. Floating label filter button (placed on the right) --}}
                 <button type="button" 
                         @click="showLabelFilterModal = true"
                         class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto relative"
