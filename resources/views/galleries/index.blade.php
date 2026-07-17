@@ -128,7 +128,7 @@
                 Tidak ada berkas gambar yang ditemukan.
             </div>
         @else
-            <div class="grid grid-cols-3 gap-[2px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-gray-200">
+            <div class="grid grid-cols-3 gap-[2px] -mx-3 overflow-hidden bg-gray-200">
                 @foreach($galleries as $gallery)
                     <div class="aspect-square bg-white relative group overflow-hidden cursor-pointer"
                          onclick="openGalleryPreview({{ $loop->index }})">
@@ -197,11 +197,6 @@
                         </div>
                     </div>
                 @endforeach
-            </div>
-
-            {{-- Pagination --}}
-            <div class="pt-4">
-                {{ $galleries->links() }}
             </div>
         @endif
 

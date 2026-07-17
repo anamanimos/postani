@@ -41,7 +41,7 @@ class GalleryController extends Controller
             });
         }
 
-        $galleries = $query->latest()->paginate(18)->withQueryString();
+        $galleries = $query->latest()->get();
         $allLabels = \App\Models\Label::orderBy('name')->get();
 
         return view('galleries.index', compact('galleries', 'allLabels'));
