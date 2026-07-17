@@ -77,16 +77,19 @@
              x-init="startAutoplay()"
              class="w-full relative select-none">
              
-             <!-- Scrollable snap-x Container (w-full width of viewport + negative margins, padded by 4% to snap-center first and last cards perfectly) -->
+              <!-- Scrollable snap-x Container (w-full width of viewport + negative margins, using spacer elements for cross-browser centering) -->
              <div x-ref="slider"
                   @scroll="updateActiveSlide()"
                   @touchstart="stopAutoplay()"
                   @touchend="startAutoplay()"
                   class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full py-2 -mx-3 no-scrollbar"
-                  style="scrollbar-width: none; -ms-overflow-style: none; padding-left: 4%; padding-right: 4%;">
+                  style="scrollbar-width: none; -ms-overflow-style: none;">
+                  
+                  <!-- Spacer Start -->
+                  <div class="w-[3%] shrink-0"></div>
                   
                   {{-- Slide 1: Penjualan Hari Ini --}}
-                  <div class="w-[92%] shrink-0 snap-center px-2">
+                  <div class="w-[94%] shrink-0 snap-center px-2">
                       <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-emerald-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                           <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-emerald-500/10 blur-xl"></div>
                           <div class="flex items-center justify-between mb-3">
@@ -101,7 +104,7 @@
                   </div>
 
                   {{-- Slide 2: Transaksi Hari Ini --}}
-                  <div class="w-[92%] shrink-0 snap-center px-2">
+                  <div class="w-[94%] shrink-0 snap-center px-2">
                       <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-blue-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                           <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-blue-500/10 blur-xl"></div>
                           <div class="flex items-center justify-between mb-3">
@@ -116,7 +119,7 @@
                   </div>
 
                   {{-- Slide 3: Total Piutang --}}
-                  <div class="w-[92%] shrink-0 snap-center px-2">
+                  <div class="w-[94%] shrink-0 snap-center px-2">
                       <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-orange-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                           <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-orange-500/10 blur-xl"></div>
                           <div class="flex items-center justify-between mb-3">
@@ -131,7 +134,7 @@
                   </div>
 
                   {{-- Slide 4: Total Hutang --}}
-                  <div class="w-[92%] shrink-0 snap-center px-2">
+                  <div class="w-[94%] shrink-0 snap-center px-2">
                       <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-red-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                           <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-red-500/10 blur-xl"></div>
                           <div class="flex items-center justify-between mb-3">
@@ -144,6 +147,9 @@
                           <p class="text-[10px] text-gray-400 mt-2">Tunggakan hutang pembelian ke supplier/tengkulak</p>
                       </div>
                   </div>
+                  
+                  <!-- Spacer End -->
+                  <div class="w-[3%] shrink-0"></div>
              </div>
 
              <!-- Indicator Dots -->
