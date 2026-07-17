@@ -766,6 +766,22 @@ function openGalleryPreview(index) {
 
     const labelButtonHtml = `<button onclick="window.triggerLabelModal(${item.id}, ${JSON.stringify(item.labels).replace(/"/g, '&quot;')}, '${item.filename.replace(/'/g, "\\'")}')" style="background:rgba(234,179,8,0.25);border:1px solid rgba(234,179,8,0.4);color:#fde047;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;transition:background 0.2s;" onmouseover="this.style.background='rgba(234,179,8,0.4)'" onmouseout="this.style.background='rgba(234,179,8,0.25)'">🏷️ Label</button>`;
 
+    // Determine usages html
+    let usagesHtml = '';
+    if (item.is_used && item.usages && item.usages.length > 0) {
+        const usagesList = item.usages.map(u => {
+            const url = u.edit_url || u.show_url || '#';
+            return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:10px;color:rgba(255,255,255,0.7);border-top:1px solid rgba(255,255,255,0.15);">
+                <span style="font-weight:600;margin-right:8px;">${u.type}</span>
+                <a href="${url}" style="color:#60a5fa;text-decoration:underline;font-weight:bold;word-break:break-all;max-width:70%;text-align:right;" target="_blank">${u.name}</a>
+            </div>`;
+        }).join('');
+        usagesHtml = `<div style="margin-top:6px;width:100%;border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;text-align:left;box-sizing:border-box;">
+            <div style="color:#fff;font-size:10px;font-weight:700;margin-bottom:4px;">📍 Terpakai di:</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">${usagesList}</div>
+        </div>`;
+    }
+
     lightbox.innerHTML = `
         <!-- Backdrop -->
         <div style="position:absolute;inset:0;background:#000;" onclick="closeGalleryPreview()"></div>
@@ -785,14 +801,18 @@ function openGalleryPreview(index) {
             ›
         </button>
 
-        <img src="${item.url}" alt="${item.filename}" style="max-width:92vw;max-height:70vh;object-fit:contain;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);position:relative;z-index:1;animation:lbScaleIn .3s ease .1s both;" onclick="event.stopPropagation()">
-        
-        <div style="position:relative;z-index:1;margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(255,255,255,0.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:16px;padding:12px 20px;border:1px solid rgba(255,255,255,0.1);max-width:80%;animation:lbScaleIn .3s ease .15s both;">
-            <span style="color:#fff;font-size:12px;font-weight:600;word-break:break-all;text-align:center;">${item.filename}</span>
-            ${labelPills ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:2px;">${labelPills}</div>` : ''}
-            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
-                ${labelButtonHtml}
-                ${deleteButtonHtml}
+        <!-- Card wrapper for Image and Details (width fits the image width) -->
+        <div style="display:inline-flex;flex-direction:column;align-items:stretch;max-width:92vw;position:relative;z-index:1;animation:lbScaleIn .3s ease .1s both;" onclick="event.stopPropagation()">
+            <img src="${item.url}" alt="${item.filename}" style="max-height:60vh;max-width:100%;object-fit:contain;border-radius:12px 12px 0 0;box-shadow:0 10px 30px rgba(0,0,0,0.5);display:block;">
+            
+            <div style="display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,0.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:0 0 12px 12px;padding:12px 20px;border:1px solid rgba(255,255,255,0.15);border-top:none;width:100%;box-sizing:border-box;">
+                <span style="color:#fff;font-size:12px;font-weight:600;word-break:break-all;text-align:center;">${item.filename}</span>
+                ${labelPills ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:2px;">${labelPills}</div>` : ''}
+                <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;">
+                    ${labelButtonHtml}
+                    ${deleteButtonHtml}
+                </div>
+                ${usagesHtml}
             </div>
         </div>
     `;
