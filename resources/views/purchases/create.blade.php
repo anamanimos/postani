@@ -362,7 +362,7 @@
                              <template x-if="imagePreview">
                                  <div class="relative w-full flex flex-col items-center justify-center py-1">
                                      <img :src="imagePreview" @click.stop="previewModalOpen = true" 
-                                          class="max-h-36 rounded-lg object-contain border border-gray-200 shadow-sm bg-white cursor-zoom-in hover:brightness-95 active:scale-95 transition-all duration-200"
+                                          class="w-full max-h-[300px] sm:max-h-[400px] rounded-lg object-contain border border-gray-200 shadow-sm bg-white cursor-zoom-in hover:brightness-95 active:scale-95 transition-all duration-200"
                                           title="Klik untuk memperbesar">
                                  </div>
                              </template>
