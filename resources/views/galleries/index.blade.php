@@ -1,6 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between w-full" x-data="{ showSearch: {{ request('search') ? 'true' : 'false' }} }">
+        <div class="flex items-center justify-between w-full" 
+             x-data="{ showSearch: {{ request('search') ? 'true' : 'false' }} }"
+             @open-header-search.window="showSearch = true; $nextTick(() => $refs.searchInput.focus())">
             <h2 class="text-lg font-bold text-dark" x-show="!showSearch">Galeri Media</h2>
             
             <button x-show="!showSearch" @click="showSearch = true; $nextTick(() => $refs.searchInput.focus())" class="text-gray-500 hover:text-dark p-1 rounded-lg transition-colors" title="Cari Gambar">
@@ -367,7 +369,28 @@
              </div>
         </div>
 
-        {{-- Floating add button --}}
+        {{-- Floating action buttons --}}
+        {{-- 1. Floating add button (placed above search, bottom-40) --}}
+        <div x-show="showFloatingAddButton" 
+             x-transition:enter="transition ease-out duration-150 transform"
+             x-transition:enter-start="opacity-0 translate-y-10 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-100 transform"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 translate-y-10 scale-95"
+             class="fixed bottom-40 right-5 z-40"
+             style="display: none;">
+            <button type="button" 
+                    @click="document.getElementById('main-file-input').click()"
+                    class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150"
+                    title="Unggah Gambar Baru">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                </svg>
+            </button>
+        </div>
+
+        {{-- 2. Floating search button (placed at the bottom, bottom-24) --}}
         <div x-show="showFloatingAddButton" 
              x-transition:enter="transition ease-out duration-150 transform"
              x-transition:enter-start="opacity-0 translate-y-10 scale-95"
@@ -378,11 +401,11 @@
              class="fixed bottom-24 right-5 z-40"
              style="display: none;">
             <button type="button" 
-                    @click="document.getElementById('main-file-input').click()"
+                    @click="window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => $dispatch('open-header-search'), 250)"
                     class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150"
-                    title="Unggah Gambar Baru">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                    title="Cari Gambar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
             </button>
         </div>
