@@ -54,8 +54,8 @@
             </div>
         </div>
 
-        {{-- Floating Filter Button (placed at top-right, top-3) --}}
-        <div class="fixed top-3 left-0 right-0 z-40 px-5 pointer-events-none">
+        {{-- Floating Filter Button (placed at top-right, top-16) --}}
+        <div class="fixed top-16 left-0 right-0 z-40 px-5 pointer-events-none">
             <div class="max-w-lg mx-auto flex justify-end">
                 <button type="button" 
                         @click="showFilterModal = true"
