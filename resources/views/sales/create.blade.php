@@ -33,13 +33,15 @@
                                 </svg>
                             </div>
                         </template>
+                        {{-- Category Overlay Badge --}}
+                        <span class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[9px] px-1.5 py-0.5 rounded font-semibold tracking-wide"
+                              x-text="product.category"></span>
                         {{-- Stock Badge --}}
                         <span :class="product.stock <= 0 ? 'bg-red-500 text-white' : 'bg-primary-100 text-primary-700'"
                               class="absolute bottom-2 left-2 text-[10px] px-1.5 py-0.5 rounded-full font-semibold"
                               x-text="'Stok: ' + formatNumber(product.stock / product.conversion_factor) + ' ' + product.sell_unit"></span>
                     </div>
                     <div class="p-3 space-y-1">
-                        <p class="text-[10px] text-gray-400" x-text="product.category"></p>
                         <h4 class="text-xs font-bold text-dark line-clamp-2 leading-tight h-8" x-text="product.name"></h4>
                         <p class="text-sm font-extrabold text-primary-600" x-text="formatRupiah(product.selling_price)"></p>
                     </div>
