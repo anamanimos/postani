@@ -353,17 +353,17 @@
 
         {{-- Floating add button --}}
         <div x-show="showFloatingAddButton" 
-             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter="transition ease-out duration-150 transform"
              x-transition:enter-start="opacity-0 translate-y-10 scale-95"
              x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave="transition ease-in duration-100 transform"
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 translate-y-10 scale-95"
              class="fixed bottom-24 right-5 z-40"
              style="display: none;">
             <button type="button" 
                     @click="document.getElementById('main-file-input').click()"
-                    class="w-12 h-12 rounded-full bg-primary-600 hover:bg-primary-700 text-white flex items-center justify-center shadow-lg active:scale-90 transition-all transform hover:-translate-y-0.5 duration-200"
+                    class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150"
                     title="Unggah Gambar Baru">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
