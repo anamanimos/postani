@@ -18,12 +18,27 @@
                  totalSlides: 4,
                  touchStart: 0,
                  touchEnd: 0,
+                 autoplayInterval: null,
+                 startAutoplay() {
+                     this.stopAutoplay();
+                     this.autoplayInterval = setInterval(() => {
+                         this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+                     }, 4000);
+                 },
+                 stopAutoplay() {
+                     if (this.autoplayInterval) {
+                         clearInterval(this.autoplayInterval);
+                         this.autoplayInterval = null;
+                     }
+                 },
                  handleTouchStart(e) {
+                     this.stopAutoplay();
                      this.touchStart = e.changedTouches[0].screenX;
                  },
                  handleTouchEnd(e) {
                      this.touchEnd = e.changedTouches[0].screenX;
                      this.handleSwipe();
+                     this.startAutoplay();
                  },
                  handleSwipe() {
                      const threshold = 50;
@@ -32,17 +47,23 @@
                      } else if (this.touchEnd - this.touchStart > threshold) {
                          if (this.activeSlide > 0) this.activeSlide--;
                      }
+                 },
+                 selectSlide(index) {
+                     this.stopAutoplay();
+                     this.activeSlide = index;
+                     this.startAutoplay();
                  }
              }"
+             x-init="startAutoplay()"
              @touchstart="handleTouchStart($event)"
              @touchend="handleTouchEnd($event)"
              class="relative overflow-hidden w-full select-none py-2 -mx-3">
              
              <!-- Slide container -->
-             <div class="flex transition-transform duration-300 ease-out animate-fadeIn" :style="'transform: translateX(-' + (activeSlide * 100) + '%)'">
+             <div class="flex transition-transform duration-300 ease-out animate-fadeIn" :style="'transform: translateX(-' + (activeSlide * 88) + '%)'">
                  
                  {{-- Slide 1: Penjualan Hari Ini --}}
-                 <div class="w-full flex-shrink-0 px-3">
+                 <div class="w-[88%] shrink-0 px-3">
                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-emerald-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-emerald-500/10 blur-xl"></div>
                          <div class="flex items-center justify-between mb-3">
@@ -57,7 +78,7 @@
                  </div>
 
                  {{-- Slide 2: Transaksi Hari Ini --}}
-                 <div class="w-full flex-shrink-0 px-3">
+                 <div class="w-[88%] shrink-0 px-3">
                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-blue-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-blue-500/10 blur-xl"></div>
                          <div class="flex items-center justify-between mb-3">
@@ -72,7 +93,7 @@
                  </div>
 
                  {{-- Slide 3: Total Piutang --}}
-                 <div class="w-full flex-shrink-0 px-3">
+                 <div class="w-[88%] shrink-0 px-3">
                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-orange-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-orange-500/10 blur-xl"></div>
                          <div class="flex items-center justify-between mb-3">
@@ -87,7 +108,7 @@
                  </div>
 
                  {{-- Slide 4: Total Hutang --}}
-                 <div class="w-full flex-shrink-0 px-3">
+                 <div class="w-[88%] shrink-0 px-3">
                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-red-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-red-500/10 blur-xl"></div>
                          <div class="flex items-center justify-between mb-3">
@@ -106,7 +127,7 @@
              <!-- Indicator Dots -->
              <div class="flex justify-center gap-1.5 mt-3.5">
                  <template x-for="i in totalSlides" :key="i - 1">
-                     <button @click="activeSlide = i - 1" 
+                     <button @click="selectSlide(i - 1)" 
                              class="h-1.5 rounded-full transition-all duration-200"
                              :class="activeSlide === (i - 1) ? 'w-4 bg-primary-600' : 'w-1.5 bg-gray-300'"></button>
                  </template>
