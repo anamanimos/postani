@@ -14,7 +14,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-4">
+    <div class="py-5 pb-24 space-y-4">
         {{-- Invoice header --}}
         <div class="glass-card p-4 space-y-3">
             <div class="flex items-center justify-between">
@@ -169,3 +169,4 @@
         @endif
     </div>
 </x-app-layout>
+

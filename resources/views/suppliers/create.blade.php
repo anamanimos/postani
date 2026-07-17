@@ -8,7 +8,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 max-w-lg mx-auto">
+    <div class="py-5 pb-24 max-w-lg mx-auto">
         <div class="card-solid p-4">
             <form action="{{ route('suppliers.store') }}" method="POST" class="space-y-4">
                 @csrf
@@ -75,3 +75,4 @@
         </div>
     </div>
 </x-app-layout>
+

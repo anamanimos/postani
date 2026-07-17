@@ -5,7 +5,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-5" x-data="galleryManager()">
+    <div class="py-5 pb-24 space-y-5" x-data="galleryManager()">
 
         {{-- Upload Section --}}
         <div class="glass-card p-4">
@@ -553,3 +553,4 @@ if (!document.getElementById('gallery-lightbox-styles')) {
     document.head.appendChild(style);
 }
 </script>
+

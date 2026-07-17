@@ -11,7 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-4">
+    <div class="py-5 pb-24 space-y-4">
         {{-- Filter --}}
         <div class="glass-card p-4">
             <form action="{{ route('reports.sales') }}" method="GET" class="grid grid-cols-2 gap-2">
@@ -68,3 +68,4 @@
         </div>
     </div>
 </x-app-layout>
+

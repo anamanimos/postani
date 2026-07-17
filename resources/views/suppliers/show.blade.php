@@ -13,7 +13,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-4">
+    <div class="py-5 pb-24 space-y-4">
         {{-- Profile info --}}
         <div class="glass-card p-4 space-y-3">
             <div>
@@ -96,3 +96,4 @@
         </form>
     </div>
 </x-app-layout>
+

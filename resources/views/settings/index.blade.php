@@ -3,7 +3,7 @@
         <h2 class="text-lg font-bold text-dark">Pengaturan Aplikasi</h2>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-4">
+    <div class="py-5 pb-24 space-y-4">
         <form action="{{ route('settings.update') }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
@@ -68,3 +68,4 @@
         </form>
     </div>
 </x-app-layout>
+

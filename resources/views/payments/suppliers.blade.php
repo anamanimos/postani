@@ -3,7 +3,7 @@
         <h2 class="text-lg font-bold text-dark">Hutang ke Tengkulak</h2>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-4">
+    <div class="py-5 pb-24 space-y-4">
         {{-- List of outstanding purchases grouped by supplier --}}
         <div class="space-y-4">
             @forelse($purchases as $supplierId => $items)
@@ -44,3 +44,4 @@
         </div>
     </div>
 </x-app-layout>
+

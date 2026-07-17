@@ -113,7 +113,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24" x-data="purchaseForm()">
+    <div class="py-5 pb-24" x-data="purchaseForm()">
         <form action="{{ route('purchases.store') }}" method="POST" enctype="multipart/form-data" 
               class="space-y-4">
             @csrf
@@ -885,3 +885,4 @@
     </script>
     @endpush
 </x-app-layout>
+

@@ -8,7 +8,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 max-w-lg mx-auto">
+    <div class="py-5 pb-24 max-w-lg mx-auto">
         <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" 
               @paste.window="
                   const items = ($event.clipboardData || window.clipboardData).items;
@@ -496,3 +496,4 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 </script>
+

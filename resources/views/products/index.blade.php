@@ -8,7 +8,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-4" x-data="{
+    <div class="py-5 pb-24 space-y-4" x-data="{
         search: '{{ request('search', '') }}',
         category: '{{ request('category', '') }}',
         get filterUrl() {
@@ -89,3 +89,4 @@
         @endif
     </div>
 </x-app-layout>
+

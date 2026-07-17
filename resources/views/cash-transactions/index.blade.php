@@ -8,7 +8,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-4">
+    <div class="py-5 pb-24 space-y-4">
         {{-- Balance summary --}}
         <div class="glass-card p-4 flex items-center justify-between bg-primary-50/10 border-l-4 border-primary-500">
             <div>
@@ -52,3 +52,4 @@
         </div>
     </div>
 </x-app-layout>
+

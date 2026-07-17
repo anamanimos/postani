@@ -11,7 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-4">
+    <div class="py-5 pb-24 space-y-4">
         {{-- Summaries --}}
         <div class="grid grid-cols-2 gap-3">
             <div class="glass-card p-4 border-l-4 border-red-500">
@@ -65,3 +65,4 @@
         </div>
     </div>
 </x-app-layout>
+

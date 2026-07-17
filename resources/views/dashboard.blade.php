@@ -11,7 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-5">
+    <div class="py-5 pb-24 space-y-5">
         {{-- Sliding Stat Cards --}}
         <div x-data="{ 
                  activeSlide: 0, 
@@ -36,7 +36,7 @@
              }"
              @touchstart="handleTouchStart($event)"
              @touchend="handleTouchEnd($event)"
-             class="relative overflow-hidden w-full select-none">
+             class="relative overflow-hidden w-full select-none py-2 px-1 -mx-1">
              
              <!-- Slide container -->
              <div class="flex transition-transform duration-300 ease-out animate-fadeIn" :style="'transform: translateX(-' + (activeSlide * 100) + '%)'">
@@ -184,3 +184,4 @@
         </div>
     </div>
 </x-app-layout>
+

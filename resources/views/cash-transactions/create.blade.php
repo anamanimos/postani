@@ -8,7 +8,7 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24">
+    <div class="py-5 pb-24">
         <div class="glass-card p-4">
             <form action="{{ route('cash-transactions.store') }}" method="POST" class="space-y-4">
                 @csrf
@@ -53,3 +53,4 @@
         </div>
     </div>
 </x-app-layout>
+

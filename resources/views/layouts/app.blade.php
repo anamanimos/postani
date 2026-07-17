@@ -158,7 +158,7 @@
 
             {{-- Top Header --}}
             <header class="sticky top-0 z-30 glass-nav">
-                <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="max-w-lg mx-auto px-3 py-3 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-float">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -248,19 +248,19 @@
             @endif
 
             @if (isset($header))
-                <div class="max-w-lg mx-auto px-4 pt-4">
+                <div class="max-w-lg mx-auto px-3 pt-4">
                     {{ $header }}
                 </div>
             @endif
 
             {{-- Page Content --}}
-            <main class="max-w-lg mx-auto px-4 pb-24 pt-2 page-enter">
+            <main class="max-w-lg mx-auto px-3 pb-24 pt-2 page-enter">
                 @yield('content')
                 {{ $slot ?? '' }}
             </main>
 
             {{-- Floating Bottom Navigation --}}
-            <nav class="fixed bottom-0 left-0 right-0 z-40 px-4 pb-4">
+            <nav class="fixed bottom-0 left-0 right-0 z-40 px-3 pb-4">
                 <div class="max-w-lg mx-auto glass-nav rounded-2xl px-2 py-1">
                     <div class="flex items-center justify-around">
                         {{-- Dashboard --}}

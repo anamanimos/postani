@@ -3,7 +3,7 @@
         <h2 class="text-lg font-bold text-dark">Kategori Produk</h2>
     </x-slot>
 
-    <div class="px-4 py-5 pb-24 space-y-6 max-w-lg mx-auto">
+    <div class="py-5 pb-24 space-y-6 max-w-lg mx-auto">
         {{-- Form Tambah Kategori --}}
         <div class="card-solid p-4">
             <h3 class="text-sm font-semibold text-dark mb-3">Tambah Kategori Baru</h3>
@@ -78,3 +78,4 @@
         </div>
     </div>
 </x-app-layout>
+
