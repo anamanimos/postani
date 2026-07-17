@@ -36,13 +36,13 @@
              }"
              @touchstart="handleTouchStart($event)"
              @touchend="handleTouchEnd($event)"
-             class="relative overflow-hidden w-full select-none py-2 px-1 -mx-1">
+             class="relative overflow-hidden w-full select-none py-2 -mx-3">
              
              <!-- Slide container -->
              <div class="flex transition-transform duration-300 ease-out animate-fadeIn" :style="'transform: translateX(-' + (activeSlide * 100) + '%)'">
                  
                  {{-- Slide 1: Penjualan Hari Ini --}}
-                 <div class="w-full flex-shrink-0 px-1">
+                 <div class="w-full flex-shrink-0 px-3">
                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-emerald-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-emerald-500/10 blur-xl"></div>
                          <div class="flex items-center justify-between mb-3">
@@ -57,7 +57,7 @@
                  </div>
 
                  {{-- Slide 2: Transaksi Hari Ini --}}
-                 <div class="w-full flex-shrink-0 px-1">
+                 <div class="w-full flex-shrink-0 px-3">
                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-blue-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-blue-500/10 blur-xl"></div>
                          <div class="flex items-center justify-between mb-3">
@@ -72,7 +72,7 @@
                  </div>
 
                  {{-- Slide 3: Total Piutang --}}
-                 <div class="w-full flex-shrink-0 px-1">
+                 <div class="w-full flex-shrink-0 px-3">
                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-orange-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-orange-500/10 blur-xl"></div>
                          <div class="flex items-center justify-between mb-3">
@@ -87,7 +87,7 @@
                  </div>
 
                  {{-- Slide 4: Total Hutang --}}
-                 <div class="w-full flex-shrink-0 px-1">
+                 <div class="w-full flex-shrink-0 px-3">
                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-red-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-red-500/10 blur-xl"></div>
                          <div class="flex items-center justify-between mb-3">
