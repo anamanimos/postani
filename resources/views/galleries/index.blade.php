@@ -1,4 +1,21 @@
 <x-app-layout>
+    @push('header_actions')
+        {{-- Floating Label Filter Button --}}
+        <button type="button" @click="$dispatch('open-label-filter-modal')"
+                class="w-9 h-9 rounded-xl bg-white/60 border border-white/40 text-primary-600 flex items-center justify-center transition-all hover:bg-white/80 active:scale-90 relative"
+                title="Filter Label">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.5 9.5a2.25 2.25 0 003.182 0l4.318-4.318a2.25 2.25 0 000-3.182l-9.5-9.5A2.25 2.25 0 009.568 3z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6h.008v.008H6V6z"/>
+            </svg>
+            
+            {{-- Active indicator dot --}}
+            @if(request('label'))
+                <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent-500 shadow-sm animate-pulse"></span>
+            @endif
+        </button>
+    @endpush
+
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold text-dark">Galeri Media</h2>
@@ -19,7 +36,8 @@
              nextPageUrl: '{{ $galleries->nextPageUrl() }}',
              openFloatingSearch: {{ request('search') ? 'true' : 'false' }}
          })"
-         @scroll.window.debounce.100ms="checkScroll()">
+         @scroll.window.debounce.100ms="checkScroll()"
+         @open-label-filter-modal.window="showLabelFilterModal = true">
 
         {{-- Upload Section --}}
         <div class="glass-card p-4">
@@ -454,26 +472,6 @@
                          </button>
                      </form>
                 </div>
-            </div>
-        </div>
-
-        {{-- 3. Floating label filter button (placed at top-right, top-20) --}}
-        <div class="fixed top-20 left-0 right-0 z-40 px-5 pointer-events-none">
-            <div class="max-w-lg mx-auto flex justify-end">
-                <button type="button" 
-                        @click="showLabelFilterModal = true"
-                        class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto relative"
-                        title="Filter Label">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.5 9.5a2.25 2.25 0 003.182 0l4.318-4.318a2.25 2.25 0 000-3.182l-9.5-9.5A2.25 2.25 0 009.568 3z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6h.008v.008H6V6z"/>
-                    </svg>
-                    
-                    {{-- Active indicator dot --}}
-                    @if(request('label'))
-                        <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-accent-500 shadow-sm animate-pulse"></span>
-                    @endif
-                </button>
             </div>
         </div>
 
