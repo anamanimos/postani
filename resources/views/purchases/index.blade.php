@@ -111,11 +111,11 @@
                            <div class="grid grid-cols-2 gap-3">
                                <div>
                                    <label class="block text-[10px] font-semibold text-gray-500 mb-1">Mulai Tanggal</label>
-                                   <input type="text" name="date_from" value="{{ request('date_from') }}" class="datepicker form-input-glass py-1.5 px-3">
+                                   <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-input-glass py-1.5 px-3">
                                </div>
                                <div>
                                    <label class="block text-[10px] font-semibold text-gray-500 mb-1">Sampai Tanggal</label>
-                                   <input type="text" name="date_to" value="{{ request('date_to') }}" class="datepicker form-input-glass py-1.5 px-3">
+                                   <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-input-glass py-1.5 px-3">
                                </div>
                            </div>
                            
