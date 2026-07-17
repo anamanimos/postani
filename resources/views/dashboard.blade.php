@@ -1,3 +1,15 @@
+@push('styles')
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+@endpush
+
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
@@ -12,17 +24,17 @@
     </x-slot>
 
     <div class="py-5 pb-24 space-y-5">
-        {{-- Sliding Stat Cards --}}
+        {{-- Sliding Stat Cards using Native CSS Scroll Snap --}}
         <div x-data="{ 
                  activeSlide: 0, 
                  totalSlides: 4,
-                 touchStart: 0,
-                 touchEnd: 0,
                  autoplayInterval: null,
+                 isScrolling: false,
                  startAutoplay() {
                      this.stopAutoplay();
                      this.autoplayInterval = setInterval(() => {
-                         this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+                         const next = (this.activeSlide + 1) % this.totalSlides;
+                         this.selectSlide(next);
                      }, 4000);
                  },
                  stopAutoplay() {
@@ -31,101 +43,107 @@
                          this.autoplayInterval = null;
                      }
                  },
-                 handleTouchStart(e) {
-                     this.stopAutoplay();
-                     this.touchStart = e.changedTouches[0].screenX;
-                 },
-                 handleTouchEnd(e) {
-                     this.touchEnd = e.changedTouches[0].screenX;
-                     this.handleSwipe();
-                     this.startAutoplay();
-                 },
-                 handleSwipe() {
-                     const threshold = 50;
-                     if (this.touchStart - this.touchEnd > threshold) {
-                         if (this.activeSlide < this.totalSlides - 1) this.activeSlide++;
-                     } else if (this.touchEnd - this.touchStart > threshold) {
-                         if (this.activeSlide > 0) this.activeSlide--;
-                     }
-                 },
                  selectSlide(index) {
                      this.stopAutoplay();
                      this.activeSlide = index;
+                     const el = this.$refs.slider;
+                     if (el) {
+                         const slideEl = el.querySelector('.shrink-0');
+                         if (slideEl) {
+                             const slideWidth = slideEl.offsetWidth;
+                             // Prevent scroll listener from trigger loops during animation
+                             this.isScrolling = true;
+                             el.scrollTo({ left: index * slideWidth, behavior: 'smooth' });
+                             setTimeout(() => { this.isScrolling = false; }, 400);
+                         }
+                     }
                      this.startAutoplay();
+                 },
+                 updateActiveSlide() {
+                     if (this.isScrolling) return;
+                     const el = this.$refs.slider;
+                     if (el) {
+                         const slideEl = el.querySelector('.shrink-0');
+                         if (slideEl) {
+                             const slideWidth = slideEl.offsetWidth;
+                             const index = Math.round(el.scrollLeft / slideWidth);
+                             if (this.activeSlide !== index && index >= 0 && index < this.totalSlides) {
+                                 this.activeSlide = index;
+                             }
+                         }
+                     }
                  }
              }"
              x-init="startAutoplay()"
-             @touchstart="handleTouchStart($event)"
-             @touchend="handleTouchEnd($event)"
-             class="relative overflow-hidden w-full select-none py-2 -mx-3">
+             class="w-full relative select-none">
              
-             <!-- Slide translation wrapper (locked to 100% width of parent) -->
-             <div class="w-full transition-transform duration-300 ease-out animate-fadeIn" :style="'transform: translateX(calc(5% - ' + (activeSlide * 90) + '%))'">
-                 
-                 <!-- Flex Container -->
-                 <div class="flex">
-                     
-                     {{-- Slide 1: Penjualan Hari Ini --}}
-                     <div class="w-[90%] shrink-0 px-3">
-                         <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-emerald-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
-                             <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-emerald-500/10 blur-xl"></div>
-                             <div class="flex items-center justify-between mb-3">
-                                 <span class="text-xs font-bold text-emerald-700 tracking-wide uppercase">Penjualan Hari Ini</span>
-                                 <div class="w-9 h-9 rounded-xl bg-emerald-100/80 flex items-center justify-center shadow-sm">
-                                     <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                 </div>
-                             </div>
-                             <p class="text-2xl font-extrabold text-dark tracking-tight">Rp {{ number_format($todaySales ?? 0, 0, ',', '.') }}</p>
-                             <p class="text-[10px] text-gray-400 mt-2">Akumulasi omset dari penjualan yang diselesaikan hari ini</p>
-                         </div>
-                     </div>
+             <!-- Scrollable snap-x Container (w-full width of viewport + negative margins, padded by 4% to snap-center first and last cards perfectly) -->
+             <div x-ref="slider"
+                  @scroll="updateActiveSlide()"
+                  @touchstart="stopAutoplay()"
+                  @touchend="startAutoplay()"
+                  class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full py-2 -mx-3 no-scrollbar"
+                  style="scrollbar-width: none; -ms-overflow-style: none; padding-left: 4%; padding-right: 4%;">
+                  
+                  {{-- Slide 1: Penjualan Hari Ini --}}
+                  <div class="w-[92%] shrink-0 snap-center px-2">
+                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-emerald-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
+                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-emerald-500/10 blur-xl"></div>
+                          <div class="flex items-center justify-between mb-3">
+                              <span class="text-xs font-bold text-emerald-700 tracking-wide uppercase">Penjualan Hari Ini</span>
+                              <div class="w-9 h-9 rounded-xl bg-emerald-100/80 flex items-center justify-center shadow-sm">
+                                  <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                              </div>
+                          </div>
+                          <p class="text-2xl font-extrabold text-dark tracking-tight">Rp {{ number_format($todaySales ?? 0, 0, ',', '.') }}</p>
+                          <p class="text-[10px] text-gray-400 mt-2">Akumulasi omset dari penjualan yang diselesaikan hari ini</p>
+                      </div>
+                  </div>
 
-                     {{-- Slide 2: Transaksi Hari Ini --}}
-                     <div class="w-[90%] shrink-0 px-3">
-                         <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-blue-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
-                             <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-blue-500/10 blur-xl"></div>
-                             <div class="flex items-center justify-between mb-3">
-                                 <span class="text-xs font-bold text-blue-700 tracking-wide uppercase">Transaksi Hari Ini</span>
-                                 <div class="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shadow-sm">
-                                     <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                                 </div>
-                             </div>
-                             <p class="text-2xl font-extrabold text-dark tracking-tight">{{ $todayTransactions ?? 0 }} <span class="text-sm font-normal text-gray-400">Nota</span></p>
-                             <p class="text-[10px] text-gray-400 mt-2">Jumlah nota kasir yang berhasil diproses hari ini</p>
-                         </div>
-                     </div>
+                  {{-- Slide 2: Transaksi Hari Ini --}}
+                  <div class="w-[92%] shrink-0 snap-center px-2">
+                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-blue-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
+                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-blue-500/10 blur-xl"></div>
+                          <div class="flex items-center justify-between mb-3">
+                              <span class="text-xs font-bold text-blue-700 tracking-wide uppercase">Transaksi Hari Ini</span>
+                              <div class="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shadow-sm">
+                                  <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                              </div>
+                          </div>
+                          <p class="text-2xl font-extrabold text-dark tracking-tight">{{ $todayTransactions ?? 0 }} <span class="text-sm font-normal text-gray-400">Nota</span></p>
+                          <p class="text-[10px] text-gray-400 mt-2">Jumlah nota kasir yang berhasil diproses hari ini</p>
+                      </div>
+                  </div>
 
-                     {{-- Slide 3: Total Piutang --}}
-                     <div class="w-[90%] shrink-0 px-3">
-                         <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-orange-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
-                             <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-orange-500/10 blur-xl"></div>
-                             <div class="flex items-center justify-between mb-3">
-                                 <span class="text-xs font-bold text-orange-700 tracking-wide uppercase">Total Piutang (Receivables)</span>
-                                 <div class="w-9 h-9 rounded-xl bg-orange-100/80 flex items-center justify-center shadow-sm">
-                                     <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-                                 </div>
-                             </div>
-                             <p class="text-2xl font-extrabold text-orange-600 tracking-tight">Rp {{ number_format($totalReceivables ?? 0, 0, ',', '.') }}</p>
-                             <p class="text-[10px] text-gray-400 mt-2">Tagihan piutang dari pelanggan yang belum dibayar</p>
-                         </div>
-                     </div>
+                  {{-- Slide 3: Total Piutang --}}
+                  <div class="w-[92%] shrink-0 snap-center px-2">
+                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-orange-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
+                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-orange-500/10 blur-xl"></div>
+                          <div class="flex items-center justify-between mb-3">
+                              <span class="text-xs font-bold text-orange-700 tracking-wide uppercase">Total Piutang (Receivables)</span>
+                              <div class="w-9 h-9 rounded-xl bg-orange-100/80 flex items-center justify-center shadow-sm">
+                                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                              </div>
+                          </div>
+                          <p class="text-2xl font-extrabold text-orange-600 tracking-tight">Rp {{ number_format($totalReceivables ?? 0, 0, ',', '.') }}</p>
+                          <p class="text-[10px] text-gray-400 mt-2">Tagihan piutang dari pelanggan yang belum dibayar</p>
+                      </div>
+                  </div>
 
-                     {{-- Slide 4: Total Hutang --}}
-                     <div class="w-[90%] shrink-0 px-3">
-                         <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-red-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
-                             <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-red-500/10 blur-xl"></div>
-                             <div class="flex items-center justify-between mb-3">
-                                 <span class="text-xs font-bold text-red-700 tracking-wide uppercase">Total Hutang (Payables)</span>
-                                 <div class="w-9 h-9 rounded-xl bg-red-100/80 flex items-center justify-center shadow-sm">
-                                     <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-                                 </div>
-                             </div>
-                             <p class="text-2xl font-extrabold text-red-600 tracking-tight">Rp {{ number_format($totalPayables ?? 0, 0, ',', '.') }}</p>
-                             <p class="text-[10px] text-gray-400 mt-2">Tunggakan hutang pembelian ke supplier/tengkulak</p>
-                         </div>
-                     </div>
-                     
-                 </div>
+                  {{-- Slide 4: Total Hutang --}}
+                  <div class="w-[92%] shrink-0 snap-center px-2">
+                      <div class="p-5 rounded-glass border border-white/40 shadow-glass bg-gradient-to-br from-white/75 to-red-50/40 relative overflow-hidden" style="backdrop-filter: blur(12px);">
+                          <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-red-500/10 blur-xl"></div>
+                          <div class="flex items-center justify-between mb-3">
+                              <span class="text-xs font-bold text-red-700 tracking-wide uppercase">Total Hutang (Payables)</span>
+                              <div class="w-9 h-9 rounded-xl bg-red-100/80 flex items-center justify-center shadow-sm">
+                                  <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                              </div>
+                          </div>
+                          <p class="text-2xl font-extrabold text-red-600 tracking-tight">Rp {{ number_format($totalPayables ?? 0, 0, ',', '.') }}</p>
+                          <p class="text-[10px] text-gray-400 mt-2">Tunggakan hutang pembelian ke supplier/tengkulak</p>
+                      </div>
+                  </div>
              </div>
 
              <!-- Indicator Dots -->
