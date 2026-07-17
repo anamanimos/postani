@@ -148,6 +148,42 @@
                         x-text="submitting ? 'Menyimpan...' : 'Selesai & Cetak Struk'"></button>
             </div>
         </div>
+
+        {{-- Floating Search Button (placed at bottom-40, above bottom-24 cart button) --}}
+        <div class="fixed bottom-40 left-0 right-0 z-40 px-5 pointer-events-none">
+            <div class="max-w-lg mx-auto relative flex justify-end h-12">
+                <div class="absolute right-0 top-0 bg-white/95 backdrop-blur-md border border-gray-200/80 shadow-lg rounded-full overflow-hidden transition-all duration-300 ease-out pointer-events-auto"
+                     :class="openFloatingSearch ? 'w-full h-12' : 'w-12 h-12'">
+                     
+                     {{-- Collapsed Button --}}
+                     <button type="button" x-show="!openFloatingSearch"
+                             @click="openFloatingSearch = true; $nextTick(() => $refs.floatSearchInput.focus())"
+                             class="w-full h-full flex items-center justify-center text-primary-600 active:scale-95 transition-transform duration-150"
+                             title="Cari Barang">
+                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                         </svg>
+                     </button>
+                     
+                     {{-- Expanded Form --}}
+                     <div x-show="openFloatingSearch" class="w-full h-full flex items-center px-4 gap-2.5" style="display: none;">
+                         <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                         </svg>
+                         <input type="text" x-model="searchQuery" x-ref="floatSearchInput"
+                                placeholder="Cari nama barang..."
+                                @keydown.escape="openFloatingSearch = false"
+                                class="flex-1 bg-transparent border-0 outline-none text-xs font-semibold text-gray-700 placeholder-gray-400 focus:ring-0 p-0">
+                         <button type="button" 
+                                 @click="openFloatingSearch = false; searchQuery = ''"
+                                 class="text-xs text-gray-400 hover:text-gray-600 font-bold flex-shrink-0 px-1 py-1">
+                             Batal
+                         </button>
+                     </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     @push('scripts')
@@ -165,6 +201,7 @@
                     'image' => $p->image
                 ])) !!},
                 searchQuery: '',
+                openFloatingSearch: false,
                 cart: [],
                 openCart: false,
                 paymentMethod: 'cash',
