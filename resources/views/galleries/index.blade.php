@@ -458,8 +458,8 @@
             </div>
         </div>
 
-        {{-- 3. Floating label filter button (placed at top-right, top-3) --}}
-        <div class="fixed top-3 left-0 right-0 z-40 px-5 pointer-events-none">
+        {{-- 3. Floating label filter button (placed at top-right, top-16) --}}
+        <div class="fixed top-16 left-0 right-0 z-40 px-5 pointer-events-none">
             <div class="max-w-lg mx-auto flex justify-end">
                 <button type="button" 
                         @click="showLabelFilterModal = true"
