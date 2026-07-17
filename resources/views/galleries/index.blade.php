@@ -5,7 +5,7 @@
         </div>
     </x-slot>
 
-    <div class="py-5 pb-24 space-y-5" 
+    <div class="py-5 pb-2 space-y-5" 
          x-data="galleryManager({
              initialItems: {{ json_encode($galleries->map(fn($g) => [
                  'id' => $g->id,
@@ -206,8 +206,9 @@
             </div>
 
             {{-- Loading spinner --}}
-            <div x-show="loading" class="py-6 flex justify-center" style="display: none;">
-                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+            <div x-show="loading" class="py-6 flex flex-col items-center justify-center gap-2" style="display: none;">
+                <div class="animate-spin rounded-full h-7 w-7 border-2 border-primary-600 border-t-transparent"></div>
+                <span class="text-[10px] text-gray-500 font-semibold tracking-wide animate-pulse">Memuat Gambar Lainnya...</span>
             </div>
         @endif
 
