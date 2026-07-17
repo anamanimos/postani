@@ -48,7 +48,7 @@
                      this.activeSlide = index;
                      const el = this.$refs.slider;
                      if (el) {
-                         const slideEl = el.querySelector('.shrink-0');
+                         const slideEl = el.querySelector('.snap-center');
                          if (slideEl) {
                              const slideWidth = slideEl.offsetWidth;
                              // Prevent scroll listener from trigger loops during animation
@@ -63,7 +63,7 @@
                      if (this.isScrolling) return;
                      const el = this.$refs.slider;
                      if (el) {
-                         const slideEl = el.querySelector('.shrink-0');
+                         const slideEl = el.querySelector('.snap-center');
                          if (slideEl) {
                              const slideWidth = slideEl.offsetWidth;
                              const index = Math.round(el.scrollLeft / slideWidth);
@@ -77,12 +77,12 @@
              x-init="startAutoplay()"
              class="w-full relative select-none">
              
-              <!-- Scrollable snap-x Container (w-full width of viewport + negative margins, using spacer elements for cross-browser centering) -->
+             <!-- Scrollable snap-x Container (using spacer elements for cross-browser centering, w-full removed to allow negative margins to stretch container fully) -->
              <div x-ref="slider"
                   @scroll="updateActiveSlide()"
                   @touchstart="stopAutoplay()"
                   @touchend="startAutoplay()"
-                  class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full py-2 -mx-3 no-scrollbar"
+                  class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth py-2 -mx-3 no-scrollbar"
                   style="scrollbar-width: none; -ms-overflow-style: none;">
                   
                   <!-- Spacer Start -->
