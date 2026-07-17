@@ -760,11 +760,35 @@ function openGalleryPreview(index) {
     // Determine label pills html
     const labelPills = item.labels.map(l => `<span style="background:rgba(22,163,74,0.3);color:#fff;font-size:9px;padding:2px 8px;border-radius:999px;font-weight:600;margin-right:4px;">${l}</span>`).join('');
     
-    const deleteButtonHtml = item.is_used 
-        ? `<span style="color:rgba(255,255,255,0.45);font-size:10px;font-weight:600;display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.1);padding:4px 10px;border-radius:999px;">🔒 Terkunci</span>`
-        : `<button onclick="window.triggerDeleteGallery(${item.id})" style="background:rgba(239,68,68,0.25);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.4)'" onmouseout="this.style.background='rgba(239,68,68,0.25)'">🗑️ Hapus</button>`;
+    // Define duotone SVG icons
+    const labelIcon = `<svg style="width:12px;height:12px;fill:none;stroke:currentColor;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+        <path d="M9.5 3h5.75c.966 0 1.75.784 1.75 1.75v5.75a1.75 1.75 0 01-.513 1.238l-7.5 7.5a1.75 1.75 0 01-2.474 0l-4.75-4.75a1.75 1.75 0 010-2.474l7.5-7.5A1.75 1.75 0 019.5 3z" fill="currentColor" opacity="0.3"/>
+        <path d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.5 9.5a2.25 2.25 0 003.182 0l4.318-4.318a2.25 2.25 0 000-3.182l-9.5-9.5A2.25 2.25 0 009.568 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="7.5" cy="7.5" r="1.5" fill="currentColor"/>
+    </svg>`;
 
-    const labelButtonHtml = `<button onclick="window.triggerLabelModal(${item.id}, ${JSON.stringify(item.labels).replace(/"/g, '&quot;')}, '${item.filename.replace(/'/g, "\\'")}')" style="background:rgba(234,179,8,0.25);border:1px solid rgba(234,179,8,0.4);color:#fde047;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;transition:background 0.2s;" onmouseover="this.style.background='rgba(234,179,8,0.4)'" onmouseout="this.style.background='rgba(234,179,8,0.25)'">🏷️ Label</button>`;
+    const deleteIcon = `<svg style="width:12px;height:12px;fill:none;stroke:currentColor;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7h14z" fill="currentColor" opacity="0.3"/>
+        <path d="M4 7h16M10 11v6M14 11v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+
+    const lockIcon = `<svg style="width:12px;height:12px;fill:none;stroke:currentColor;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+        <rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor" opacity="0.3"/>
+        <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 11V7a4 4 0 018 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+
+    const pinIcon = `<svg style="width:13px;height:13px;fill:none;stroke:currentColor;vertical-align:middle;margin-right:4px;color:#60a5fa;" viewBox="0 0 24 24">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" fill="currentColor" opacity="0.3"/>
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+    </svg>`;
+
+    const deleteButtonHtml = item.is_used 
+        ? `<span style="color:rgba(255,255,255,0.45);font-size:10px;font-weight:600;display:inline-flex;align-items:center;background:rgba(255,255,255,0.1);padding:4px 10px;border-radius:999px;">${lockIcon}Terkunci</span>`
+        : `<button onclick="window.triggerDeleteGallery(${item.id})" style="background:rgba(239,68,68,0.25);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.4)'" onmouseout="this.style.background='rgba(239,68,68,0.25)'">${deleteIcon}Hapus</button>`;
+
+    const labelButtonHtml = `<button onclick="window.triggerLabelModal(${item.id}, ${JSON.stringify(item.labels).replace(/"/g, '&quot;')}, '${item.filename.replace(/'/g, "\\'")}')" style="background:rgba(234,179,8,0.25);border:1px solid rgba(234,179,8,0.4);color:#fde047;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(234,179,8,0.4)'" onmouseout="this.style.background='rgba(234,179,8,0.25)'">${labelIcon}Label</button>`;
 
     // Determine usages html
     let usagesHtml = '';
@@ -777,7 +801,7 @@ function openGalleryPreview(index) {
             </div>`;
         }).join('');
         usagesHtml = `<div style="margin-top:6px;width:100%;border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;text-align:left;box-sizing:border-box;">
-            <div style="color:#fff;font-size:10px;font-weight:700;margin-bottom:4px;">📍 Terpakai di:</div>
+            <div style="color:#fff;font-size:10px;font-weight:700;margin-bottom:4px;display:inline-flex;align-items:center;">${pinIcon}Terpakai di:</div>
             <div style="display:flex;flex-direction:column;gap:2px;">${usagesList}</div>
         </div>`;
     }
