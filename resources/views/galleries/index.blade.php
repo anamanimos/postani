@@ -366,15 +366,7 @@
         </div>
 
         {{-- 2. Floating search button (placed at the bottom, bottom-24) --}}
-        <div x-show="showFloatingAddButton" 
-             x-transition:enter="transition ease-out duration-150 transform"
-             x-transition:enter-start="opacity-0 translate-y-10 scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-             x-transition:leave="transition ease-in duration-100 transform"
-             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-             x-transition:leave-end="opacity-0 translate-y-10 scale-95"
-             class="fixed bottom-24 left-0 right-0 z-40 px-5 pointer-events-none"
-             style="display: none;">
+        <div class="fixed bottom-24 left-0 right-0 z-40 px-5 pointer-events-none">
             <div class="max-w-lg mx-auto relative flex justify-end h-12">
                 <div class="absolute right-0 top-0 bg-white/95 backdrop-blur-md border border-gray-200/80 shadow-lg rounded-full overflow-hidden transition-all duration-300 ease-out pointer-events-auto"
                      :class="openFloatingSearch ? 'w-full h-12' : 'w-12 h-12'">
