@@ -385,6 +385,85 @@
              </div>
         </div>
 
+        <!-- Modal Filter Status -->
+        <div x-show="showStatusFilterModal" 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             style="display: none;"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+             
+             {{-- Backdrop --}}
+             <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="showStatusFilterModal = false"></div>
+             
+             {{-- Modal content wrapper (aligned to bottom for mobile look) --}}
+             <div class="flex items-end justify-center min-h-screen p-4 sm:items-center">
+                  <div class="bg-white rounded-t-2xl sm:rounded-2xl max-w-sm w-full p-5 shadow-2xl relative z-10 transform transition-all duration-300 ease-out border border-gray-150 max-h-[70vh] flex flex-col"
+                       x-show="showStatusFilterModal"
+                       x-transition:enter="transition ease-out duration-300 transform"
+                       x-transition:enter-start="translate-y-full sm:scale-95"
+                       x-transition:enter-end="translate-y-0 sm:scale-100"
+                       x-transition:leave="transition ease-in duration-200 transform"
+                       x-transition:leave-start="translate-y-0 sm:scale-100"
+                       x-transition:leave-end="translate-y-full sm:scale-95">
+                       
+                       <div class="flex justify-between items-center pb-3 border-b border-gray-100 mb-4 flex-shrink-0">
+                            <h3 class="text-sm font-bold text-dark">Filter Berdasarkan Status</h3>
+                            <button @click="showStatusFilterModal = false" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                       </div>
+                       
+                       {{-- Status Options --}}
+                       <div class="space-y-1.5 overflow-y-auto flex-1 pr-1">
+                            {{-- Option: Semua --}}
+                            <a href="{{ route('galleries.index', ['filter' => '', 'search' => request('search'), 'label' => request('label')]) }}"
+                               class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ !request('filter') ? 'bg-primary-50 text-primary-600 border border-primary-100' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent' }}">
+                                <span>Semua</span>
+                                @if(!request('filter'))
+                                    <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                @endif
+                            </a>
+                            
+                            {{-- Option: Digunakan --}}
+                            <a href="{{ route('galleries.index', ['filter' => 'used', 'search' => request('search'), 'label' => request('label')]) }}"
+                               class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request('filter') == 'used' ? 'bg-primary-50 text-primary-600 border border-primary-100' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent' }}">
+                                <span class="flex items-center gap-1.5">
+                                     <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                     Digunakan
+                                </span>
+                                @if(request('filter') == 'used')
+                                    <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                @endif
+                            </a>
+                            
+                            {{-- Option: Belum Digunakan --}}
+                            <a href="{{ route('galleries.index', ['filter' => 'unused', 'search' => request('search'), 'label' => request('label')]) }}"
+                               class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request('filter') == 'unused' ? 'bg-primary-50 text-primary-600 border border-primary-100' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent' }}">
+                                <span class="flex items-center gap-1.5">
+                                     <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                                     Belum Digunakan
+                                </span>
+                                @if(request('filter') == 'unused')
+                                    <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                @endif
+                            </a>
+                       </div>
+                  </div>
+             </div>
+        </div>
+
         {{-- Floating action buttons --}}
         {{-- 1. Floating add button (placed above search, bottom-40) --}}
         <div x-show="showFloatingAddButton" 
@@ -452,46 +531,19 @@
             <div class="max-w-lg mx-auto flex justify-end gap-2.5">
                 
                 {{-- 3. Floating status filter button (placed on the left of label, cycles: Semua -> Digunakan -> Belum Digunakan) --}}
-                @php
-                    $currentFilter = request('filter');
-                    if ($currentFilter == 'used') {
-                        $nextFilter = 'unused';
-                        $filterTitle = 'Filter: Digunakan';
-                    } elseif ($currentFilter == 'unused') {
-                        $nextFilter = '';
-                        $filterTitle = 'Filter: Belum Digunakan';
-                    } else {
-                        $nextFilter = 'used';
-                        $filterTitle = 'Filter: Semua';
-                    }
-                    $nextUrl = route('galleries.index', ['filter' => $nextFilter, 'search' => request('search'), 'label' => request('label')]);
-                @endphp
-                <a href="{{ $nextUrl }}"
-                   class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto relative"
-                   title="{{ $filterTitle }} (Klik untuk mengubah)">
-                    
-                    @if($currentFilter == 'used')
-                        {{-- Green check circle --}}
-                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    @elseif($currentFilter == 'unused')
-                        {{-- Orange warning circle --}}
-                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    @else
-                        {{-- Gray layout menu list icon --}}
-                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
-                    @endif
+                {{-- 3. Floating status filter button (placed on the left of label) --}}
+                <button type="button" @click="showStatusFilterModal = true"
+                        class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto relative"
+                        title="Filter Status">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
                     
                     {{-- Active indicator dot --}}
-                    @if($currentFilter)
+                    @if(request('filter'))
                         <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-accent-500 shadow-sm animate-pulse"></span>
                     @endif
-                </a>
+                </button>
 
                 {{-- 4. Floating label filter button (placed on the right) --}}
                 <button type="button" 
@@ -542,6 +594,7 @@ document.addEventListener('alpine:init', () => {
         activeFilter: '{{ request('filter') }}',
         activeLabel: '{{ request('label') }}',
         showLabelFilterModal: false,
+        showStatusFilterModal: false,
 
         showUsageModal: false,
         activeUsages: [],
