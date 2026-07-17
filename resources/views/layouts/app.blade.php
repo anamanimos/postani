@@ -157,7 +157,28 @@
         <div class="min-h-screen" style="background: linear-gradient(135deg, #FAFAF9 0%, #f0fdf4 30%, #FAFAF9 60%, #fff7ed 100%);">
 
             {{-- Top Header --}}
-            <header class="sticky top-0 z-30 glass-nav">
+            <header class="sticky top-0 z-30 glass-nav transition-all duration-300"
+                    x-data="{ scrolled: false, pageTitle: 'POS Toko Tani' }"
+                    x-init="
+                        window.addEventListener('scroll', () => {
+                            scrolled = window.scrollY > 20;
+                        });
+                        
+                        // Extract page title dynamically
+                        setTimeout(() => {
+                            const headerContainer = document.querySelector('main')?.previousElementSibling;
+                            const h2El = headerContainer ? headerContainer.querySelector('h2') : null;
+                            if (h2El) {
+                                pageTitle = h2El.textContent.trim();
+                            } else {
+                                const parts = document.title.split('-');
+                                const rawTitle = parts[parts.length - 1]?.trim() || '';
+                                if (rawTitle && rawTitle !== 'POS Toko Tani') {
+                                    pageTitle = rawTitle;
+                                }
+                            }
+                        }, 100);
+                    ">
                 <div class="max-w-lg mx-auto px-3 py-3 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-float">
@@ -165,9 +186,33 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <div>
-                            <h1 class="text-base font-bold text-dark leading-tight">POS Toko Tani</h1>
-                            <p class="text-[10px] text-gray-400 font-medium">Sistem Kasir Pertanian</p>
+                        <div class="relative h-9 min-w-[150px] overflow-hidden">
+                            {{-- POS Toko Tani (Default State) --}}
+                            <div x-show="!scrolled" 
+                                 x-transition:enter="transition ease-out duration-300 transform"
+                                 x-transition:enter-start="opacity-0 translate-y-2"
+                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-200 transform"
+                                 x-transition:leave-start="opacity-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 -translate-y-2"
+                                 class="absolute inset-y-0 left-0 flex flex-col justify-center">
+                                <h1 class="text-base font-bold text-dark leading-tight">POS Toko Tani</h1>
+                                <p class="text-[10px] text-gray-400 font-medium">Sistem Kasir Pertanian</p>
+                            </div>
+
+                            {{-- Page Title (Scrolled State) --}}
+                            <div x-show="scrolled" 
+                                 x-transition:enter="transition ease-out duration-300 transform"
+                                 x-transition:enter-start="opacity-0 translate-y-2"
+                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-200 transform"
+                                 x-transition:leave-start="opacity-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 -translate-y-2"
+                                 class="absolute inset-y-0 left-0 flex flex-col justify-center"
+                                 style="display: none;">
+                                <h1 class="text-base font-bold text-primary-600 leading-tight truncate max-w-[200px]" x-text="pageTitle"></h1>
+                                <p class="text-[10px] text-gray-400 font-medium">Halaman Aktif</p>
+                            </div>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
