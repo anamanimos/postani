@@ -382,10 +382,8 @@
                      </button>
                      
                      {{-- Expanded Form --}}
-                     <form x-show="openFloatingSearch" action="{{ route('galleries.index') }}" method="GET" 
+                     <form x-show="openFloatingSearch" @submit.prevent="submitSearch()"
                            class="w-full h-full flex items-center px-4 gap-2.5" style="display: none;">
-                         <input type="hidden" name="filter" value="{{ request('filter') }}">
-                         <input type="hidden" name="label" value="{{ request('label') }}">
                          
                          <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -397,7 +395,7 @@
                                 class="flex-1 bg-transparent border-0 outline-none text-xs font-semibold text-gray-700 placeholder-gray-400 focus:ring-0 p-0">
                          
                          <button type="button" 
-                                 @click="openFloatingSearch = false; $refs.floatSearchInput.value = ''; $refs.floatSearchInput.form.submit()"
+                                 @click="cancelSearch()"
                                  class="text-xs text-gray-400 hover:text-gray-600 font-bold flex-shrink-0 px-1 py-1">
                              Batal
                          </button>
@@ -434,6 +432,8 @@ document.addEventListener('alpine:init', () => {
         loading: false,
         showFloatingAddButton: false,
         openFloatingSearch: openFloatingSearch,
+        activeFilter: '{{ request('filter') }}',
+        activeLabel: '{{ request('label') }}',
 
         showUsageModal: false,
         activeUsages: [],
@@ -464,11 +464,10 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        loadMore() {
-            if (this.loading || !this.nextPageUrl) return;
+        fetchItems(url, replaceItems = false) {
             this.loading = true;
 
-            fetch(this.nextPageUrl, {
+            fetch(url, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -478,13 +477,17 @@ document.addEventListener('alpine:init', () => {
                 if (!res.ok) {
                     const text = await res.text();
                     console.error("HTTP error details:", res.status, text);
-                    alert("Gagal memuat gambar: " + res.status + " " + text.substring(0, 100));
+                    alert("Gagal mengambil data: " + res.status + " " + text.substring(0, 100));
                     throw new Error("HTTP error " + res.status);
                 }
                 return res.json();
             })
             .then(data => {
-                this.items.push(...data.data);
+                if (replaceItems) {
+                    this.items = data.data;
+                } else {
+                    this.items.push(...data.data);
+                }
                 this.nextPageUrl = data.next_page_url;
                 this.loading = false;
             })
@@ -492,6 +495,26 @@ document.addEventListener('alpine:init', () => {
                 console.error(err);
                 this.loading = false;
             });
+        },
+
+        loadMore() {
+            if (this.loading || !this.nextPageUrl) return;
+            this.fetchItems(this.nextPageUrl, false);
+        },
+
+        submitSearch() {
+            const q = this.$refs.floatSearchInput.value.trim();
+            const url = `/galleries?search=${encodeURIComponent(q)}&filter=${this.activeFilter}&label=${this.activeLabel}`;
+            window.history.pushState(null, '', url);
+            this.fetchItems(url, true);
+        },
+
+        cancelSearch() {
+            this.openFloatingSearch = false;
+            this.$refs.floatSearchInput.value = '';
+            const url = `/galleries?search=&filter=${this.activeFilter}&label=${this.activeLabel}`;
+            window.history.pushState(null, '', url);
+            this.fetchItems(url, true);
         },
 
         deleteItem(id) {
