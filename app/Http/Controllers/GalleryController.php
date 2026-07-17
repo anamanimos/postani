@@ -44,18 +44,28 @@ class GalleryController extends Controller
         $galleries = $query->latest()->paginate(18)->withQueryString();
 
         if ($request->expectsJson()) {
-            return response()->json([
-                'data' => $galleries->map(fn($g) => [
-                    'id' => $g->id,
-                    'filepath' => $g->filepath,
-                    'url' => asset('storage/' . $g->filepath),
-                    'filename' => $g->filename,
-                    'labels' => $g->labels->pluck('name'),
-                    'is_used' => $g->is_used,
-                    'usages' => $g->usages
-                ]),
-                'next_page_url' => $galleries->nextPageUrl(),
-            ]);
+            try {
+                return response()->json([
+                    'data' => $galleries->map(fn($g) => [
+                        'id' => $g->id,
+                        'filepath' => $g->filepath,
+                        'url' => asset('storage/' . $g->filepath),
+                        'filename' => $g->filename,
+                        'labels' => $g->labels->pluck('name'),
+                        'is_used' => $g->is_used,
+                        'usages' => $g->usages
+                    ]),
+                    'next_page_url' => $galleries->nextPageUrl(),
+                ]);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Gallery API Error: ' . $e->getMessage(), [
+                    'trace' => $e->getTraceAsString()
+                ]);
+                return response()->json([
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ], 500);
+            }
         }
 
         $allLabels = \App\Models\Label::orderBy('name')->get();

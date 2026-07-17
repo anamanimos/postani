@@ -414,7 +414,15 @@ document.addEventListener('alpine:init', () => {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(res => res.json())
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    console.error("HTTP error details:", res.status, text);
+                    alert("Gagal memuat gambar: " + res.status + " " + text.substring(0, 100));
+                    throw new Error("HTTP error " + res.status);
+                }
+                return res.json();
+            })
             .then(data => {
                 this.items.push(...data.data);
                 this.nextPageUrl = data.next_page_url;
