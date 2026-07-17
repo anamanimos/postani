@@ -3,22 +3,25 @@
         <h2 class="text-lg font-bold text-dark">Produk</h2>
     </x-slot>
 
-    <div class="py-3 pb-28 space-y-3" x-data="productList()" @scroll.window="checkScroll()">
+    <div class="pb-28 space-y-3" x-data="productList()" @scroll.window="checkScroll()">
 
-        {{-- Category Filter Chips --}}
+        {{-- Sticky Category Filter Chips (fixed under header) --}}
         @if(isset($categories) && $categories->count() > 0)
-        <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-            <a href="{{ route('products.index') }}"
-                class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-all {{ !request('category') ? 'bg-primary-600 text-white shadow-lg' : 'bg-white/60 text-gray-600 border border-white/40' }}">
-                Semua
-            </a>
-            @foreach($categories as $cat)
-            <a href="{{ route('products.index', ['category' => $cat->id, 'search' => request('search')]) }}"
-                class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap {{ request('category') == $cat->id ? 'bg-primary-600 text-white shadow-lg' : 'bg-white/60 text-gray-600 border border-white/40' }}">
-                {{ $cat->name }}
-            </a>
-            @endforeach
+        <div class="fixed top-16 left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100/80 px-3 py-2">
+            <div class="max-w-lg mx-auto flex flex-wrap gap-1.5">
+                <a href="{{ route('products.index', ['search' => request('search')]) }}"
+                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all {{ !request('category') ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    Semua
+                </a>
+                @foreach($categories as $cat)
+                <a href="{{ route('products.index', ['category' => $cat->id, 'search' => request('search')]) }}"
+                    class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all {{ request('category') == $cat->id ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    {{ $cat->name }}
+                </a>
+                @endforeach
+            </div>
         </div>
+        <div class="pt-12"></div>
         @endif
 
         {{-- Active Search Indicator --}}
@@ -91,12 +94,8 @@
         </div>
 
         {{-- Floating Action Buttons --}}
-        {{-- 1. Floating add button (bottom-40) --}}
-        <div x-show="showFloatingButtons" x-transition:enter="transition ease-out duration-150 transform"
-             x-transition:enter-start="opacity-0 translate-y-10 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-             x-transition:leave="transition ease-in duration-100 transform"
-             x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-10 scale-95"
-             class="fixed bottom-40 left-0 right-0 z-40 px-5 pointer-events-none" style="display: none;">
+        {{-- 1. Floating add button (bottom-40, always visible) --}}
+        <div class="fixed bottom-40 left-0 right-0 z-40 px-5 pointer-events-none">
             <div class="max-w-lg mx-auto flex justify-end">
                 <a href="{{ route('products.create') }}"
                    class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto"
@@ -173,7 +172,6 @@
                 items: initialItems,
                 nextPageUrl: nextPageUrl,
                 loading: false,
-                showFloatingButtons: false,
                 openFloatingSearch: false,
                 searchQuery: '{{ request('search', '') }}',
                 activeSearch: '{{ request('search', '') }}',
@@ -187,8 +185,6 @@
                 },
 
                 checkScroll() {
-                    this.showFloatingButtons = window.scrollY > 120;
-
                     if (this.loading || !this.nextPageUrl) return;
 
                     const threshold = 300;
