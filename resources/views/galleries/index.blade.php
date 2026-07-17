@@ -128,54 +128,42 @@
                 Tidak ada berkas gambar yang ditemukan.
             </div>
         @else
-            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+            <div class="grid grid-cols-3 gap-[2px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-gray-200">
                 @foreach($galleries as $gallery)
-                    <div class="aspect-square bg-gray-50 relative group rounded-xl overflow-hidden shadow-sm border border-gray-150">
+                    <div class="aspect-square bg-white relative group overflow-hidden cursor-pointer"
+                         onclick="openGalleryPreview({{ $loop->index }})">
                         {{-- Image Element --}}
                         <img src="{{ asset('storage/' . $gallery->filepath) }}" 
-                             class="w-full h-full object-cover" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
                              alt="{{ $gallery->filename }}"
                              loading="lazy">
 
                         {{-- Labels at Top-Left --}}
                         @if($gallery->labels->isNotEmpty())
-                            <div class="absolute top-1.5 left-1.5 z-10 flex flex-wrap gap-1 max-w-[70%]">
+                            <div class="absolute top-1.5 left-1.5 z-10 flex flex-wrap gap-1 max-w-[75%] pointer-events-none">
                                 @foreach($gallery->labels as $label)
-                                    <span class="bg-black/60 text-white rounded px-1.5 py-0.5 text-[8px] font-semibold truncate max-w-[60px] block" title="{{ $label->name }}">
+                                    <span class="bg-black/60 text-white rounded px-1.5 py-0.5 text-[8px] font-semibold truncate max-w-[60px] block shadow-sm" title="{{ $label->name }}">
                                         {{ $label->name }}
                                     </span>
                                 @endforeach
                             </div>
                         @endif
 
-                        {{-- Center Eye Preview on Hover --}}
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center cursor-pointer"
-                             onclick="openGalleryPreview({{ $loop->index }})">
-                            <div class="opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-200">
-                                <div class="w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
                         {{-- Top-Right Checkmark (If Used) --}}
                         @if($gallery->is_used)
-                            <div class="absolute top-1.5 right-1.5 z-10">
-                                <button @click.stop="openUsageModal({{ json_encode($gallery->usages) }}, '{{ addslashes($gallery->filename) }}')" type="button" 
+                            <div class="absolute top-1.5 right-1.5 z-10" @click.stop>
+                                <button @click="openUsageModal({{ json_encode($gallery->usages) }}, '{{ addslashes($gallery->filename) }}')" type="button" 
                                         title="Gambar ini sedang digunakan. Klik untuk detail."
                                         class="w-5 h-5 rounded-full bg-green-500 text-white flex items-center justify-center shadow-md active:scale-90 transition-transform">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                                     </svg>
                                 </button>
                             </div>
                         @endif
 
-                        {{-- Bottom Overlay --}}
-                        <div @click.stop class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-1.5 pt-6 flex items-center justify-between">
+                        {{-- Bottom Overlay (visible on hover) --}}
+                        <div @click.stop class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent p-1.5 pt-6 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                             <span class="text-[9px] font-medium text-white truncate max-w-[55%]" title="{{ $gallery->filename }}">
                                 {{ $gallery->filename }}
                             </span>
@@ -183,27 +171,17 @@
                             <div class="flex items-center gap-1">
                                 {{-- Edit label button --}}
                                 <button type="button" 
-                                        @click.stop="openLabelModal({{ $gallery->id }}, {{ json_encode($gallery->labels->pluck('name')) }}, '{{ addslashes($gallery->filename) }}')"
+                                        @click="openLabelModal({{ $gallery->id }}, {{ json_encode($gallery->labels->pluck('name')) }}, '{{ addslashes($gallery->filename) }}')"
                                         class="text-white hover:text-yellow-300 transition-colors active:scale-90 transform p-0.5" title="Kelola Label">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.5 20.5L18 12l-6-6-8.5 8.5a2.12 2.12 0 000 3l3 3a2.12 2.12 0 003 0zM7 7h.01"/>
                                     </svg>
                                 </button>
 
-                                {{-- Preview eye button (mobile friendly) --}}
-                                <button type="button" 
-                                        onclick="event.stopPropagation(); openGalleryPreview({{ $loop->index }})"
-                                        class="text-white hover:text-blue-300 transition-colors active:scale-90 transform p-0.5" title="Preview">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                    </svg>
-                                </button>
-
                                 {{-- Delete action --}}
                                 @if(!$gallery->is_used)
                                     <form action="{{ route('galleries.destroy', $gallery) }}" method="POST" 
-                                          class="confirm-delete" data-confirm="Yakin ingin menghapus gambar ini dari galeri?">
+                                          class="confirm-delete inline-flex" data-confirm="Yakin ingin menghapus gambar ini dari galeri?">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-white hover:text-red-400 transition-colors active:scale-90 transform p-0.5">
@@ -377,10 +355,35 @@ const galleryItems = [
             id: {{ $gallery->id }},
             url: '{{ asset('storage/' . $gallery->filepath) }}',
             filename: '{{ addslashes($gallery->filename) }}',
-            labels: {!! json_encode($gallery->labels->pluck('name')) !!}
+            labels: {!! json_encode($gallery->labels->pluck('name')) !!},
+            is_used: {{ $gallery->is_used ? 'true' : 'false' }}
         },
     @endforeach
 ];
+
+// Global bridge helpers for lightbox actions
+window.triggerLabelModal = function(id, labels, filename) {
+    const el = document.querySelector('[x-data="galleryManager()"]');
+    if (el) {
+        const alpine = Alpine.$data(el);
+        alpine.openLabelModal(id, labels, filename);
+        closeGalleryPreview();
+    }
+};
+
+window.triggerDeleteGallery = function(actionUrl, token) {
+    if (confirm("Yakin ingin menghapus gambar ini dari galeri?")) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = actionUrl;
+        form.innerHTML = `
+            <input type="hidden" name="_token" value="${token}">
+            <input type="hidden" name="_method" value="DELETE">
+        `;
+        document.body.appendChild(form);
+        form.submit();
+    }
+};
 
 // Alpine gallery manager component
 document.addEventListener('alpine:init', () => {
@@ -475,6 +478,13 @@ function openGalleryPreview(index) {
     
     // Determine label pills html
     const labelPills = item.labels.map(l => `<span style="background:rgba(22,163,74,0.3);color:#fff;font-size:9px;padding:2px 8px;border-radius:999px;font-weight:600;margin-right:4px;">${l}</span>`).join('');
+    
+    const token = '{{ csrf_token() }}';
+    const deleteButtonHtml = item.is_used 
+        ? `<span style="color:rgba(255,255,255,0.45);font-size:10px;font-weight:600;display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.1);padding:4px 10px;border-radius:999px;">🔒 Terkunci</span>`
+        : `<button onclick="window.triggerDeleteGallery('/galleries/${item.id}', '${token}')" style="background:rgba(239,68,68,0.25);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.4)'" onmouseout="this.style.background='rgba(239,68,68,0.25)'">🗑️ Hapus</button>`;
+
+    const labelButtonHtml = `<button onclick="window.triggerLabelModal(${item.id}, ${JSON.stringify(item.labels).replace(/"/g, '&quot;')}, '${item.filename.replace(/'/g, "\\'")}')" style="background:rgba(234,179,8,0.25);border:1px solid rgba(234,179,8,0.4);color:#fde047;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;transition:background 0.2s;" onmouseover="this.style.background='rgba(234,179,8,0.4)'" onmouseout="this.style.background='rgba(234,179,8,0.25)'">🏷️ Label</button>`;
 
     lightbox.innerHTML = `
         <!-- Backdrop -->
@@ -497,9 +507,13 @@ function openGalleryPreview(index) {
 
         <img src="${item.url}" alt="${item.filename}" style="max-width:92vw;max-height:70vh;object-fit:contain;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);position:relative;z-index:1;animation:lbScaleIn .3s ease .1s both;" onclick="event.stopPropagation()">
         
-        <div style="position:relative;z-index:1;margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(255,255,255,0.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:16px;padding:10px 20px;border:1px solid rgba(255,255,255,0.1);max-width:80%;animation:lbScaleIn .3s ease .15s both;">
+        <div style="position:relative;z-index:1;margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(255,255,255,0.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:16px;padding:12px 20px;border:1px solid rgba(255,255,255,0.1);max-width:80%;animation:lbScaleIn .3s ease .15s both;">
             <span style="color:#fff;font-size:12px;font-weight:600;word-break:break-all;text-align:center;">${item.filename}</span>
             ${labelPills ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:2px;">${labelPills}</div>` : ''}
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                ${labelButtonHtml}
+                ${deleteButtonHtml}
+            </div>
         </div>
     `;
     document.body.appendChild(lightbox);
