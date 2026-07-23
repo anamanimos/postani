@@ -95,7 +95,7 @@ class SaleController extends Controller
                 $sale = Sale::create([
                     'invoice_number' => Sale::generateInvoiceNumber(),
                     'customer_id' => $validated['customer_id'] ?? null,
-                    'sale_date' => $validated['sale_date'] ?? Carbon::today(),
+                    'sale_date' => $validated['sale_date'] ?? Carbon::now(),
                     'total_amount' => $totalAmount,
                     'paid_amount' => $paidAmount,
                     'due_amount' => $dueAmount,
@@ -173,5 +173,21 @@ class SaleController extends Controller
             ->setPaper([0, 0, 226.77, 600], 'portrait'); // ~80mm thermal receipt width
 
         return $pdf->stream("struk-{$sale->invoice_number}.pdf");
+    }
+
+    /**
+     * Update the sale date for a transaction.
+     */
+    public function updateDate(Request $request, Sale $sale): RedirectResponse
+    {
+        $validated = $request->validate([
+            'sale_date' => ['required', 'date'],
+        ]);
+
+        $sale->update([
+            'sale_date' => $validated['sale_date'],
+        ]);
+
+        return redirect()->back()->with('success', 'Tanggal transaksi berhasil diperbarui.');
     }
 }

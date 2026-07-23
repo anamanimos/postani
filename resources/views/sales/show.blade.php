@@ -10,7 +10,7 @@
 
     <div class="py-5 pb-24 space-y-4">
         {{-- Invoice header --}}
-        <div class="glass-card p-4 space-y-3">
+        <div class="glass-card p-4 space-y-3" x-data="{ editingDate: false }">
             <div class="flex items-center justify-between">
                 <span class="text-xs text-gray-400 font-semibold uppercase">{{ $sale->invoice_number }}</span>
                 @if($sale->payment_status === 'paid')
@@ -24,12 +24,30 @@
             <h1 class="text-lg font-bold text-dark">Penjualan ke {{ $sale->customer->name ?? 'Walk-in (Umum)' }}</h1>
             <div class="grid grid-cols-2 gap-2 text-xs text-gray-500">
                 <div>
-                    <p class="text-gray-400">Tanggal Transaksi</p>
-                    <p class="font-medium text-dark">{{ $sale->sale_date->locale('id')->isoFormat('D MMMM Y, HH:mm') }}</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-gray-400">Tanggal Transaksi</p>
+                        <button type="button" @click="editingDate = !editingDate" class="text-primary-600 font-bold hover:underline text-[11px] flex items-center gap-0.5">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                            <span x-text="editingDate ? 'Batal' : 'Edit'"></span>
+                        </button>
+                    </div>
+                    <p class="font-medium text-dark mt-0.5" x-show="!editingDate">
+                        {{ $sale->sale_date->locale('id')->isoFormat('D MMMM Y, HH:mm') }}
+                    </p>
+
+                    <form action="{{ route('sales.update-date', $sale) }}" method="POST" x-show="editingDate" class="mt-2 space-y-2" style="display: none;">
+                        @csrf
+                        @method('PATCH')
+                        <input type="datetime-local" name="sale_date" value="{{ $sale->sale_date->format('Y-m-d\TH:i') }}" required class="form-input-glass !text-xs !py-1.5 !px-2 w-full">
+                        <div class="flex gap-1">
+                            <button type="submit" class="btn-primary py-1 px-3 text-[11px] font-bold">Simpan</button>
+                            <button type="button" @click="editingDate = false" class="btn-secondary py-1 px-3 text-[11px]">Batal</button>
+                        </div>
+                    </form>
                 </div>
                 <div>
                     <p class="text-gray-400">Metode Bayar</p>
-                    <p class="font-medium text-dark uppercase">{{ $sale->payment_method }}</p>
+                    <p class="font-medium text-dark uppercase mt-0.5">{{ $sale->payment_method }}</p>
                 </div>
             </div>
             <div class="pt-2">

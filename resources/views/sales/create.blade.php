@@ -177,6 +177,19 @@
                             </select>
                         </div>
                     </div>
+                {{-- Tanggal Transaksi --}}
+                <div class="space-y-1.5">
+                    <label class="block text-[10px] font-semibold text-gray-500">Tanggal Transaksi</label>
+                    <div class="input-group-solid">
+                        <span class="input-prefix">
+                            <!-- Duotone Icon: Calendar -->
+                            <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.3" d="M3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V6Z" fill="currentColor"/>
+                                <path d="M3 10H21M8 2V6M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <input type="datetime-local" x-model="saleDate" class="form-input-solid !text-xs !py-2">
+                    </div>
                 </div>
 
                 {{-- Submit Button --}}
@@ -258,6 +271,11 @@
                 openCart: false,
                 paymentMethod: 'cash',
                 customerId: '',
+                saleDate: (function() {
+                    const d = new Date();
+                    const pad = (n) => String(n).padStart(2, '0');
+                    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                })(),
                 submitting: false,
 
                 filteredProducts() {
@@ -367,6 +385,7 @@
 
                     const payload = {
                         customer_id: this.customerId || null,
+                        sale_date: this.saleDate || null,
                         payment_method: this.paymentMethod,
                         items: this.cart.map(item => ({
                             product_id: item.id,

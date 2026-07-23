@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     // Sales
     Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('/sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
+    Route::patch('/sales/{sale}/update-date', [SaleController::class, 'updateDate'])->name('sales.update-date');
     
     // Payments
     Route::get('/payments/suppliers', [PaymentController::class, 'supplierPayments'])->name('payments.suppliers');
