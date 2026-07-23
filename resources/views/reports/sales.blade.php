@@ -49,16 +49,25 @@
             </div>
             <div class="divide-y divide-gray-100">
                 @forelse($sales as $sale)
-                <a href="{{ route('sales.show', $sale) }}" class="p-3 flex items-center justify-between hover:bg-white/40 block text-xs">
-                    <div>
+                <div class="p-3 flex items-center justify-between hover:bg-white/40 text-xs">
+                    <a href="{{ route('sales.show', $sale) }}" class="flex-1">
                         <p class="font-semibold text-dark">{{ $sale->invoice_number }}</p>
                         <p class="text-gray-400">{{ $sale->sale_date->format('d/m/Y H:i') }} · {{ $sale->customer->name ?? 'Walk-in (Umum)' }}</p>
+                    </a>
+                    <div class="text-right flex items-center gap-2">
+                        <div>
+                            <p class="font-bold text-dark">Rp {{ number_format($sale->total_amount, 0, ',', '.') }}</p>
+                            <p class="text-[10px] text-gray-400 capitalize">{{ $sale->payment_method }}</p>
+                        </div>
+                        <form action="{{ route('sales.destroy', $sale) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi {{ $sale->invoice_number }}? Stok produk akan dikembalikan secara otomatis.');" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" title="Hapus Penjualan">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </form>
                     </div>
-                    <div class="text-right">
-                        <p class="font-bold text-dark">Rp {{ number_format($sale->total_amount, 0, ',', '.') }}</p>
-                        <p class="text-[10px] text-gray-400 capitalize">{{ $sale->payment_method }}</p>
-                    </div>
-                </a>
+                </div>
                 @empty
                 <div class="p-8 text-center text-gray-400 text-sm">
                     Tidak ada transaksi penjualan pada periode ini.

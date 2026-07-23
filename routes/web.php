@@ -33,11 +33,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('customers', CustomerController::class);
     
     // Purchases
-    Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
+    Route::resource('purchases', PurchaseController::class);
     Route::get('/purchases/price-history', [PurchaseController::class, 'getPriceHistory'])->name('purchases.price-history');
     
     // Sales
-    Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
     Route::get('/sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
     Route::patch('/sales/{sale}/update-date', [SaleController::class, 'updateDate'])->name('sales.update-date');
     

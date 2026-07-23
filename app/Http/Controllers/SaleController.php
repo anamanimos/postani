@@ -190,4 +190,33 @@ class SaleController extends Controller
 
         return redirect()->back()->with('success', 'Tanggal transaksi berhasil diperbarui.');
     }
+
+    /**
+     * Soft delete a sale transaction and restore product stock.
+     */
+    public function destroy(Sale $sale): RedirectResponse
+    {
+        try {
+            DB::transaction(function () use ($sale) {
+                foreach ($sale->saleItems as $item) {
+                    $product = $item->product;
+                    if ($product) {
+                        $stockReduction = $item->quantity * $product->conversion_factor;
+                        $product->stock += $stockReduction;
+                        $product->save();
+                    }
+                }
+
+                $sale->delete();
+            });
+
+            return redirect()
+                ->back()
+                ->with('success', 'Data transaksi penjualan berhasil dihapus (soft delete).');
+        } catch (\Throwable $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal menghapus transaksi penjualan: ' . $e->getMessage());
+        }
+    }
 }

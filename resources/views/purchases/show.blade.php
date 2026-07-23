@@ -7,10 +7,19 @@
                 </a>
                 <h2 class="text-lg font-bold text-dark">Detail Pembelian</h2>
             </div>
-            <a href="{{ route('purchases.edit', $purchase) }}" 
-               class="px-3 py-1.5 text-xs font-bold text-primary-600 hover:text-primary-700 bg-white/80 hover:bg-white border border-gray-200 rounded-xl transition-all shadow-sm active:scale-95">
-                ✏️ Edit Nota
-            </a>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('purchases.edit', $purchase) }}" 
+                   class="px-3 py-1.5 text-xs font-bold text-primary-600 hover:text-primary-700 bg-white/80 hover:bg-white border border-gray-200 rounded-xl transition-all shadow-sm active:scale-95">
+                    ✏️ Edit Nota
+                </a>
+                <form action="{{ route('purchases.destroy', $purchase) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pembelian {{ $purchase->invoice_number }}? Stok barang akan disesuaikan secara otomatis.');" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 text-xs px-3 py-1.5 rounded-xl font-bold shadow-sm transition-all flex items-center gap-1 active:scale-95">
+                        🗑️ Hapus
+                    </button>
+                </form>
+            </div>
         </div>
     </x-slot>
 

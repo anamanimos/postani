@@ -368,4 +368,36 @@ class PurchaseController extends Controller
 
         $product->save();
     }
+
+    public function destroy(Purchase $purchase): RedirectResponse
+    {
+        try {
+            DB::transaction(function () use ($purchase) {
+                $affectedProductIds = $purchase->purchaseItems->pluck('product_id')->unique()->toArray();
+
+                foreach ($purchase->purchaseItems as $item) {
+                    $product = $item->product;
+                    if ($product) {
+                        $product->stock -= $item->quantity;
+                        $product->save();
+                    }
+                    PurchasePriceHistory::where('purchase_item_id', $item->id)->delete();
+                }
+
+                $purchase->delete();
+
+                foreach ($affectedProductIds as $productId) {
+                    $this->recalculateProductPrices($productId);
+                }
+            });
+
+            return redirect()
+                ->route('purchases.index')
+                ->with('success', 'Data transaksi pembelian berhasil dihapus (soft delete).');
+        } catch (\Throwable $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal menghapus transaksi pembelian: ' . $e->getMessage());
+        }
+    }
 }

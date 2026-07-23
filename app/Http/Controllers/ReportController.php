@@ -46,6 +46,7 @@ class ReportController extends Controller
         // Gross profit: (selling_price - last_purchase_price * conversion_factor) per item
         $grossProfit = SaleItem::join('sales', 'sale_items.sale_id', '=', 'sales.id')
             ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->whereNull('sales.deleted_at')
             ->whereDate('sales.sale_date', '>=', $dateFrom)
             ->whereDate('sales.sale_date', '<=', $dateTo)
             ->select(DB::raw(
@@ -112,6 +113,7 @@ class ReportController extends Controller
 
         $profitByDate = SaleItem::join('sales', 'sale_items.sale_id', '=', 'sales.id')
             ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->whereNull('sales.deleted_at')
             ->whereDate('sales.sale_date', '>=', $dateFrom)
             ->whereDate('sales.sale_date', '<=', $dateTo)
             ->select(
@@ -130,6 +132,7 @@ class ReportController extends Controller
 
         $saleItems = SaleItem::with(['product.sellUnit', 'sale'])
             ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+            ->whereNull('sales.deleted_at')
             ->whereDate('sales.sale_date', '>=', $dateFrom)
             ->whereDate('sales.sale_date', '<=', $dateTo)
             ->select('sale_items.*')
@@ -171,6 +174,7 @@ class ReportController extends Controller
         $suppliersWithDebt = \App\Models\Supplier::select('suppliers.*')
             ->selectRaw('SUM(purchases.due_amount) as total_due')
             ->join('purchases', 'suppliers.id', '=', 'purchases.supplier_id')
+            ->whereNull('purchases.deleted_at')
             ->where('purchases.due_amount', '>', 0)
             ->groupBy('suppliers.id')
             ->orderBy('total_due', 'desc')
@@ -179,6 +183,7 @@ class ReportController extends Controller
         $customersWithDebt = \App\Models\Customer::select('customers.*')
             ->selectRaw('SUM(sales.due_amount) as total_due')
             ->join('sales', 'customers.id', '=', 'sales.customer_id')
+            ->whereNull('sales.deleted_at')
             ->where('sales.due_amount', '>', 0)
             ->groupBy('customers.id')
             ->orderBy('total_due', 'desc')

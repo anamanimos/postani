@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Carbon\Carbon;
 
 class Sale extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'invoice_number', 'customer_id', 'sale_date', 'total_amount',
         'payment_method', 'payment_status', 'paid_amount', 'due_amount', 'created_by'
