@@ -2,8 +2,12 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold text-dark">Riwayat Penjualan</h2>
-            <a href="{{ route('sales.create') }}" class="btn-primary flex items-center gap-2 text-xs py-2 px-4 rounded-full">
-                <span>➕ Jual Baru</span>
+            <a href="{{ route('sales.create') }}" class="btn-primary flex items-center gap-1.5 text-xs py-2 px-4 rounded-xl shadow-sm">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle opacity="0.3" cx="12" cy="12" r="10" fill="currentColor"/>
+                    <path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Jual Baru</span>
             </a>
         </div>
     </x-slot>

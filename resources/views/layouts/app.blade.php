@@ -181,19 +181,34 @@
                         <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Menu Utama</p>
                         <div class="space-y-1">
                             <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M3 10.5L12 3L21 10.5V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V10.5Z" fill="currentColor"/>
+                                    <path d="M3 10.5L12 3L21 10.5M9 21V14H15V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                                 <span>Beranda</span>
                             </a>
                             <a href="{{ route('sales.create') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('sales.create') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M5.4 5L7 13H17L21 5H5.4Z" fill="currentColor"/>
+                                    <path d="M3 3H5.4L7 13H17L21 5H5.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="9" cy="20" r="1.5" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+                                    <circle cx="17" cy="20" r="1.5" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+                                </svg>
                                 <span>Kasir Jual Baru</span>
                             </a>
                             <a href="{{ route('sales.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('sales.index', 'sales.show') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M4 4C4 2.89543 4.89543 2 6 2H18C19.1046 2 20 2.89543 20 4V22L17 20L14 22L12 20L10 22L7 20L4 22V4Z" fill="currentColor"/>
+                                    <path d="M8 7H16M8 11H16M8 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
                                 <span>Riwayat Penjualan</span>
                             </a>
                             <a href="{{ route('purchases.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('purchases.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
+                                    <path d="M2 17L12 22L22 17M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                                 <span>Pembelian (Beli)</span>
                             </a>
                         </div>
@@ -204,19 +219,35 @@
                         <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Katalog & Stok</p>
                         <div class="space-y-1">
                             <a href="{{ route('products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('products.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">📦</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M3 7.5L12 3L21 7.5V16.5L12 21L3 16.5V7.5Z" fill="currentColor"/>
+                                    <path d="M3 7.5L12 12M12 12L21 7.5M12 12V21M7.5 5.25L16.5 9.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                                 <span>Daftar Produk</span>
                             </a>
                             <a href="{{ route('categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('categories.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">🏷️</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M4 4H10.5858C11.1163 4 11.625 4.21071 12 4.58579L20.4142 13C21.1953 13.781 21.1953 15.0474 20.4142 15.8284L15.8284 20.4142C15.0474 21.1953 13.781 21.1953 13 20.4142L4.58579 12C4.21071 11.625 4 11.1163 4 10.5858V4Z" fill="currentColor"/>
+                                    <path d="M4 4H10.5858C11.1163 4 11.625 4.21071 12 4.58579L20.4142 13C21.1953 13.781 21.1953 15.0474 20.4142 15.8284L15.8284 20.4142C15.0474 21.1953 13.781 21.1953 13 20.4142L4.58579 12C4.21071 11.625 4 11.1163 4 10.5858V4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
+                                </svg>
                                 <span>Kategori</span>
                             </a>
                             <a href="{{ route('units.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('units.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">📏</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V6Z" fill="currentColor"/>
+                                    <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M7 4V8M11 4V10M15 4V8M19 4V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
                                 <span>Satuan Unit</span>
                             </a>
                             <a href="{{ route('galleries.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('galleries.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">🖼️</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V6Z" fill="currentColor"/>
+                                    <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                                    <path d="M21 15L16 10L5 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                                 <span>Galeri Foto</span>
                             </a>
                         </div>
@@ -227,11 +258,22 @@
                         <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Relasi Bisnis</p>
                         <div class="space-y-1">
                             <a href="{{ route('customers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('customers.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">👥</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" fill="currentColor"/>
+                                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                                    <path opacity="0.3" d="M17 14C19.7614 14 22 16.2386 22 19V21H18" fill="currentColor"/>
+                                    <path d="M4 21C4 17.134 7.13401 14 11 14H13C16.866 14 20 17.134 20 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
                                 <span>Pelanggan</span>
                             </a>
                             <a href="{{ route('suppliers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('suppliers.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">🤝</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M1 4C1 3.44772 1.44772 3 2 3H14C14.5523 3 15 3.44772 15 4V16C15 16.5523 14.5523 17 14 17H2C1.44772 17 1 16.5523 1 16V4Z" fill="currentColor"/>
+                                    <path d="M1 4C1 3.44772 1.44772 3 2 3H14C14.5523 3 15 3.44772 15 4V16C15 16.5523 14.5523 17 14 17H2C1.44772 17 1 16.5523 1 16V4Z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M15 8H19.2C19.4652 8 19.7196 8.10536 19.9071 8.29289L22.7071 11.0929C22.8946 11.2804 23 11.5348 23 11.8V16C23 16.5523 22.5523 17 22 17H15V8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                    <circle cx="5.5" cy="18.5" r="2.5" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+                                    <circle cx="18.5" cy="18.5" r="2.5" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+                                </svg>
                                 <span>Tengkulak (Supplier)</span>
                             </a>
                         </div>
@@ -242,19 +284,33 @@
                         <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Keuangan & Laporan</p>
                         <div class="space-y-1">
                             <a href="{{ route('cash-transactions.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('cash-transactions.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">🏦</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M3 9L12 3L21 9V11H3V9Z" fill="currentColor"/>
+                                    <path d="M3 9L12 3L21 9M3 11H21M5 11V18M9 11V18M15 11V18M19 11V18M3 18H21M2 21H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                                 <span>Buku Kas Toko</span>
                             </a>
                             <a href="{{ route('payments.suppliers') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('payments.suppliers*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">💸</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V6Z" fill="currentColor"/>
+                                    <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M3 9H21M7 15H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
                                 <span>Hutang Tengkulak</span>
                             </a>
                             <a href="{{ route('payments.customers') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('payments.customers*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">💰</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" fill="currentColor"/>
+                                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 7V17M14.5 9.5C14.5 8.11929 13.3807 7 12 7H10C8.89543 7 8 7.89543 8 9C8 10.1046 8.89543 11 10 11H14C15.1046 11 16 11.8954 16 13C16 14.1046 15.1046 15 14 15H12M12 17H9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
                                 <span>Piutang Pelanggan</span>
                             </a>
                             <a href="{{ route('reports.sales') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('reports.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">📊</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M3 4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4Z" fill="currentColor"/>
+                                    <path d="M3 20H21M7 16V12M12 16V8M17 16V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
                                 <span>Laporan & Analisis</span>
                             </a>
                         </div>
@@ -265,35 +321,22 @@
                         <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Sistem</p>
                         <div class="space-y-1">
                             <a href="{{ route('users.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('users.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">👤</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" fill="currentColor"/>
+                                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
                                 <span>Kelola Pengguna</span>
                             </a>
                             <a href="{{ route('settings.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('settings.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
-                                <span class="text-sm">⚙️</span>
+                                <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle opacity="0.3" cx="12" cy="12" r="4" fill="currentColor"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                                 <span>Pengaturan Toko</span>
                             </a>
                         </div>
-                    </div>
-                </div>
-
-                {{-- Sidebar User Profile Footer --}}
-                <div class="p-3 border-t border-gray-150/60 bg-white/40">
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50/80 border border-gray-100">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <div class="w-8 h-8 rounded-lg bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                                {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-xs font-bold text-dark truncate">{{ Auth::user()->name ?? 'User' }}</p>
-                                <p class="text-[10px] text-gray-400 truncate">{{ Auth::user()->role ?? 'Kasir' }}</p>
-                            </div>
-                        </div>
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Keluar">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                            </button>
-                        </form>
                     </div>
                 </div>
             </aside>

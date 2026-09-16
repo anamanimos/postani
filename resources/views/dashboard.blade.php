@@ -14,7 +14,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-lg font-bold text-dark">Selamat Datang! 👋</h2>
+                <h2 class="text-lg font-bold text-dark">Selamat Datang!</h2>
                 <p class="text-sm text-gray-500">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}</p>
             </div>
             <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
@@ -311,19 +311,42 @@
                     <h3 class="text-sm font-bold text-dark mb-3">Aksi Cepat</h3>
                     <div class="grid grid-cols-2 gap-2.5">
                         <a href="{{ route('sales.create') }}" class="p-3 rounded-xl bg-primary-50/80 hover:bg-primary-100/80 text-primary-800 transition-colors border border-primary-100 flex flex-col items-center text-center">
-                            <span class="text-xl mb-1">🛒</span>
+                            <div class="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center text-primary-600 mb-1.5">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M5.4 5L7 13H17L21 5H5.4Z" fill="currentColor"/>
+                                    <path d="M3 3H5.4L7 13H17L21 5H5.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="9" cy="20" r="1.5" fill="currentColor"/>
+                                    <circle cx="17" cy="20" r="1.5" fill="currentColor"/>
+                                </svg>
+                            </div>
                             <span class="text-xs font-bold">Kasir Jual</span>
                         </a>
                         <a href="{{ route('purchases.create') }}" class="p-3 rounded-xl bg-blue-50/80 hover:bg-blue-100/80 text-blue-800 transition-colors border border-blue-100 flex flex-col items-center text-center">
-                            <span class="text-xl mb-1">📦</span>
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 mb-1.5">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
+                                    <path d="M2 17L12 22L22 17M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
                             <span class="text-xs font-bold">Beli Stok</span>
                         </a>
                         <a href="{{ route('products.create') }}" class="p-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/80 text-emerald-800 transition-colors border border-emerald-100 flex flex-col items-center text-center">
-                            <span class="text-xl mb-1">➕</span>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 mb-1.5">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle opacity="0.3" cx="12" cy="12" r="10" fill="currentColor"/>
+                                    <path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
                             <span class="text-xs font-bold">Tambah Produk</span>
                         </a>
                         <a href="{{ route('reports.sales') }}" class="p-3 rounded-xl bg-orange-50/80 hover:bg-orange-100/80 text-orange-800 transition-colors border border-orange-100 flex flex-col items-center text-center">
-                            <span class="text-xl mb-1">📊</span>
+                            <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 mb-1.5">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.3" d="M3 4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4Z" fill="currentColor"/>
+                                    <path d="M3 20H21M7 16V12M12 16V8M17 16V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
                             <span class="text-xs font-bold">Laporan Omset</span>
                         </a>
                     </div>
