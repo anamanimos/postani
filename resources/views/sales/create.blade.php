@@ -7,27 +7,23 @@
         <div class="lg:flex lg:gap-6 lg:items-start">
             {{-- Left Column: Products & Controls --}}
             <div class="lg:flex-1 min-w-0">
-                {{-- Tanggal Penjualan & Desktop Search Control Bar --}}
-                <div class="card-solid p-3 mb-3 bg-white flex items-center justify-between gap-3 shadow-sm rounded-xl">
-                    <div class="flex items-center gap-2 text-dark font-bold text-xs flex-shrink-0">
-                        <!-- Duotone Icon: Calendar -->
-                        <svg class="w-4 h-4 text-primary-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path opacity="0.3" d="M3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V6Z" fill="currentColor"/>
-                            <path d="M3 10H21M8 2V6M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        <span>Tgl Penjualan:</span>
-                    </div>
-                    <input type="datetime-local" x-model="saleDate" class="form-input-solid !text-xs !py-1 !px-2 max-w-[190px] font-semibold text-gray-700">
-
-                    {{-- Desktop Quick Search Bar --}}
-                    <div class="hidden lg:flex items-center flex-1 max-w-xs relative ml-auto">
-                        <svg class="w-4 h-4 text-gray-400 absolute left-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {{-- Sticky Search Bar in Left Column --}}
+                <div class="sticky top-16 md:top-20 z-20 mb-3 bg-white/95 backdrop-blur-md p-2.5 rounded-xl border border-gray-200/80 shadow-sm flex items-center gap-2.5">
+                    <div class="relative flex-1">
+                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                         <input type="text" x-model="searchQuery" x-ref="desktopSearchInput"
                                placeholder="Cari barang (Ctrl+F)..."
-                               class="form-input-solid !text-xs !py-1.5 !pl-9 !pr-7 w-full font-medium text-gray-700 rounded-lg">
-                        <button type="button" x-show="searchQuery" @click="searchQuery = ''" class="absolute right-2.5 text-gray-400 hover:text-gray-600 text-xs font-bold leading-none">×</button>
+                               class="form-input-solid !text-xs !py-2 !pl-9 !pr-8 w-full font-medium text-gray-700 rounded-lg">
+                        <button type="button" x-show="searchQuery" @click="searchQuery = ''; $refs.desktopSearchInput.focus()" 
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm font-bold leading-none p-1"
+                                title="Hapus pencarian">×</button>
+                    </div>
+                    <div class="hidden sm:flex items-center gap-1 text-[11px] font-semibold text-gray-400 px-2 py-1 bg-gray-50 rounded-lg border border-gray-200/70 flex-shrink-0 select-none">
+                        <kbd class="font-mono text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded shadow-xs text-gray-500">Ctrl</kbd>
+                        <span>+</span>
+                        <kbd class="font-mono text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded shadow-xs text-gray-500">F</kbd>
                     </div>
                 </div>
 
@@ -97,7 +93,7 @@
                     </div>
 
                     {{-- Cart Items List Desktop --}}
-                    <div x-show="cart.length > 0" class="max-h-[38vh] overflow-y-auto divide-y divide-gray-100">
+                    <div x-show="cart.length > 0" class="max-h-[32vh] xl:max-h-[36vh] overflow-y-auto divide-y divide-gray-100">
                         <template x-for="(item, idx) in cart" :key="'desk-' + item.id">
                             <div class="px-4 py-2.5">
                                 <div class="flex items-start justify-between gap-2 mb-1.5">
@@ -167,6 +163,21 @@
                                     <option value="{{ $customer->id }}">{{ $customer->name }}</option>
                                 @endforeach
                             </select>
+                        </div>
+
+                        {{-- Tanggal Penjualan Desktop --}}
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-semibold text-gray-500">Tanggal Penjualan</label>
+                            <div class="input-group-solid">
+                                <span class="input-prefix">
+                                    <!-- Duotone Icon: Calendar -->
+                                    <svg class="w-3.5 h-3.5 text-primary-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path opacity="0.3" d="M3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V6Z" fill="currentColor"/>
+                                        <path d="M3 10H21M8 2V6M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                <input type="datetime-local" x-model="saleDate" class="form-input-solid !text-xs !py-1.5 w-full bg-white font-medium text-gray-700">
+                            </div>
                         </div>
 
                         {{-- Submit Button --}}
@@ -439,16 +450,14 @@
                     window.addEventListener('keydown', (e) => {
                         if ((e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F')) {
                             e.preventDefault();
-                            if (window.innerWidth >= 1024 && this.$refs.desktopSearchInput) {
+                            if (this.$refs.desktopSearchInput) {
                                 this.$refs.desktopSearchInput.focus();
                                 this.$refs.desktopSearchInput.select();
-                            } else {
+                            } else if (this.$refs.floatSearchInput) {
                                 this.openFloatingSearch = true;
                                 this.$nextTick(() => {
-                                    if (this.$refs.floatSearchInput) {
-                                        this.$refs.floatSearchInput.focus();
-                                        this.$refs.floatSearchInput.select();
-                                    }
+                                    this.$refs.floatSearchInput.focus();
+                                    this.$refs.floatSearchInput.select();
                                 });
                             }
                         }
