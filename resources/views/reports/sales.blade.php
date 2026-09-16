@@ -15,7 +15,7 @@
     <div class="py-5 pb-24 space-y-4">
         {{-- Filter --}}
         <div class="glass-card p-4">
-            <form action="{{ route('reports.sales') }}" method="GET" class="grid grid-cols-2 gap-2">
+            <form action="{{ route('reports.sales') }}" method="GET" class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 md:items-end">
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-500 mb-1">Mulai</label>
                     <input type="text" name="date_from" value="{{ request('date_from', date('Y-m-d')) }}" class="datepicker form-input-glass py-1.5 px-3">
@@ -24,7 +24,7 @@
                     <label class="block text-[10px] font-semibold text-gray-500 mb-1">Sampai</label>
                     <input type="text" name="date_to" value="{{ request('date_to', date('Y-m-d')) }}" class="datepicker form-input-glass py-1.5 px-3">
                 </div>
-                <div class="col-span-2 pt-2 flex gap-2">
+                <div class="col-span-2 md:col-span-2 pt-2 md:pt-0 flex gap-2">
                     <button type="submit" class="btn-primary py-2 text-xs flex-1">Filter</button>
                     <a href="{{ route('reports.sales') }}" class="btn-secondary py-2 text-xs text-center flex-1">Reset</a>
                 </div>
@@ -50,7 +50,7 @@
             </div>
             <div class="divide-y divide-gray-100">
                 @forelse($sales as $sale)
-                <div class="p-3 flex items-center justify-between hover:bg-white/40 text-xs">
+                <div class="p-3 md:px-6 md:py-4 flex items-center justify-between hover:bg-white/40 text-xs">
                     <a href="{{ route('sales.show', $sale) }}" class="flex-1">
                         <p class="font-semibold text-dark">{{ $sale->invoice_number }}</p>
                         <p class="text-gray-400">{{ $sale->sale_date->format('d/m/Y H:i') }} · {{ $sale->customer->name ?? 'Walk-in (Umum)' }}</p>

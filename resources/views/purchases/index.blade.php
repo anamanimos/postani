@@ -1,15 +1,33 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-lg font-bold text-dark">Riwayat Pembelian</h2>
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-dark">Riwayat Pembelian</h2>
+            <div class="hidden md:flex items-center gap-2">
+                <button type="button" 
+                        @click="$dispatch('open-filter-modal')"
+                        class="btn-secondary flex items-center gap-1.5 text-xs py-2 px-3.5 rounded-xl">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span>Filter Tanggal</span>
+                    @if(request('date_from') || request('date_to'))
+                        <span class="w-2 h-2 rounded-full bg-accent-500"></span>
+                    @endif
+                </button>
+                <a href="{{ route('purchases.create') }}" class="btn-primary flex items-center gap-1.5 text-xs py-2 px-4 rounded-xl">
+                    <span>+ Beli Barang Baru</span>
+                </a>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="py-5 pb-24 space-y-4" x-data="{ showFilterModal: false }">
+    <div class="py-5 pb-24 space-y-4" x-data="{ showFilterModal: false }" @open-filter-modal.window="showFilterModal = true">
 
         {{-- Purchase List --}}
         <div class="glass-card overflow-hidden">
             <div class="divide-y divide-gray-100">
                 @forelse($purchases as $purchase)
-                <div class="p-4 flex items-center justify-between hover:bg-white/40 transition-colors">
+                <div class="p-4 md:px-6 md:py-4 flex items-center justify-between hover:bg-white/40 transition-colors">
                     <a href="{{ route('purchases.show', $purchase) }}" class="flex-1">
                         <p class="text-sm font-semibold text-dark">{{ $purchase->invoice_number }}</p>
                         <p class="text-xs text-gray-400">Tengkulak: <span class="font-medium text-dark">{{ $purchase->supplier->name }}</span></p>
@@ -50,8 +68,8 @@
         </div>
         @endif
         
-        {{-- Floating add button (placed at bottom-24) --}}
-        <div class="fixed bottom-24 left-0 right-0 z-40 px-5 pointer-events-none">
+        {{-- Floating add button (placed at bottom-24, mobile only) --}}
+        <div class="fixed bottom-24 left-0 right-0 z-40 px-5 pointer-events-none md:hidden">
             <div class="max-w-lg mx-auto flex justify-end">
                 <a href="{{ route('purchases.create') }}" 
                    class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto"
@@ -63,8 +81,8 @@
             </div>
         </div>
 
-        {{-- Floating Filter Button (placed at top-right, top-16) --}}
-        <div class="fixed top-16 left-0 right-0 z-40 px-5 pointer-events-none">
+        {{-- Floating Filter Button (placed at top-right, mobile only) --}}
+        <div class="fixed top-16 left-0 right-0 z-40 px-5 pointer-events-none md:hidden">
             <div class="max-w-lg mx-auto flex justify-end">
                 <button type="button" 
                         @click="showFilterModal = true"

@@ -11,7 +11,7 @@
     <div class="py-5 pb-24 space-y-4">
         {{-- Filter Form --}}
         <div class="glass-card p-4">
-            <form action="{{ route('sales.index') }}" method="GET" class="grid grid-cols-2 gap-2">
+            <form action="{{ route('sales.index') }}" method="GET" class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 md:items-end">
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-500 mb-1">Mulai Tanggal</label>
                     <input type="text" name="date_from" value="{{ request('date_from') }}" class="datepicker form-input-glass py-1.5 px-3">
@@ -20,7 +20,7 @@
                     <label class="block text-[10px] font-semibold text-gray-500 mb-1">Sampai Tanggal</label>
                     <input type="text" name="date_to" value="{{ request('date_to') }}" class="datepicker form-input-glass py-1.5 px-3">
                 </div>
-                <div class="col-span-2 pt-2 flex gap-2">
+                <div class="col-span-2 md:col-span-2 pt-2 md:pt-0 flex gap-2">
                     <button type="submit" class="btn-primary py-2 text-xs flex-1">Filter</button>
                     <a href="{{ route('sales.index') }}" class="btn-secondary py-2 text-xs text-center flex-1">Reset</a>
                 </div>
@@ -31,7 +31,7 @@
         <div class="glass-card overflow-hidden">
             <div class="divide-y divide-gray-100">
                 @forelse($sales as $sale)
-                <div class="p-4 flex items-center justify-between hover:bg-white/40 transition-colors">
+                <div class="p-4 md:px-6 md:py-4 flex items-center justify-between hover:bg-white/40 transition-colors">
                     <a href="{{ route('sales.show', $sale) }}" class="flex-1">
                         <p class="text-sm font-semibold text-dark">{{ $sale->invoice_number }}</p>
                         <p class="text-xs text-gray-400">Pelanggan: <span class="font-medium text-dark">{{ $sale->customer->name ?? 'Walk-in (Umum)' }}</span></p>

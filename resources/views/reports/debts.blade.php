@@ -27,41 +27,43 @@
             </div>
         </div>
 
-        {{-- Top Debts --}}
-        <div class="glass-card overflow-hidden">
-            <div class="px-4 py-3 border-b border-white/30">
-                <h3 class="text-sm font-semibold text-dark">Hutang Toko ke Tengkulak</h3>
-            </div>
-            <div class="divide-y divide-gray-100">
-                @forelse($suppliersWithDebt as $supplier)
-                <div class="px-4 py-3 flex items-center justify-between text-xs">
-                    <span>{{ $supplier->name }}</span>
-                    <span class="font-bold text-red-600">Rp {{ number_format($supplier->total_due, 0, ',', '.') }}</span>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {{-- Top Debts --}}
+            <div class="glass-card overflow-hidden">
+                <div class="px-4 py-3 border-b border-white/30">
+                    <h3 class="text-sm font-semibold text-dark">Hutang Toko ke Tengkulak</h3>
                 </div>
-                @empty
-                <div class="p-4 text-center text-gray-400 text-xs">
-                    Tidak ada hutang ke tengkulak.
+                <div class="divide-y divide-gray-100">
+                    @forelse($suppliersWithDebt as $supplier)
+                    <div class="px-4 py-3 flex items-center justify-between text-xs">
+                        <span>{{ $supplier->name }}</span>
+                        <span class="font-bold text-red-600">Rp {{ number_format($supplier->total_due, 0, ',', '.') }}</span>
+                    </div>
+                    @empty
+                    <div class="p-4 text-center text-gray-400 text-xs">
+                        Tidak ada hutang ke tengkulak.
+                    </div>
+                    @endforelse
                 </div>
-                @endforelse
             </div>
-        </div>
 
-        {{-- Top Receivables --}}
-        <div class="glass-card overflow-hidden">
-            <div class="px-4 py-3 border-b border-white/30">
-                <h3 class="text-sm font-semibold text-dark">Piutang Pelanggan (Petani)</h3>
-            </div>
-            <div class="divide-y divide-gray-100">
-                @forelse($customersWithDebt as $customer)
-                <div class="px-4 py-3 flex items-center justify-between text-xs">
-                    <span>{{ $customer->name }}</span>
-                    <span class="font-bold text-accent-600">Rp {{ number_format($customer->total_due, 0, ',', '.') }}</span>
+            {{-- Top Receivables --}}
+            <div class="glass-card overflow-hidden">
+                <div class="px-4 py-3 border-b border-white/30">
+                    <h3 class="text-sm font-semibold text-dark">Piutang Pelanggan (Petani)</h3>
                 </div>
-                @empty
-                <div class="p-4 text-center text-gray-400 text-xs">
-                    Tidak ada piutang pelanggan.
+                <div class="divide-y divide-gray-100">
+                    @forelse($customersWithDebt as $customer)
+                    <div class="px-4 py-3 flex items-center justify-between text-xs">
+                        <span>{{ $customer->name }}</span>
+                        <span class="font-bold text-accent-600">Rp {{ number_format($customer->total_due, 0, ',', '.') }}</span>
+                    </div>
+                    @empty
+                    <div class="p-4 text-center text-gray-400 text-xs">
+                        Tidak ada piutang pelanggan.
+                    </div>
+                    @endforelse
                 </div>
-                @endforelse
             </div>
         </div>
     </div>

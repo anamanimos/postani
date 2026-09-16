@@ -27,4 +27,7 @@ Homestead.yaml
 Thumds.db
 .agents/
 .gemini/
+.claude/
+agent/
+skills-lock.json
 

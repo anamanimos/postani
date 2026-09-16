@@ -1,13 +1,29 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-lg font-bold text-dark">Produk</h2>
+        <div class="flex items-center justify-between gap-4">
+            <h2 class="text-lg font-bold text-dark">Produk</h2>
+            <div class="hidden md:flex items-center gap-3">
+                <form action="{{ route('products.index') }}" method="GET" class="relative w-64">
+                    @if(request('category'))
+                        <input type="hidden" name="category" value="{{ request('category') }}">
+                    @endif
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama produk..." class="form-input-solid !py-2 !pl-9 !pr-4 !text-xs w-full bg-white shadow-sm rounded-xl">
+                    <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </form>
+                <a href="{{ route('products.create') }}" class="btn-primary flex items-center gap-1.5 text-xs py-2 px-4 rounded-xl flex-shrink-0">
+                    <span>+ Tambah Produk</span>
+                </a>
+            </div>
+        </div>
     </x-slot>
 
     <div class="pb-28 space-y-3" x-data="productList()" @scroll.window="checkScroll()">
 
         {{-- Sticky Category Filter Chips (fixed under header when scrolled) --}}
         @if(isset($categories) && $categories->count() > 0)
-        <div class="sticky top-[60px] z-20 -mx-3 px-3 py-2 transition-all duration-200 overflow-x-auto scrollbar-hide"
+        <div class="sticky top-[60px] z-20 -mx-3 px-3 py-2 transition-all duration-200 overflow-x-auto scrollbar-hide md:mx-0 md:px-0"
              :class="isStickyCategory ? 'bg-white/90 backdrop-blur-md border-b border-gray-150 shadow-sm' : 'bg-transparent border-transparent'">
             <div class="flex gap-1.5 whitespace-nowrap">
                 <a href="{{ route('products.index', ['search' => request('search')]) }}"
@@ -36,9 +52,9 @@
         </div>
 
         {{-- Product Grid (Infinite Scroll) --}}
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
             <template x-for="product in items" :key="product.id">
-                <a :href="product.show_url" class="card-solid overflow-hidden block active:scale-[0.98] transition-transform bg-white">
+                <a :href="product.show_url" class="card-solid overflow-hidden block active:scale-[0.98] transition-transform bg-white hover:shadow-md hover:border-primary-200">
                     <div class="aspect-square bg-gray-100 relative">
                         <template x-if="product.image">
                             <img :src="'/storage/' + product.image" class="w-full h-full object-cover" :alt="product.name" loading="lazy">
@@ -78,7 +94,7 @@
 
             {{-- Empty State (only when no items after initial load) --}}
             <template x-if="items.length === 0 && !loading">
-                <div class="col-span-2 py-12 text-center">
+                <div class="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5 xl:col-span-6 py-12 text-center">
                     <!-- Duotone Icon: Package empty -->
                     <svg class="w-16 h-16 text-gray-300 mx-auto mb-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path opacity="0.3" d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
@@ -99,9 +115,9 @@
             </svg>
         </div>
 
-        {{-- Floating Action Buttons --}}
-        {{-- 1. Floating add button (bottom-40, always visible) --}}
-        <div class="fixed bottom-40 left-0 right-0 z-40 px-5 pointer-events-none">
+        {{-- Floating Action Buttons (Mobile Only) --}}
+        {{-- 1. Floating add button (bottom-40, always visible on mobile) --}}
+        <div class="fixed bottom-40 left-0 right-0 z-40 px-5 pointer-events-none md:hidden">
             <div class="max-w-lg mx-auto flex justify-end">
                 <a href="{{ route('products.create') }}"
                    class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/80 text-primary-600 flex items-center justify-center shadow-lg active:scale-90 hover:bg-white transition-all transform hover:-translate-y-0.5 duration-150 pointer-events-auto"
@@ -115,8 +131,8 @@
             </div>
         </div>
 
-        {{-- 2. Floating search button (bottom-24) --}}
-        <div class="fixed bottom-24 left-0 right-0 z-40 px-5 pointer-events-none">
+        {{-- 2. Floating search button (bottom-24 on mobile) --}}
+        <div class="fixed bottom-24 left-0 right-0 z-40 px-5 pointer-events-none md:hidden">
             <div class="max-w-lg mx-auto relative flex justify-end h-12">
                 <div class="absolute right-0 top-0 bg-white/95 backdrop-blur-md border border-gray-200/80 shadow-lg rounded-full overflow-hidden transition-all duration-300 ease-out pointer-events-auto"
                      :class="openFloatingSearch ? 'w-full h-12' : 'w-12 h-12'">

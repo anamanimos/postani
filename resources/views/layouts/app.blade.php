@@ -159,156 +159,320 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen" style="background: linear-gradient(135deg, #FAFAF9 0%, #f0fdf4 30%, #FAFAF9 60%, #fff7ed 100%);">
 
-            {{-- Top Header --}}
-            <header class="sticky top-0 z-30 glass-nav transition-all duration-300"
-                    x-data="{ scrolled: false, pageTitle: 'POS Toko Tani' }"
-                    x-init="
-                        window.addEventListener('scroll', () => {
-                            scrolled = window.scrollY > 20;
-                        });
-                        
-                        // Extract page title dynamically
-                        setTimeout(() => {
-                            const headerContainer = document.querySelector('main')?.previousElementSibling;
-                            const h2El = headerContainer ? headerContainer.querySelector('h2') : null;
-                            if (h2El) {
-                                pageTitle = h2El.textContent.trim();
-                            } else {
-                                const parts = document.title.split('-');
-                                const rawTitle = parts[parts.length - 1]?.trim() || '';
-                                if (rawTitle && rawTitle !== 'POS Toko Tani') {
-                                    pageTitle = rawTitle;
-                                }
-                            }
-                        }, 100);
-                    ">
-                <div class="max-w-lg mx-auto px-3 py-3 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-float">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div class="relative h-9 min-w-[150px] overflow-hidden">
-                            {{-- POS Toko Tani (Default State) --}}
-                            <div x-show="!scrolled" 
-                                 x-transition:enter="transition ease-out duration-300 transform"
-                                 x-transition:enter-start="opacity-0 translate-y-2"
-                                 x-transition:enter-end="opacity-100 translate-y-0"
-                                 x-transition:leave="transition ease-in duration-200 transform"
-                                 x-transition:leave-start="opacity-100 translate-y-0"
-                                 x-transition:leave-end="opacity-0 -translate-y-2"
-                                 class="absolute inset-y-0 left-0 flex flex-col justify-center">
-                                <h1 class="text-base font-bold text-dark leading-tight">POS Toko Tani</h1>
-                                <p class="text-[10px] text-gray-400 font-medium">Sistem Kasir Pertanian</p>
-                            </div>
+            {{-- Desktop Sidebar Navigation (Hidden on mobile < 768px, visible on md: and up) --}}
+            <aside class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40 bg-white/85 backdrop-blur-xl border-r border-gray-200/60 shadow-sm select-none">
+                {{-- Sidebar Header --}}
+                <div class="h-16 flex items-center gap-3 px-6 border-b border-gray-150/60">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-float flex-shrink-0">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <h1 class="text-sm font-bold text-dark leading-tight truncate">POS Toko Tani</h1>
+                        <p class="text-[10px] text-gray-400 font-medium truncate">Sistem Kasir Pertanian</p>
+                    </div>
+                </div>
 
-                            {{-- Page Title (Scrolled State) --}}
-                            <div x-show="scrolled" 
-                                 x-transition:enter="transition ease-out duration-300 transform"
-                                 x-transition:enter-start="opacity-0 translate-y-2"
-                                 x-transition:enter-end="opacity-100 translate-y-0"
-                                 x-transition:leave="transition ease-in duration-200 transform"
-                                 x-transition:leave-start="opacity-100 translate-y-0"
-                                 x-transition:leave-end="opacity-0 -translate-y-2"
-                                 class="absolute inset-y-0 left-0 flex flex-col justify-center"
-                                 style="display: none;">
-                                <h1 class="text-base font-bold text-primary-600 leading-tight truncate max-w-[200px]" x-text="pageTitle"></h1>
-                                <p class="text-[10px] text-gray-400 font-medium">Halaman Aktif</p>
-                            </div>
+                {{-- Sidebar Navigation Items --}}
+                <div class="flex-1 overflow-y-auto px-3 py-4 space-y-4 scrollbar-thin">
+                    {{-- Group: Transaksi --}}
+                    <div>
+                        <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Menu Utama</p>
+                        <div class="space-y-1">
+                            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                <span>Beranda</span>
+                            </a>
+                            <a href="{{ route('sales.create') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('sales.create') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                                <span>Kasir Jual Baru</span>
+                            </a>
+                            <a href="{{ route('sales.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('sales.index', 'sales.show') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                <span>Riwayat Penjualan</span>
+                            </a>
+                            <a href="{{ route('purchases.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('purchases.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                <span>Pembelian (Beli)</span>
+                            </a>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        {{-- Profile Menu --}}
+
+                    {{-- Group: Inventaris --}}
+                    <div>
+                        <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Katalog & Stok</p>
+                        <div class="space-y-1">
+                            <a href="{{ route('products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('products.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">📦</span>
+                                <span>Daftar Produk</span>
+                            </a>
+                            <a href="{{ route('categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('categories.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">🏷️</span>
+                                <span>Kategori</span>
+                            </a>
+                            <a href="{{ route('units.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('units.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">📏</span>
+                                <span>Satuan Unit</span>
+                            </a>
+                            <a href="{{ route('galleries.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('galleries.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">🖼️</span>
+                                <span>Galeri Foto</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- Group: Relasi --}}
+                    <div>
+                        <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Relasi Bisnis</p>
+                        <div class="space-y-1">
+                            <a href="{{ route('customers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('customers.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">👥</span>
+                                <span>Pelanggan</span>
+                            </a>
+                            <a href="{{ route('suppliers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('suppliers.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">🤝</span>
+                                <span>Tengkulak (Supplier)</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- Group: Keuangan & Laporan --}}
+                    <div>
+                        <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Keuangan & Laporan</p>
+                        <div class="space-y-1">
+                            <a href="{{ route('cash-transactions.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('cash-transactions.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">🏦</span>
+                                <span>Buku Kas Toko</span>
+                            </a>
+                            <a href="{{ route('payments.suppliers') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('payments.suppliers*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">💸</span>
+                                <span>Hutang Tengkulak</span>
+                            </a>
+                            <a href="{{ route('payments.customers') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('payments.customers*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">💰</span>
+                                <span>Piutang Pelanggan</span>
+                            </a>
+                            <a href="{{ route('reports.sales') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('reports.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">📊</span>
+                                <span>Laporan & Analisis</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- Group: Pengaturan --}}
+                    <div>
+                        <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Sistem</p>
+                        <div class="space-y-1">
+                            <a href="{{ route('users.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('users.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">👤</span>
+                                <span>Kelola Pengguna</span>
+                            </a>
+                            <a href="{{ route('settings.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('settings.*') ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100/70 hover:text-dark' }}">
+                                <span class="text-sm">⚙️</span>
+                                <span>Pengaturan Toko</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Sidebar User Profile Footer --}}
+                <div class="p-3 border-t border-gray-150/60 bg-white/40">
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50/80 border border-gray-100">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-8 h-8 rounded-lg bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs font-bold text-dark truncate">{{ Auth::user()->name ?? 'User' }}</p>
+                                <p class="text-[10px] text-gray-400 truncate">{{ Auth::user()->role ?? 'Kasir' }}</p>
+                            </div>
+                        </div>
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Keluar">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+
+            {{-- Main Content Wrapper (With left margin md:pl-64 on desktop) --}}
+            <div class="md:pl-64 flex flex-col min-h-screen">
+
+                {{-- Desktop Top Bar (Hidden on mobile < 768px, visible on md: and up) --}}
+                <header class="hidden md:flex items-center justify-between px-8 py-3.5 sticky top-0 z-30 bg-white/75 backdrop-blur-md border-b border-gray-200/50 shadow-sm select-none">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-semibold text-gray-400">Hari ini:</span>
+                        <span class="text-xs font-bold text-dark bg-gray-100/80 px-2.5 py-1 rounded-lg">
+                            {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('sales.create') }}" class="btn-primary py-1.5 px-4 text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Jual Baru (Kasir)</span>
+                        </a>
+                        <div class="w-px h-6 bg-gray-200"></div>
                         <div x-data="{ open: false }" class="relative">
-                            <button @click="open = !open" class="w-9 h-9 rounded-xl bg-white/60 border border-white/40 flex items-center justify-center transition-all hover:bg-white/80">
-                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
+                            <button @click="open = !open" class="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-gray-100/80 transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-xs">
+                                    {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                                </div>
+                                <div class="text-left hidden lg:block">
+                                    <p class="text-xs font-bold text-dark leading-tight">{{ Auth::user()->name ?? 'User' }}</p>
+                                    <p class="text-[10px] text-gray-400">{{ Auth::user()->role ?? 'Kasir' }}</p>
+                                </div>
+                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </button>
                             <div x-show="open" @click.away="open = false"
-                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter="transition ease-out duration-150"
                                  x-transition:enter-start="opacity-0 scale-95"
                                  x-transition:enter-end="opacity-100 scale-100"
-                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave="transition ease-in duration-100"
                                  x-transition:leave-start="opacity-100 scale-100"
                                  x-transition:leave-end="opacity-0 scale-95"
-                                 class="absolute right-0 mt-2 w-48 glass-card-solid p-2 z-50">
+                                 class="absolute right-0 mt-2 w-48 glass-card-solid p-2 z-50 shadow-lg">
                                 <div class="px-3 py-2 border-b border-gray-100 mb-1">
-                                    <p class="text-sm font-semibold text-dark">{{ Auth::user()->name }}</p>
-                                    <p class="text-xs text-gray-400">{{ Auth::user()->email }}</p>
+                                    <p class="text-xs font-bold text-dark">{{ Auth::user()->name ?? 'User' }}</p>
+                                    <p class="text-[10px] text-gray-400 truncate">{{ Auth::user()->email ?? '' }}</p>
                                 </div>
-                                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                    Profil
+                                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors">
+                                    Profil Saya
                                 </a>
-                                <a href="{{ route('settings.index') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                                <a href="{{ route('settings.index') }}" class="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors">
                                     Pengaturan
                                 </a>
-                                <a href="{{ route('users.index') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors">
-                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path opacity="0.3" d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" fill="currentColor"/>
-                                        <path d="M6 21C6 17.134 9.13401 14 13 14H11C7.13401 14 4 17.134 4 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                        <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" stroke-width="2"/>
-                                    </svg>
-                                    Kelola Pengguna
-                                </a>
-
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                                        Keluar (Logout)
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                </div>
-            </header>
+                </header>
 
-            {{-- Flash Messages (SweetAlert2) --}}
-            @if(session('success'))
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: "{!! addslashes(session('success')) !!}",
-                            timer: 2500,
-                            showConfirmButton: false,
-                            timerProgressBar: true,
-                            customClass: {
-                                popup: 'rounded-2xl font-sans shadow-lg'
-                            }
-                        });
-                    });
-                </script>
-            @endif
+                {{-- Mobile Top Header (Visible only on mobile < 768px, hidden on md: and up) --}}
+                <header class="sticky top-0 z-30 glass-nav transition-all duration-300 md:hidden"
+                        x-data="{ scrolled: false, pageTitle: 'POS Toko Tani' }"
+                        x-init="
+                            window.addEventListener('scroll', () => {
+                                scrolled = window.scrollY > 20;
+                            });
+                            
+                            // Extract page title dynamically
+                            setTimeout(() => {
+                                const headerContainer = document.querySelector('main')?.previousElementSibling;
+                                const h2El = headerContainer ? headerContainer.querySelector('h2') : null;
+                                if (h2El) {
+                                    pageTitle = h2El.textContent.trim();
+                                } else {
+                                    const parts = document.title.split('-');
+                                    const rawTitle = parts[parts.length - 1]?.trim() || '';
+                                    if (rawTitle && rawTitle !== 'POS Toko Tani') {
+                                        pageTitle = rawTitle;
+                                    }
+                                }
+                            }, 100);
+                        ">
+                    <div class="max-w-lg mx-auto px-3 py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-float">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="relative h-9 min-w-[150px] overflow-hidden">
+                                {{-- POS Toko Tani (Default State) --}}
+                                <div x-show="!scrolled" 
+                                     x-transition:enter="transition ease-out duration-300 transform"
+                                     x-transition:enter-start="opacity-0 translate-y-2"
+                                     x-transition:enter-end="opacity-100 translate-y-0"
+                                     x-transition:leave="transition ease-in duration-200 transform"
+                                     x-transition:leave-start="opacity-100 translate-y-0"
+                                     x-transition:leave-end="opacity-0 -translate-y-2"
+                                     class="absolute inset-y-0 left-0 flex flex-col justify-center">
+                                    <h1 class="text-base font-bold text-dark leading-tight">POS Toko Tani</h1>
+                                    <p class="text-[10px] text-gray-400 font-medium">Sistem Kasir Pertanian</p>
+                                </div>
 
-            @if(session('error'))
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: "{!! addslashes(session('error')) !!}",
-                            customClass: {
-                                popup: 'rounded-2xl font-sans shadow-lg'
-                            }
-                        });
-                    });
-                </script>
-            @endif
+                                {{-- Page Title (Scrolled State) --}}
+                                <div x-show="scrolled" 
+                                     x-transition:enter="transition ease-out duration-300 transform"
+                                     x-transition:enter-start="opacity-0 translate-y-2"
+                                     x-transition:enter-end="opacity-100 translate-y-0"
+                                     x-transition:leave="transition ease-in duration-200 transform"
+                                     x-transition:leave-start="opacity-100 translate-y-0"
+                                     x-transition:leave-end="opacity-0 -translate-y-2"
+                                     class="absolute inset-y-0 left-0 flex flex-col justify-center"
+                                     style="display: none;">
+                                    <h1 class="text-base font-bold text-primary-600 leading-tight truncate max-w-[200px]" x-text="pageTitle"></h1>
+                                    <p class="text-[10px] text-gray-400 font-medium">Halaman Aktif</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            {{-- Profile Menu --}}
+                            <div x-data="{ open: false }" class="relative">
+                                <button @click="open = !open" class="w-9 h-9 rounded-xl bg-white/60 border border-white/40 flex items-center justify-center transition-all hover:bg-white/80">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                </button>
+                                <div x-show="open" @click.away="open = false"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute right-0 mt-2 w-48 glass-card-solid p-2 z-50">
+                                    <div class="px-3 py-2 border-b border-gray-100 mb-1">
+                                        <p class="text-sm font-semibold text-dark">{{ Auth::user()->name }}</p>
+                                        <p class="text-xs text-gray-400">{{ Auth::user()->email }}</p>
+                                    </div>
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                        Profil
+                                    </a>
+                                    <a href="{{ route('settings.index') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                                        Pengaturan
+                                    </a>
+                                    <a href="{{ route('users.index') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path opacity="0.3" d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" fill="currentColor"/>
+                                            <path d="M6 21C6 17.134 9.13401 14 13 14H11C7.13401 14 4 17.134 4 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                        Kelola Pengguna
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
 
-            @if (isset($header))
-                <div class="max-w-lg mx-auto px-3 pt-4">
-                    {{ $header }}
-                </div>
-            @endif
+                @if (isset($header))
+                    <div class="w-full max-w-lg mx-auto px-3 pt-4 md:max-w-7xl md:px-8 md:pt-6">
+                        {{ $header }}
+                    </div>
+                @endif
 
-            {{-- Page Content --}}
-            <main class="max-w-lg mx-auto px-3 pb-24 pt-2 page-enter">
-                @yield('content')
-                {{ $slot ?? '' }}
-            </main>
+                {{-- Page Content --}}
+                <main class="w-full max-w-lg mx-auto px-3 pb-24 pt-2 page-enter md:max-w-7xl md:px-8 md:pt-4 md:pb-12 flex-1">
+                    @yield('content')
+                    {{ $slot ?? '' }}
+                </main>
 
-            {{-- Floating Bottom Navigation --}}
-            <nav class="fixed bottom-0 left-0 right-0 z-40 px-3 pb-4">
+            </div>
+
+            {{-- Floating Bottom Navigation (Visible only on mobile < 768px) --}}
+            <nav class="fixed bottom-0 left-0 right-0 z-40 px-3 pb-4 md:hidden">
                 <div class="max-w-lg mx-auto glass-nav rounded-2xl px-2 py-1">
                     <div class="flex items-center justify-around">
                         {{-- Dashboard --}}
