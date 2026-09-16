@@ -7,26 +7,6 @@
         <div class="lg:flex lg:gap-6 lg:items-start">
             {{-- Left Column: Products & Controls --}}
             <div class="lg:flex-1 min-w-0">
-                {{-- Sticky Search Bar in Left Column --}}
-                <div class="sticky top-16 md:top-20 z-20 mb-3 bg-white/95 backdrop-blur-md p-2.5 rounded-xl border border-gray-200/80 shadow-sm flex items-center gap-2.5">
-                    <div class="relative flex-1">
-                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                        <input type="text" x-model="searchQuery" x-ref="desktopSearchInput"
-                               placeholder="Cari barang (Ctrl+F)..."
-                               class="form-input-solid !text-xs !py-2 !pl-9 !pr-8 w-full font-medium text-gray-700 rounded-lg">
-                        <button type="button" x-show="searchQuery" @click="searchQuery = ''; $refs.desktopSearchInput.focus()" 
-                                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm font-bold leading-none p-1"
-                                title="Hapus pencarian">×</button>
-                    </div>
-                    <div class="hidden sm:flex items-center gap-1 text-[11px] font-semibold text-gray-400 px-2 py-1 bg-gray-50 rounded-lg border border-gray-200/70 flex-shrink-0 select-none">
-                        <kbd class="font-mono text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded shadow-xs text-gray-500">Ctrl</kbd>
-                        <span>+</span>
-                        <kbd class="font-mono text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded shadow-xs text-gray-500">F</kbd>
-                    </div>
-                </div>
-
                 {{-- Product Grid --}}
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                     <template x-for="product in filteredProducts()" :key="product.id">
@@ -60,6 +40,37 @@
                             </div>
                         </div>
                     </template>
+                </div>
+
+                {{-- Empty Search Result State --}}
+                <div x-show="filteredProducts().length === 0" class="card-solid p-8 text-center bg-white rounded-2xl border border-gray-150 my-3">
+                    <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 mx-auto mb-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <p class="text-xs font-bold text-gray-600">Tidak ada produk ditemukan</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">Coba kata kunci pencarian yang lain.</p>
+                </div>
+
+                {{-- Desktop Sticky Search Bar (At the Bottom) --}}
+                <div class="hidden lg:flex lg:sticky lg:bottom-4 z-20 mt-3 bg-white/95 backdrop-blur-md p-2.5 rounded-xl border border-gray-200/80 shadow-lg items-center gap-2.5">
+                    <div class="relative flex-1">
+                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" x-model="searchQuery" x-ref="desktopSearchInput"
+                               placeholder="Cari barang (Ctrl+F)..."
+                               class="form-input-solid !text-xs !py-2 !pl-9 !pr-8 w-full font-medium text-gray-700 rounded-lg">
+                        <button type="button" x-show="searchQuery" @click="searchQuery = ''; $refs.desktopSearchInput.focus()" 
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm font-bold leading-none p-1"
+                                title="Hapus pencarian">×</button>
+                    </div>
+                    <div class="flex items-center gap-1 text-[11px] font-semibold text-gray-400 px-2 py-1 bg-gray-50 rounded-lg border border-gray-200/70 flex-shrink-0 select-none">
+                        <kbd class="font-mono text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded shadow-xs text-gray-500">Ctrl</kbd>
+                        <span>+</span>
+                        <kbd class="font-mono text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded shadow-xs text-gray-500">F</kbd>
+                    </div>
                 </div>
             </div>
 
@@ -450,7 +461,7 @@
                     window.addEventListener('keydown', (e) => {
                         if ((e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F')) {
                             e.preventDefault();
-                            if (this.$refs.desktopSearchInput) {
+                            if (window.innerWidth >= 1024 && this.$refs.desktopSearchInput) {
                                 this.$refs.desktopSearchInput.focus();
                                 this.$refs.desktopSearchInput.select();
                             } else if (this.$refs.floatSearchInput) {
