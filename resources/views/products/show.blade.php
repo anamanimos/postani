@@ -20,7 +20,7 @@
                 </a>
                 
                 {{-- Quick Delete in header for desktop/tablet --}}
-                <form action="{{ route('products.destroy', $product) }}" method="POST" class="confirm-delete hidden sm:inline-block" data-confirm="Yakin ingin menghapus produk '{{ $product->name }}'? Seluruh data terkait akan terpengaruh.">
+                <form action="{{ route('products.destroy', $product) }}" method="POST" class="confirm-delete hidden sm:inline-block" data-confirm="Yakin ingin menghapus produk '{{ $product->name }}'? Seluruh riwayat data terkait akan terpengaruh.">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-3 py-2 rounded-xl font-bold transition-colors active:scale-95 flex items-center gap-1">
@@ -36,16 +36,18 @@
         {{-- Responsive Grid: 1 col on mobile, 12 cols on desktop --}}
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
             
-            {{-- LEFT COLUMN: Product Image & Quick Summary & Actions --}}
-            <div class="lg:col-span-5 space-y-4">
+            {{-- LEFT COLUMN: Product Image & Metadata & Actions (4 cols on desktop) --}}
+            <div class="lg:col-span-4 space-y-4">
                 {{-- Image Card --}}
                 <div class="card-solid p-3 sm:p-4 relative">
-                    <div class="w-full aspect-square max-h-[380px] sm:max-h-[420px] rounded-xl bg-gray-50/80 border border-gray-150 overflow-hidden relative flex items-center justify-center group {{ $product->image ? 'cursor-pointer' : '' }}"
+                    <div class="w-full aspect-square rounded-xl bg-gray-50/80 border border-gray-150 overflow-hidden relative flex items-center justify-center group {{ $product->image ? 'cursor-pointer' : '' }}"
+                         style="max-height: 360px;"
                          @if($product->image) @click="imgPreviewOpen = true" @endif>
                         
                         @if($product->image)
                             <img src="{{ asset('storage/' . $product->image) }}" 
-                                 class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" 
+                                 class="max-w-full max-h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" 
+                                 style="max-height: 340px;"
                                  alt="{{ $product->name }}">
                             
                             {{-- Hover Zoom Badge --}}
@@ -56,8 +58,8 @@
                                 </span>
                             </div>
                         @else
-                            <div class="w-full h-full flex flex-col items-center justify-center text-gray-300">
-                                <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-full h-full flex flex-col items-center justify-center text-gray-300 py-12">
+                                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
                                 <span class="text-xs text-gray-400 mt-2">Tidak ada foto produk</span>
@@ -89,7 +91,7 @@
 
                         @if($product->image)
                             <div class="absolute bottom-2.5 right-2.5 z-10 pointer-events-none">
-                                <span class="text-[10px] text-gray-500 bg-white/80 backdrop-blur-md px-2 py-0.5 rounded-md border border-gray-200/60 shadow-2xs font-medium">
+                                <span class="text-[10px] text-gray-500 bg-white/80 backdrop-blur-md px-2 py-0.5 rounded-md border border-gray-200/60 shadow-xs font-medium">
                                     🔍 Klik untuk zoom
                                 </span>
                             </div>
@@ -98,7 +100,7 @@
                 </div>
 
                 {{-- Quick Meta Card on Left for Desktop --}}
-                <div class="card-solid p-4 hidden lg:block space-y-3">
+                <div class="card-solid p-4 space-y-3">
                     <div class="flex items-center justify-between text-xs pb-2 border-b border-gray-150">
                         <span class="text-gray-500 font-semibold">Status Produk</span>
                         <span class="inline-flex items-center gap-1.5 font-bold {{ $product->is_active ? 'text-emerald-600' : 'text-red-500' }}">
@@ -139,8 +141,8 @@
                 </div>
             </div>
 
-            {{-- RIGHT COLUMN: Product Info, Stock details, Movements, Purchases --}}
-            <div class="lg:col-span-7 space-y-5">
+            {{-- RIGHT COLUMN: Product Info, Stock details, Movements, Purchases (8 cols on desktop) --}}
+            <div class="lg:col-span-8 space-y-5">
                 
                 {{-- Card 1: Main Product Header & Pricing --}}
                 <div class="card-solid p-5 space-y-4">
@@ -148,7 +150,7 @@
                         <div class="space-y-1">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-xs px-2.5 py-0.5 rounded-full bg-primary-50 text-primary-700 border border-primary-200 font-bold">
-                                    {{ $product->category->name ?? 'Tanpa Kategori' }}
+                                    {{ $product->category?->name ?? 'Tanpa Kategori' }}
                                 </span>
                                 @if($product->sku)
                                     <span class="text-xs px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 font-mono font-medium">
@@ -166,7 +168,7 @@
                             <p class="text-[11px] font-semibold text-primary-800">Harga Jual (Kasir)</p>
                             <div class="mt-1 flex items-baseline gap-1">
                                 <span class="text-xl sm:text-2xl font-black text-primary-600">Rp {{ number_format($product->selling_price, 0, ',', '.') }}</span>
-                                <span class="text-xs text-gray-500 font-medium">/ {{ $product->sellUnit->symbol ?? 'unit' }}</span>
+                                <span class="text-xs text-gray-500 font-medium">/ {{ $product->sellUnit?->symbol ?? 'unit' }}</span>
                             </div>
                         </div>
 
@@ -181,7 +183,7 @@
                                     @endif
                                 </span>
                                 @if($product->last_purchase_price > 0)
-                                    <span class="text-[10px] text-gray-400">/ {{ $product->buyUnit->symbol ?? '' }}</span>
+                                    <span class="text-[10px] text-gray-400">/ {{ $product->buyUnit?->symbol ?? '' }}</span>
                                 @endif
                             </div>
                         </div>
@@ -197,7 +199,7 @@
                                     @endif
                                 </span>
                                 @if($product->avg_purchase_price > 0)
-                                    <span class="text-[10px] text-gray-400">/ {{ $product->buyUnit->symbol ?? '' }}</span>
+                                    <span class="text-[10px] text-gray-400">/ {{ $product->buyUnit?->symbol ?? '' }}</span>
                                 @endif
                             </div>
                         </div>
@@ -217,34 +219,34 @@
                         <div class="p-3 bg-gray-50 rounded-xl border border-gray-200/60">
                             <p class="text-[11px] text-gray-500 font-medium">Stok Saat Ini</p>
                             <p class="text-xl font-black mt-1 {{ $product->stock <= ($product->min_stock ?? 0) ? 'text-red-600' : 'text-dark' }}">
-                                {{ $product->stock }} <span class="text-xs font-normal text-gray-500">{{ $product->sellUnit->symbol ?? '' }}</span>
+                                {{ $product->stock }} <span class="text-xs font-normal text-gray-500">{{ $product->sellUnit?->symbol ?? '' }}</span>
                             </p>
                         </div>
 
                         <div class="p-3 bg-gray-50 rounded-xl border border-gray-200/60">
                             <p class="text-[11px] text-gray-500 font-medium">Stok Minimum</p>
                             <p class="text-xl font-black mt-1 text-dark">
-                                {{ $product->min_stock ?? 0 }} <span class="text-xs font-normal text-gray-500">{{ $product->sellUnit->symbol ?? '' }}</span>
+                                {{ $product->min_stock ?? 0 }} <span class="text-xs font-normal text-gray-500">{{ $product->sellUnit?->symbol ?? '' }}</span>
                             </p>
                         </div>
 
                         <div class="p-3 bg-gray-50 rounded-xl border border-gray-200/60">
                             <p class="text-[11px] text-gray-500 font-medium">Satuan Beli</p>
-                            <p class="text-sm font-bold mt-1 text-dark truncate">{{ $product->buyUnit->name ?? '-' }}</p>
-                            <p class="text-[10px] text-gray-400">Simbol: {{ $product->buyUnit->symbol ?? '-' }}</p>
+                            <p class="text-sm font-bold mt-1 text-dark truncate">{{ $product->buyUnit?->name ?? '-' }}</p>
+                            <p class="text-[10px] text-gray-400">Simbol: {{ $product->buyUnit?->symbol ?? '-' }}</p>
                         </div>
 
                         <div class="p-3 bg-gray-50 rounded-xl border border-gray-200/60">
                             <p class="text-[11px] text-gray-500 font-medium">Satuan Jual</p>
-                            <p class="text-sm font-bold mt-1 text-dark truncate">{{ $product->sellUnit->name ?? '-' }}</p>
-                            <p class="text-[10px] text-gray-400">Simbol: {{ $product->sellUnit->symbol ?? '-' }}</p>
+                            <p class="text-sm font-bold mt-1 text-dark truncate">{{ $product->sellUnit?->name ?? '-' }}</p>
+                            <p class="text-[10px] text-gray-400">Simbol: {{ $product->sellUnit?->symbol ?? '-' }}</p>
                         </div>
                     </div>
 
                     <div class="bg-gray-50/80 rounded-xl p-3 border border-gray-200/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs">
                         <span class="text-gray-500 font-semibold">Rumus Konversi Satuan:</span>
-                        <span class="font-bold text-dark bg-white px-2.5 py-1 rounded-lg border border-gray-200 shadow-2xs self-start sm:self-auto">
-                            1 {{ $product->buyUnit->name ?? 'Satuan Beli' }} ({{ $product->buyUnit->symbol ?? '' }}) = {{ $product->conversion_factor }} {{ $product->sellUnit->name ?? 'Satuan Jual' }} ({{ $product->sellUnit->symbol ?? '' }})
+                        <span class="font-bold text-dark bg-white px-2.5 py-1 rounded-lg border border-gray-200 shadow-xs self-start sm:self-auto">
+                            1 {{ $product->buyUnit?->name ?? 'Satuan Beli' }} ({{ $product->buyUnit?->symbol ?? '' }}) = {{ $product->conversion_factor }} {{ $product->sellUnit?->name ?? 'Satuan Jual' }} ({{ $product->sellUnit?->symbol ?? '' }})
                         </span>
                     </div>
                 </div>
@@ -348,7 +350,7 @@
                     <form action="{{ route('products.destroy', $product) }}" method="POST" class="confirm-delete" data-confirm="Yakin ingin menghapus produk '{{ $product->name }}'? Seluruh riwayat transaksi terkait akan terpengaruh.">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="w-full py-3 border border-red-200 bg-red-50 text-red-600 font-bold rounded-xl text-xs hover:bg-red-100 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 shadow-2xs">
+                        <button type="submit" class="w-full py-3 border border-red-200 bg-red-50 text-red-600 font-bold rounded-xl text-xs hover:bg-red-100 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 shadow-xs">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             <span>Hapus Produk Ini</span>
                         </button>

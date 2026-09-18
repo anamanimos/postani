@@ -5,13 +5,18 @@
                 <h2 class="text-lg font-bold text-dark">Manajemen Pengguna</h2>
                 <p class="text-xs text-gray-500">Kelola akun administrator dan kasir</p>
             </div>
-            <a href="{{ route('users.create') }}" class="w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform" title="Tambah Pengguna">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            </a>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('users.create') }}" class="md:hidden w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform" title="Tambah Pengguna">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                </a>
+                <a href="{{ route('users.create') }}" class="hidden md:inline-flex btn-primary items-center gap-1.5 text-xs py-2 px-4 rounded-xl shadow-xs">
+                    <span>+ Tambah Pengguna</span>
+                </a>
+            </div>
         </div>
     </x-slot>
 
-    <div class="py-4 pb-28 space-y-4 max-w-lg mx-auto" x-data="{
+    <div class="py-4 pb-28 space-y-4 max-w-lg mx-auto md:max-w-none" x-data="{
         search: '{{ request('search', '') }}',
         role: '{{ request('role', '') }}',
         status: '{{ request('status', '') }}',
@@ -108,9 +113,9 @@
         @endif
 
         {{-- Users List --}}
-        <div class="space-y-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @forelse($users as $user)
-            <div class="card-solid p-4 hover:shadow-md transition-all bg-white relative">
+            <div class="card-solid p-4 hover:shadow-md transition-all bg-white relative flex flex-col justify-between">
                 <div class="flex items-start justify-between gap-3">
                     {{-- User Avatar & Info --}}
                     <div class="flex items-start gap-3 min-w-0 flex-1">
@@ -130,7 +135,7 @@
                                     <path opacity="0.3" d="M3 8L10.89 13.26C11.56 13.71 12.44 13.71 13.11 13.26L21 8M5 19H19C20.1 19 21 18.1 21 17V7C21 5.9 20.1 5 19 5H5C3.9 5 3 5.9 3 7V17C3 18.1 3.9 19 5 19Z" fill="currentColor"/>
                                     <path d="M3 8L10.89 13.26C11.56 13.71 12.44 13.71 13.11 13.26L21 8M5 19H19C20.1 19 21 18.1 21 17V7C21 5.9 20.1 5 19 5H5C3.9 5 3 5.9 3 7V17C3 18.1 3.9 19 5 19Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                                 </svg>
-                                <span>{{ $user->email }}</span>
+                                <span class="truncate">{{ $user->email }}</span>
                             </p>
 
                             @if($user->phone)
@@ -139,7 +144,7 @@
                                     <path opacity="0.3" d="M3 5c0-1.1.9-2 2-2h3.5c.55 0 1.05.3 1.25.8l1.2 3c.2.5.05 1.1-.35 1.5L8.7 10.2c1.2 2.1 2.9 3.8 5 5l1.9-1.9c.4-.4 1-.55 1.5-.35l3 1.2c.5.2.8.7.8 1.25V19c0 1.1-.9 2-2 2-9.4 0-17-7.6-17-17z" fill="currentColor"/>
                                     <path d="M3 5c0-1.1.9-2 2-2h3.5c.55 0 1.05.3 1.25.8l1.2 3c.2.5.05 1.1-.35 1.5L8.7 10.2c1.2 2.1 2.9 3.8 5 5l1.9-1.9c.4-.4 1-.55 1.5-.35l3 1.2c.5.2.8.7.8 1.25V19c0 1.1-.9 2-2 2-9.4 0-17-7.6-17-17z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                                 </svg>
-                                <span>{{ $user->phone }}</span>
+                                <span class="truncate">{{ $user->phone }}</span>
                             </p>
                             @endif
 
@@ -176,7 +181,7 @@
                 {{-- Action Bar --}}
                 <div class="border-t border-gray-100 mt-3 pt-2.5 flex items-center justify-between">
                     <a href="{{ route('users.show', $user) }}" class="text-xs font-semibold text-primary-600 hover:text-primary-700 flex items-center gap-1">
-                        Lihat Riwayat Transaksi
+                        Lihat Riwayat
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
 
@@ -209,7 +214,7 @@
                 </div>
             </div>
             @empty
-            <div class="card-solid p-8 text-center space-y-2 bg-white">
+            <div class="card-solid p-8 text-center space-y-2 bg-white md:col-span-2 lg:col-span-3">
                 <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto text-gray-400">
                     <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path opacity="0.3" d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" fill="currentColor"/>
