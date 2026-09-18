@@ -108,15 +108,15 @@
                     </div>
                     <div class="flex items-center justify-between text-xs pb-2 border-b border-gray-150">
                         <span class="text-gray-500 font-semibold">Kategori</span>
-                        <span class="font-bold text-dark">{{ $product->category->name ?? 'Tanpa Kategori' }}</span>
+                        <span class="font-bold text-dark">{{ $product->category?->name ?? 'Tanpa Kategori' }}</span>
                     </div>
                     <div class="flex items-center justify-between text-xs pb-2 border-b border-gray-150">
                         <span class="text-gray-500 font-semibold">Satuan Jual</span>
-                        <span class="font-bold text-dark">{{ $product->sellUnit->name ?? '-' }} ({{ $product->sellUnit->symbol ?? '' }})</span>
+                        <span class="font-bold text-dark">{{ $product->sellUnit?->name ?? '-' }} ({{ $product->sellUnit?->symbol ?? '' }})</span>
                     </div>
                     <div class="flex items-center justify-between text-xs">
                         <span class="text-gray-500 font-semibold">Satuan Beli</span>
-                        <span class="font-bold text-dark">{{ $product->buyUnit->name ?? '-' }} ({{ $product->buyUnit->symbol ?? '' }})</span>
+                        <span class="font-bold text-dark">{{ $product->buyUnit?->name ?? '-' }} ({{ $product->buyUnit?->symbol ?? '' }})</span>
                     </div>
                 </div>
 
@@ -314,11 +314,14 @@
                         </div>
                     </div>
                     <div class="divide-y divide-gray-100 max-h-64 overflow-y-auto">
-                        @forelse($product->purchaseItems ?? [] as $item)
+                        @php
+                            $validPurchases = ($product->purchaseItems ?? collect())->filter(fn($item) => !is_null($item->purchase));
+                        @endphp
+                        @forelse($validPurchases as $item)
                         <div class="px-5 py-3 hover:bg-gray-50/50 transition-colors">
                             <div class="flex items-center justify-between gap-3">
                                 <div>
-                                    <p class="text-xs font-bold text-dark">{{ $item->purchase->supplier->name ?? 'Tengkulak' }}</p>
+                                    <p class="text-xs font-bold text-dark">{{ $item->purchase->supplier?->name ?? 'Tengkulak' }}</p>
                                     <p class="text-[10px] text-gray-400">
                                         {{ $item->purchase->purchase_date ? \Carbon\Carbon::parse($item->purchase->purchase_date)->locale('id')->isoFormat('D MMMM Y') : '-' }}
                                         @if($item->purchase->invoice_number)
@@ -327,7 +330,7 @@
                                     </p>
                                 </div>
                                 <div class="text-right flex-shrink-0">
-                                    <p class="text-xs font-bold text-dark">{{ $item->quantity }} {{ $product->buyUnit->symbol ?? '' }}</p>
+                                    <p class="text-xs font-bold text-dark">{{ $item->quantity }} {{ $product->buyUnit?->symbol ?? '' }}</p>
                                     <p class="text-[11px] text-gray-500">@ Rp {{ number_format($item->unit_price, 0, ',', '.') }}</p>
                                 </div>
                             </div>

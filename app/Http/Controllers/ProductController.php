@@ -113,7 +113,10 @@ class ProductController extends Controller
                 $query->with('creator')->latest('created_at')->latest('id')->take(30);
             },
             'purchaseItems' => function ($query) {
-                $query->with('purchase.supplier')->latest('id')->take(10);
+                $query->whereHas('purchase')
+                    ->with('purchase.supplier')
+                    ->latest('id')
+                    ->take(10);
             }
         ]);
 
