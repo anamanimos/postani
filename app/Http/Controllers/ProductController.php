@@ -111,6 +111,9 @@ class ProductController extends Controller
             'sellUnit',
             'stockMovements' => function ($query) {
                 $query->with('creator')->latest('created_at')->latest('id')->take(30);
+            },
+            'purchaseItems' => function ($query) {
+                $query->with('purchase.supplier')->latest('id')->take(10);
             }
         ]);
 
